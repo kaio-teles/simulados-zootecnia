@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vitaminas em Aves e Suínos - Funções e Deficiências</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:20px;font-family:system-ui,-apple-system,sans-serif;background:transparent;color:var(--foreground,#18181b);font-size:15px;line-height:1.5}
+  @media (prefers-color-scheme:dark){body{color:var(--foreground,#e4e4e7)}}
+  .app{
+    --c-card:var(--card,#ffffff);--c-bd:var(--border,#d4d4d8);--c-fg:var(--foreground,#18181b);
+    --c-mut:var(--muted-foreground,#52525b);--c-pri:var(--primary,#15803d);--c-prifg:var(--primary-foreground,#ffffff);
+    --ok:#16a34a;--ko:#dc2626;
+    max-width:780px;margin:0 auto;background:var(--c-card);color:var(--c-fg);border:1px solid var(--c-bd);border-radius:14px;padding:24px;box-shadow:0 4px 12px rgba(0,0,0,0.05)
+  }
+  @media (prefers-color-scheme:dark){.app{--c-card:var(--card,#1c1c1f);--c-bd:var(--border,#3f3f46);--c-fg:var(--foreground,#e4e4e7);--c-mut:var(--muted-foreground,#a1a1aa);--c-pri:var(--primary,#22c55e);--c-prifg:var(--primary-foreground,#0b1220);--ok:#4ade80;--ko:#f87171}}
+  h1{font-size:20px;margin:0 0 2px;color:var(--c-fg)}
+  .sub{color:var(--c-mut);font-size:13px;margin:0 0 14px}
+  .bar{height:6px;background:var(--c-bd);border-radius:99px;overflow:hidden;margin:6px 0 16px}
+  .bar>i{display:block;height:100%;background:var(--c-pri);width:0;transition:width .25s ease-out}
+  .meta{display:flex;justify-content:space-between;font-size:13px;color:var(--c-mut);font-weight:500}
+  .stem{font-size:16px;font-weight:600;margin:0 0 14px;line-height:1.45}
+  .opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--c-bd);border-radius:10px;padding:12px 14px;margin:0 0 9px;cursor:pointer;transition:border-color .15s, background .15s}
+  .opt:hover:not(:disabled){border-color:var(--c-pri);background:rgba(21,128,61,0.07)}
+  .opt b{min-width:22px;color:var(--c-pri);font-size:15px}
+  .opt:disabled{cursor:default;opacity:.6}
+  .opt.ok{opacity:1;border-color:var(--ok);background:rgba(22,163,74,0.16);font-weight:500}
+  .opt.ko{opacity:1;border-color:var(--ko);background:rgba(220,38,38,0.16)}
+  @media (prefers-color-scheme:dark){
+    .opt:hover:not(:disabled){background:rgba(34,197,94,0.10)}
+    .opt.ok{background:rgba(74,222,128,0.16)}
+    .opt.ko{background:rgba(248,113,113,0.16)}
+  }
+  .fb{border-top:1px dashed var(--c-bd);margin-top:16px;padding-top:14px;font-size:14px}
+  .fb p{margin:0 0 7px}
+  .fb .h{font-weight:700;font-size:16px}
+  .fb .h.ok{color:var(--ok)} .fb .h.ko{color:var(--ko)}
+  .fb em{color:var(--c-mut);font-style:normal;font-weight:600}
+  button.main{font:inherit;font-weight:600;background:var(--c-pri);color:var(--c-prifg);border:0;border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  button.sec{font:inherit;font-weight:600;background:transparent;color:var(--c-fg);border:1px solid var(--c-bd);border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0 16px}
+  th,td{border:1px solid var(--c-bd);padding:7px 10px;text-align:left;vertical-align:top}
+  th{color:var(--c-mut);background:rgba(113,113,122,0.12)}
+  td.p{white-space:nowrap;font-weight:700}
+  .low{color:var(--ko);font-weight:700}
+  .score{font-size:38px;font-weight:800;margin:6px 0;color:var(--c-pri)}
+  h2{font-size:16px;margin:18px 0 6px}
+  ul{margin:4px 0 10px;padding-left:20px;font-size:14px}
+  .hint{font-size:12px;color:var(--c-mut);margin-top:14px}
+  .note{font-size:13px;color:var(--c-mut);border-left:3px solid var(--c-pri);padding-left:10px;margin:12px 0}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+var T = {
+ "A": {
+  "nome": "A - Vitaminas A e D (aves e suínos)",
+  "nucleo": "Vit A preserva rodopsina e epitélios (aves têm queratinização do TGI e uratos nos ureteres; suínos têm ataxia e baixa resistência respiratória). Na Vit D, suínos usam D2 e D3 e aves só D3; falta causa raquitismo/bico mole/nódulos costela-vértebra em aves e osteomalácia/paralisia articular em suínos.",
+  "pistas": "Uratos nos ureteres + queratinização TGI (A aves) vs. D2+D3 suínos / só D3 aves + bicos moles/paratireoide/osteomalácia.",
+  "conf": "Achar que aves aproveitam bem vitamina D2 ou confundir acúmulo de uratos (Vit A) com gota/lesão renal da Vit D."
+ },
+ "B": {
+  "nome": "B - Vitaminas E e K (aves e suínos)",
+  "nucleo": "Vit E (+ selênio) evita peroxidação e prolonga carcaça; em aves falta gera encefalomalácia ('galinha louca', 2ª–4ª sem), diátese exsudativa (3ª–6ª sem, edema verde-azulado), distrofia muscular/erosão de moela e queda na eclodibilidade; em suínos dá distrofia, hepatose e microangiopatia dietética. Vit K carboxila Gla para protrombina e osteocalcina; falta gera hemorragias.",
+  "pistas": "2ª–4ª sem encefalomalácia vs. 3ª–6ª sem edema verde-azulado (E aves), hepatose/microangiopatia (E suínos), Gla/osteocalcina/hemorragia pós-desmame (K).",
+  "conf": "Misturar encefalomalácia da Vit E com polineurite da B1, ou esquecer a atuação da Vit K na osteocalcina óssea."
+ },
+ "C": {
+  "nome": "C - Tiamina (B1) e Riboflavina (B2)",
+  "nucleo": "B1 (TPP: piruvato descarboxilase e ciclo das pentoses): falta causa polineurite em aves (retração da cabeça/extensão das pernas) e em suínos cianose, coração dilatado por ácido pirúvico/láctico e 'observação de estrelas'. B2 (FAD/FMN → ATP): falta causa paralisia dos dedos curvos em aves e dermatite seca/comprometimento visual em suínos.",
+  "pistas": "Polineurite + coração dilatado + pirúvico/láctico + 'observação de estrelas' (B1) vs. FAD/FMN + paralisia dos dedos curvos (B2).",
+  "conf": "Trocar 'observação de estrelas'/polineurite (B1) por 'passo de ganso' (pantotênico) ou 'dedos curvos' (B2)."
+ },
+ "D": {
+  "nome": "D - Piridoxina (B6) e Cobalamina (B12)",
+  "nucleo": "B6 (piridoxal fosfato) é coenzima de transaminases em AA/proteínas; falta dá edema palpebral em aves e dermatite ao redor de olhos/focinho + convulsões em suínos. B12 atua em propionato, metionina e síntese proteica; falta gera perose e bico encurtado em aves, e pelagem eriçada e anemia em suínos.",
+  "pistas": "Transaminases + edema palpebral/dermatite focinho-olhos/convulsões (B6) vs. propionato/metionina + perose/bico curto + pelagem eriçada/anemia (B12).",
+  "conf": "Confundir edema de pálpebras da B6 com exsudato castanho ocular do ácido pantotênico, ou atribuir fissura de casco à B12."
+ },
+ "E": {
+  "nome": "E - Niacina e Biotina (vitamina H)",
+  "nucleo": "Niacina (NAD/NADP em CHO, lipídios e AA): em aves causa curvamento de pernas e lesão semelhante à perose SEM deslocar o tendão; em suínos dá dermatite e distúrbios digestivos. Biotina (carboxilação: oxalacetato e malonil-CoA): em aves causa membrana entre os dedos e deformação crânio/pernas; em suínos dá fissuras nos cascos e espasmos posteriores.",
+  "pistas": "NAD/NADP + pseudoperose sem deslocar tendão (Niacina) vs. oxalacetato/malonil-CoA + membrana interdigital + rachadura nos cascos (Biotina).",
+  "conf": "Achar que a niacina desloca o tendão na perose ou atribuir a membrana interdigital das aves à riboflavina."
+ },
+ "F": {
+  "nome": "F - Ácido Pantotênico e Ácido Fólico",
+  "nucleo": "Pantotênico forma Coenzima A (CoA); falta causa lesões nos ângulos do bico/pálpebras/pés e hemorragia subcutânea em aves, e em suínos 'passo de ganso', exsudato castanho periocular e distúrbios adrenais. Fólico atua em compostos monocarbonados e purinas (DNA/RNA); falta dá anemia, perose (aves) e falha reprodutiva (suínos).",
+  "pistas": "CoA + ângulos do bico + 'passo de ganso'/exsudato castanho/adrenais (Pantotênico) vs. 1C/purinas DNA-RNA + anemia/perose/eclodibilidade (Fólico).",
+  "conf": "Confundir 'passo de ganso' (pantotênico) com 'observação de estrelas' (B1) ou com 'membros traseiros abertos' (colina)."
+ },
+ "G": {
+  "nome": "G - Colina (aves e suínos)",
+  "nucleo": "Colina integra membranas (lecitina e esfingomielina), forma acetilcolina e age como agente lipotrópico hepático; sua deficiência causa infiltração/fígado gorduroso em ambas as espécies, perose em aves e membros traseiros abertos com rigidez articular em suínos.",
+  "pistas": "Lecitina/esfingomielina + acetilcolina + agente lipotrópico (fígado gorduroso) + perose (aves) + membros traseiros abertos (suínos).",
+  "conf": "Confundir infiltração gordurosa no fígado (colina) com hepatose dietética (vitamina E em suínos)."
+ },
+ "H": {
+  "nome": "H - Vitamina C (síntese endógena e estresse)",
+  "nucleo": "Vitamina C (oxirredução, colágeno, ferro no estado ferroso e imunidade) é sintetizada por aves (gulonolactona redutase) e suínos adultos — exceto leitões nas primeiras 6 semanas — tornando carência/suplementação relevante sob estresse.",
+  "pistas": "Gulonolactona redutase (aves) + leitões nas primeiras 6 semanas + ferro ferroso + colágeno + estresse/imunidade.",
+  "conf": "Achar que aves e todos os suínos são incapazes de sintetizar vitamina C ou ignorar a janela das 6 semanas em leitões."
+ }
+};
+var Q = {
+ "A1": {
+  "t": "A",
+  "ang": "Identificação",
+  "q": "Em aves jovens a partir da 2ª–3ª semana de vida, observa-se raquitismo, ossos e bicos moles/dobráveis, nódulos na junção costela-vértebra, hipertrofia da paratireoide e ovos de casca mole; já em suínos adultos ocorre osteomalácia. Qual vitamina está deficiente?",
+  "ok": "Vitamina D",
+  "er": [
+   [
+    "Vitamina A (retinol/retinal)",
+    "Vitamina A gera cegueira noturna, queratinização digestiva e uratos nos ureteres, não ossos/bicos moles ou hipertrofia paratireoidea."
+   ],
+   [
+    "Vitamina K (filoquinona/menaquinona)",
+    "Embora a vitamina K atue na osteocalcina óssea, sua carência manifesta-se por pontos hemorrágicos, anemia e retardo na coagulação."
+   ],
+   [
+    "Vitamina E (alfa-tocoferol)",
+    "Em aves, a falta de vitamina E provoca encefalomalácia, diátese exsudativa, distrofia muscular e erosão da moela."
+   ]
+  ],
+  "pista": "2ª–3ª semana + ossos/bicos moles + nódulos costela-vértebra + hipertrofia paratireoidea + osteomalácia.",
+  "outro": "Se o quadro em aves incluísse anorexia por queratinização do trato digestivo e acúmulo de uratos nos ureteres/túbulos renais, seria vitamina A.",
+  "ref": "Seção 1 - Vitamina A e Vitamina D (pág. 1)"
+ },
+ "A2": {
+  "t": "A",
+  "ang": "Princípio",
+  "q": "Qual mecanismo explica a atuação da vitamina D na mineralização óssea e no fortalecimento da casca dos ovos, e por que a formulação para aves não pode contar com o ergocalciferol (D2) da mesma forma que para suínos?",
+  "ok": "Induz proteína ligadora de cálcio intestinal para absorver Ca/P; aves aproveitam bem apenas D3, enquanto suínos usam D2 e D3",
+  "er": [
+   [
+    "Porque a vitamina D converte ácido L-glutâmico em Gla na casca do ovo, e apenas os suínos possuem a enzima gulonolactona redutase para ativar a D2",
+    "Ácido glutâmico → Gla pertence à vitamina K e gulonolactona redutase refere-se à síntese de vitamina C."
+   ],
+   [
+    "Porque estimula diretamente a síntese de rodopsina nos túbulos renais de aves, tornando a D2 tóxica para poedeiras e segura apenas em leitões",
+    "Rodopsina pertence à vitamina A; o texto destaca diferença de eficiência de aproveitamento entre aves (só D3) e suínos (D2 e D3)."
+   ],
+   [
+    "Porque bloqueia a hipertrofia da tireoide nos suínos jovens e só funciona em aves quando combinada com acetilcolina e esfingomielina",
+    "O texto cita proteína ligadora de cálcio na mucosa intestinal (e hipertrofia da paratireoide na falta em aves), sem relação com acetilcolina."
+   ]
+  ],
+  "pista": "Proteína ligadora de Ca na mucosa intestinal + distinção de aproveitamento D2/D3 entre espécies.",
+  "outro": "Se a pergunta focasse a ação da vitamina A na saúde epitelial, a explicação envolveria rodopsina na visão e integridade de mucosas/epitélios.",
+  "ref": "Seção 1 - Vitamina D (pág. 1)"
+ },
+ "A3": {
+  "t": "A",
+  "ang": "Armadilha",
+  "q": "Um formulador substitui 100% da vitamina D3 por D2 (ergocalciferol) em rações de frangos de corte e suínos em crescimento, esperando igual desempenho esquelético nas duas espécies porque ambas são animais não ruminantes. Qual falha grave há nisso?",
+  "ok": "Suínos aproveitam D2 e D3, mas as aves aproveitam eficientemente apenas D3, ficando expostas a raquitismo e bico mole",
+  "er": [
+   [
+    "Na verdade nenhuma das duas espécies aproveita D2, pois apenas ruminantes conseguem converter ergocalciferol em D3 no rúmen",
+    "O material afirma explicitamente que suínos utilizam tanto a D2 quanto a D3."
+   ],
+   [
+    "A troca prejudica exclusivamente os suínos (causando osteomalácia rápida), enquanto as aves usam D2 melhor do que D3 na postura",
+    "É o exato oposto: aves aproveitam eficientemente apenas a vitamina D3."
+   ],
+   [
+    "A vitamina D2 funciona perfeitamente nas duas espécies desde que haja excesso de queratinização do trato digestivo para absorvê-la",
+    "Queratinização do trato digestivo é sinal de deficiência de vitamina A em aves, e o texto restringe eficiência em aves à D3."
+   ]
+  ],
+  "pista": "Diferença específica do tópico 'Aproveitamento' em Vitamina D (suínos vs. aves).",
+  "outro": "Se a comparação entre espécies fosse sobre vitamina C endógena, o grupo com exceção temporária estaria nos leitões jovens nas primeiras 6 semanas.",
+  "ref": "Seção 1 - Vitamina D (pág. 1)"
+ },
+ "A4": {
+  "t": "A",
+  "ang": "Inversão",
+  "q": "Quando falta vitamina A em aves e em suínos, que sinais distinguem respectivamente o quadro clínico aviário do quadro suíno além da cegueira noturna e incoordenação motora comuns?",
+  "ok": "Aves: queratinização do TGI, uratos nos ureteres/túbulos renais e queda de postura; suínos: infecção respiratória, ataxia total e falha reprodutiva",
+  "er": [
+   [
+    "Aves: diátese exsudativa verde-azulada no peito e erosão de moela; suínos: hepatose dietética e microangiopatia cardíaca",
+    "Esses conjuntos descrevem deficiência de vitamina E em aves e suínos, não vitamina A."
+   ],
+   [
+    "Aves: polineurite com retração da cabeça e dedos curvos; suínos: coração dilatado por ácido láctico e passo de ganso",
+    "Polineurite/coração dilatado pertencem à B1, dedos curvos à B2 e passo de ganso ao ácido pantotênico."
+   ],
+   [
+    "Aves: nódulos costela-vértebra e bicos dobráveis; suínos: rigidez articular levando a paralisia de leitões e osteomalácia",
+    "Nódulos costela-vértebra, bicos moles e osteomalácia definem a deficiência de vitamina D."
+   ]
+  ],
+  "pista": "Tema dado (deficiência de Vitamina A); separa sinais renais/digestivos aviários de respiratórios/ataxia total suína.",
+  "outro": "Se o sinal ocular envolvesse exsudato castanho em suínos em vez de cegueira noturna, o déficit seria de ácido pantotênico.",
+  "ref": "Seção 1 - Vitamina A (pág. 1)"
+ },
+ "A5": {
+  "t": "A",
+  "ang": "Ponte",
+  "ponte": "Vitaminas A e D ↔ Queda de postura/casca e proteção sistêmica",
+  "q": "Em uma granja de poedeiras com queda brusca de produção de ovos e fragilidade da casca acompanhada de infecções secundárias e hipertrofia paratireoidea, como A e D explicam o quadro combinado?",
+  "ok": "Falta de A reduz postura e imunidade epitelial (infecções); falta de D desregula Ca/P causando casca mole e hipertrofia paratireoidea",
+  "er": [
+   [
+    "Vitamina A causa diretamente a hipertrofia da paratireoide ao reduzir uratos renais, enquanto a vitamina D sintetiza rodopsina para a postura",
+    "Troca os mecanismos: rodopsina é Vit A; hipertrofia da paratireoide e metabolismo de Ca/P para casca são Vit D."
+   ],
+   [
+    "Ambas atuam apenas como coenzimas hidrossolúveis do ciclo das pentoses, prejudicando a casca por acúmulo de ácido pirúvico nos ovidutos",
+    "A e D são lipossolúveis (armazenadas no organismo via lipídios); piruvato e ciclo das pentoses referem-se à B1."
+   ],
+   [
+    "A falta de A produz ovos sem casca por ausência de osteocalcina, enquanto a falta de D provoca queratinização da glândula uropigiana",
+    "Osteocalcina depende de vitamina K, queratinização digestiva pertence à vitamina A e ovos sem casca à vitamina D."
+   ]
+  ],
+  "pista": "Integra queda de produção/infecções (Vit A) + ovos casca mole/paratireoide (Vit D) na pág. 1.",
+  "outro": "Se os ovos tivessem queda de eclodibilidade associada à degeneração testicular nos galos ou edema verde-azulado, o foco migraria para vitamina E (ou ácido fólico na eclodibilidade).",
+  "ref": "Seção 1 - Vitamina A e Vitamina D (pág. 1)"
+ },
+ "B1": {
+  "t": "B",
+  "ang": "Identificação",
+  "q": "Em pintainhos de 2ª a 4ª semana ocorre ataxia, curvamento do pescoço, hemorragia e necrose cerebral ('doença da galinha louca'); entre a 3ª e 6ª semana surge edema verde-azulado no peito por aumento da permeabilidade capilar; e em suínos há hepatose e microangiopatia dietéticas. Que vitamina falta?",
+  "ok": "Vitamina E (alfa-tocoferol)",
+  "er": [
+   [
+    "Vitamina K (menadiona), já que há hemorragia cerebral em aves e microangiopatia em leitões",
+    "Vitamina K dá pontos hemorrágicos na pele e TGI com retardo de coagulação; encefalomalácia, diátese verde-azulada e hepatose são da Vit E."
+   ],
+   [
+    "Vitamina B1 (tiamina), por envolver ataxia, curvamento cervical e sinais nervosos graves",
+    "B1 causa polineurite (retração da cabeça) em aves e 'observação de estrelas' em suínos — sem diátese verde-azulada nem hepatose dietética."
+   ],
+   [
+    "Colina, por provocar degeneração tecidual associada à hepatose dietética e lesão muscular",
+    "Colina gera infiltração/fígado gorduroso (não hepatose/microangiopatia dietéticas nem diátese exsudativa)."
+   ]
+  ],
+  "pista": "Encefalomalácia 2ª–4ª sem + diátese exsudativa verde-azulada 3ª–6ª sem + erosão de moela + hepatose dietética.",
+  "outro": "Se as hemorragias fossem pontos hemorrágicos na pele e TGI com aumento do tempo de coagulação e distúrbio digestivo grave pós-desmame, seria vitamina K.",
+  "ref": "Seção 1 - Vitamina E (pág. 2)"
+ },
+ "B2": {
+  "t": "B",
+  "ang": "Princípio",
+  "q": "Qual é a base bioquímica comum pela qual a vitamina K sustenta tanto a hemostasia quanto o tecido ósseo, diferenciando-se do papel antioxidante protetor da vitamina E?",
+  "ok": "Vit K é cofator para converter ácido L-glutâmico em Gla (protrombina e osteocalcina); Vit E evita peroxidação lipídica com selênio",
+  "er": [
+   [
+    "Vitamina K sintetiza colágeno mantendo o ferro no estado ferroso dentro da medula óssea, enquanto vitamina E atua apenas como transmissor nervoso",
+    "Colágeno/ferro ferroso pertencem à vitamina C e transmissão nervosa (acetilcolina) à colina."
+   ],
+   [
+    "Ambas atuam apenas no intestino como veículo lipídico para absorver cálcio e produzir proteínas ligadoras da casca dos ovos",
+    "Absorção intestinal de Ca via proteína ligadora pertence à vitamina D; K carboxila L-glutâmico em Gla e E age como antioxidante."
+   ],
+   [
+    "Vitamina K carboxila ácidos graxos para prolongar a vida útil da carcaça, enquanto vitamina E promove protrombina para evitar erosão da moela",
+    "Inverte os mecanismos: prolongar vida útil da carcaça e proteger moela/músculos pertence à Vit E; protrombina é Vit K."
+   ]
+  ],
+  "pista": "Carboxilação L-glutâmico → Gla (protrombina + osteocalcina) na K vs. antioxidação + Se + vida de carcaça na E.",
+  "outro": "Se a enzima envolvesse reações de carboxilação de oxalacetato e malonil-CoA para síntese lipídica (sem protrombina), a vitamina seria a biotina.",
+  "ref": "Seção 1 - Vitamina E e Vitamina K (pág. 2)"
+ },
+ "B3": {
+  "t": "B",
+  "ang": "Armadilha",
+  "q": "Ao ver pintainhos de 4 semanas com necrose hemorrágica cerebral e outros na 5ª semana com edema subcutâneo azulado no peito, um técnico suspeita apenas de deficiência de vitamina K por causa da palavra 'hemorragia' e do edema. Por que o diagnóstico está errado?",
+  "ok": "Hemorragia/necrose cerebral (encefalomalácia, 2ª–4ª sem) e edema verde-azulado (diátese, 3ª–6ª sem) são sinais típicos da vitamina E",
+  "er": [
+   [
+    "Na verdade a deficiência de vitamina K causa especificamente diátese exsudativa verde-azulada na 3ª–6ª semana, e nunca anemia ou pontos no TGI",
+    "Vitamina K causa pontos hemorrágicos na pele e TGI, anemia e retardo de coagulação; edema verde-azulado é diátese exsudativa da Vit E."
+   ],
+   [
+    "Ambos os quadros correspondem exclusivamente à deficiência de vitamina B6 e vitamina B12, não tendo ligação com vitaminas lipossolúveis",
+    "B6 gera edema de pálpebras (não edema verde-azulado peitoral) e B12 gera perose/bico curto em aves."
+   ],
+   [
+    "A necrose cerebral e o edema no peito indicam toxicidade aguda por excesso de vitamina E, jamais deficiência nutricional",
+    "O texto lista encefalomalácia nutricional, diátese exsudativa e distrofia muscular explicitamente como deficiências de vitamina E em aves."
+   ]
+  ],
+  "pista": "Armadilha da palavra 'hemorragia' confundindo encefalomalácia (Vit E) com distúrbio de coagulação (Vit K).",
+  "outro": "Se os achados em aves fossem pontos hemorrágicos disseminados na pele/TGI e demora na coagulação sem necrose cerebral, seria de fato vitamina K.",
+  "ref": "Seção 1 - Vitamina E e Vitamina K (pág. 2)"
+ },
+ "B4": {
+  "t": "B",
+  "ang": "Inversão",
+  "q": "Quando falta vitamina K em leitões pós-desmame versus quando falta vitamina E em suínos, que conjuntos distintos de lesões orgânicas o material contrapõe?",
+  "ok": "Falta de K dá hemorragias pele/TGI e distúrbios digestivos hemorrágicos graves; falta de E dá distrofia muscular, hepatose e microangiopatia",
+  "er": [
+   [
+    "Falta de K gera hepatose dietética e andar rígido até decúbito permanente, enquanto falta de E reduz tempo de coagulação provocando morte hemorrágica",
+    "Inverte exatamente os dois blocos da página 2."
+   ],
+   [
+    "Ambas provocam exclusivamente rigidez articular por desmineralização óssea e osteomalácia semelhante ao déficit de cálcio",
+    "Osteomalácia em suínos adultos é da vitamina D; E dá distrofia/hepatose/microangiopatia e K dá hemorragias e anemia."
+   ],
+   [
+    "Falta de K causa infiltração gordurosa simples no fígado com membros abertos, enquanto falta de E causa exsudato castanho nos olhos",
+    "Membros abertos/fígado gorduroso são colina e exsudato castanho ocular é ácido pantotênico."
+   ]
+  ],
+  "pista": "Tema dado (deficiências de K e E em suínos); exige o contraste exato das lesões.",
+  "outro": "Se a lesão suína envolvesse coração dilatado com acúmulo de ácido láctico e posição de 'observação de estrelas', a carência seria de tiamina (B1).",
+  "ref": "Seção 1 - Vitamina E e Vitamina K (pág. 2)"
+ },
+ "B5": {
+  "t": "B",
+  "ang": "Ponte",
+  "ponte": "Vitamina E + Selênio e Vitamina K ↔ Proteção tecidual e qualidade pós-abate",
+  "q": "Por que a vitamina E aparece ligada simultaneamente à saúde viva do lote (anticorpos, testículos, moela, músculo) e ao pós-abate (carcaça), enquanto a vitamina K garante o status hematológico e esquelético?",
+  "ok": "Vit E freia peroxidação lipídica em membranas vivas e na carcaça; Vit K garante carboxilação de Gla na protrombina e osteocalcina",
+  "er": [
+   [
+    "Porque a vitamina E atua como agente lipotrópico hepático igual à colina e a vitamina K atua no ciclo das pentoses da musculatura peitoral",
+    "Agente lipotrópico é a colina e ciclo das pentoses é B1; E é antioxidante de membrana/carcaça e K carboxila protrombina/osteocalcina."
+   ],
+   [
+    "Porque somente a vitamina K participa da formação de anticorpos e preservação de membranas com o selênio após o abate",
+    "Quem estimula anticorpos, atua com selênio nas membranas e prolonga a vida útil da carcaça é a vitamina E."
+   ],
+   [
+    "Porque vitamina E regula a síntese de oxalacetato na moela, enquanto a vitamina K mantém o ferro no estado ferroso na hemoglobina",
+    "Oxalacetato é carboxilação via biotina e manutenção do ferro no estado ferroso é função da vitamina C."
+   ]
+  ],
+  "pista": "Conecta funções completas da página 2 (antioxidante/carcaça/Se/anticorpos da Vit E vs. Gla/protrombina/osteocalcina da Vit K).",
+  "outro": "Se a qualidade de carcaça e resposta imune sob estresse térmico envolvessem também síntese de colágeno e estado ferroso do ferro, entraria a vitamina C.",
+  "ref": "Seção 1 - Vitamina E e Vitamina K (pág. 2)"
+ },
+ "C1": {
+  "t": "C",
+  "ang": "Identificação",
+  "q": "Em aves gera polineurite (paralisia muscular com extensão das pernas e retração da cabeça) e baixa taxa respiratória; em suínos produz cianose, temperatura subnormal, coração dilatado por acúmulo de ácido pirúvico e láctico, tremores e posição de 'observação de estrelas'. Que vitamina falta?",
+  "ok": "Vitamina B1 (tiamina)",
+  "er": [
+   [
+    "Vitamina B2 (riboflavina), cuja falta gera paralisia dos dedos curvos e 'observação de estrelas'",
+    "B2 causa paralisia dos dedos curvos em aves e dermatite seca/problemas visuais em suínos, sem coração dilatado nem 'observação de estrelas'."
+   ],
+   [
+    "Ácido pantotênico, responsável pelo quadro neuromuscular de 'passo de ganso' e acúmulo de ácido pirúvico",
+    "'Passo de ganso' é do ácido pantotênico em suínos; acúmulo de pirúvico/láctico e 'observação de estrelas' pertencem à B1."
+   ],
+   [
+    "Vitamina E, pela associação direta com necrose cerebral em aves jovens e hiperestesia",
+    "Em aves, a Vit E provoca encefalomalácia com curvamento de pescoço (2ª–4ª sem); o bloco TPP/pirúvico/polineurite/'estrelas' é da B1."
+   ]
+  ],
+  "pista": "Polineurite (extensão pernas + retração cabeça) + coração dilatado por pirúvico/láctico + 'observação de estrelas'.",
+  "outro": "Se o sinal nas aves fosse paralisia dos dedos curvos e diarreia associada a FAD/FMN, a vitamina seria a riboflavina (B2).",
+  "ref": "Seção 2 - Vitamina B1 (pág. 3)"
+ },
+ "C2": {
+  "t": "C",
+  "ang": "Princípio",
+  "q": "Que papéis bioquímicos distintos explicam por que a carência de B1 acumula justamente ácido pirúvico e láctico nos suínos, enquanto a falta de B2 compromete a geração geral de ATP a partir de glicose, ácidos graxos e aminoácidos?",
+  "ok": "B1 forma TPP (piruvato descarboxilase e ciclo das pentoses); B2 compõe FAD e FMN na cadeia oxidativa de vários substratos para ATP",
+  "er": [
+   [
+    "B1 forma Coenzima A para transportar grupos acil e B2 atua na remetilação de homocisteína em metionina no fígado",
+    "CoA pertence ao ácido pantotênico e metionina/propionato pertencem à B12."
+   ],
+   [
+    "B1 atua exclusivamente como transaminase de aminoácidos e B2 compõe a lecitina das membranas mitocondriais",
+    "Transaminases de aminoácidos são piridoxal fosfato (B6) e lecitina pertence à colina."
+   ],
+   [
+    "B1 é cofator de carboxilação do malonil-CoA e B2 funciona apenas na redução de ribonucleotídeos a purinas no núcleo",
+    "Malonil-CoA refere-se à biotina e purinas/monocarbonados ao ácido fólico."
+   ]
+  ],
+  "pista": "TPP (piruvato descarboxilase + pentoses) explicando acúmulo de pirúvico/láctico vs. FAD/FMN na geração de ATP.",
+  "outro": "Se as coenzimas oxidativas fossem NAD e NADP (oxidação de CHO/lipídios/AA com pseudoperose em aves), tratar-se-ia de niacina.",
+  "ref": "Seção 2 - Vitamina B1 e Vitamina B2 (pág. 3)"
+ },
+ "C3": {
+  "t": "C",
+  "ang": "Armadilha",
+  "q": "Um estudante lê sobre sinais locomotores nas aves e conclui: 'Extensão das pernas com retração da cabeça (polineurite) e paralisia dos dedos curvos são duas fases da mesma carência de vitamina B2'. Qual correção deve ser feita?",
+  "ok": "Polineurite (extensão de pernas/retração da cabeça) é da tiamina (B1); paralisia dos dedos curvos pertence à riboflavina (B2)",
+  "er": [
+   [
+    "Na verdade ambas pertencem à vitamina B1, enquanto a riboflavina só provoca deformação óssea do crânio e membrana interdigital",
+    "Deformação do crânio e membrana entre os dedos pertencem à biotina em aves; B2 dá especificamente paralisia dos dedos curvos."
+   ],
+   [
+    "Os dois sinais ocorrem na falta de ácido pantotênico, sendo a B2 restrita a edema palpebral e encurtamento do bico",
+    "Edema nas pálpebras é da B6, encurtamento do bico é da B12 e lesões nos ângulos do bico são do pantotênico."
+   ],
+   [
+    "Paralisia dos dedos curvos é da B1 e polineurite pertence à niacina por deslocamento do tendão na perose",
+    "Inverte B1/B2 e ainda atribui deslocamento do tendão à niacina (que não desloca tendão)."
+   ]
+  ],
+  "pista": "Separação clínica exata entre B1 (polineurite) e B2 (dedos curvos) na página 3.",
+  "outro": "Se a deformação podal em aves fosse presença de membrana entre os dedos das patas (sem dedos curvos), seria deficiência de biotina.",
+  "ref": "Seção 2 - Vitamina B1 e Vitamina B2 (pág. 3)"
+ },
+ "C4": {
+  "t": "C",
+  "ang": "Inversão",
+  "q": "Se suínos entrarem em deficiência severa de riboflavina (B2) ou de tiamina (B1), que sinais sistêmicos e cutâneo-oculares caracterizam a falta de B2 em contraste com o quadro cardiopulmonar/neurológico da B1?",
+  "ok": "B2 gera falha reprodutiva, TGI, dermatite seca e déficit visual (vs. cianose e coração dilatado da B1)",
+  "er": [
+   [
+    "B2 causa coração dilatado com acúmulo de ácido láctico e postura de 'observação de estrelas', enquanto B1 gera dermatite seca/escamosa",
+    "Inverte os quadros da página 3 entre tiamina e riboflavina em suínos."
+   ],
+   [
+    "B2 causa 'passo de ganso' com exsudato castanho ocular e anemia adrenal, enquanto B1 gera membros traseiros abertos",
+    "'Passo de ganso'/exsudato/adrenal é ácido pantotênico e membros traseiros abertos é colina."
+   ],
+   [
+    "B2 provoca fissuras/rachaduras nos cascos e espasmos posteriores, enquanto B1 causa dermatite exclusiva ao redor do focinho",
+    "Rachaduras nos cascos/espasmos pertencem à biotina e dermatite ao redor dos olhos/focinho + convulsões à B6."
+   ]
+  ],
+  "pista": "Tema dado (carência de B2 vs. B1 em suínos); contrasta TGI/dermatite seca/visão/reprodução vs. cianose/coração/hiperestesia.",
+  "outro": "Se o comprometimento visual viesse acompanhado de redução de resistência respiratória e ataxia total sem dermatite escamosa, apontaria para vitamina A.",
+  "ref": "Seção 2 - Vitamina B1 e Vitamina B2 (pág. 3)"
+ },
+ "C5": {
+  "t": "C",
+  "ang": "Ponte",
+  "ponte": "Hidrossolúveis energéticas (B1 e B2) ↔ Armazenamento limitado",
+  "q": "Por que as deficiências de B1 e B2 se refletem rapidamente em baixo crescimento em ambas as espécies e falhas graves na geração de energia celular?",
+  "ok": "Por terem armazenamento corporal limitado e formarem coenzimas (TPP, FAD, FMN) centrais à oxidação de carboidratos, AG e AA para ATP",
+  "er": [
+   [
+    "Porque são estocadas por meses no fígado via veículos lipídicos, mas bloqueiam a absorção intestinal de cálcio e fósforo pela paratireoide",
+    "Armazenamento longo em veículo lipídico e absorção de Ca/P são de vitaminas lipossolúveis (especialmente D), não hidrossolúveis."
+   ],
+   [
+    "Porque atuam apenas como neurotransmissores (acetilcolina) e agentes lipotrópicos hepáticos sem ligação com geração de ATP",
+    "Acetilcolina e papel lipotrópico pertencem à colina; B1 (TPP) e B2 (FAD/FMN) são coenzimas energéticas centrais."
+   ],
+   [
+    "Porque aves e suínos dependem da enzima gulonolactona redutase para produzi-las, a qual só falha após a 6ª semana de idade",
+    "Gulonolactona redutase e janela de 6 semanas em leitões referem-se à vitamina C."
+   ]
+  ],
+  "pista": "Une a regra introdutória da Seção 2 (armazenamento limitado + coenzimas energéticas) ao papel específico de B1 e B2.",
+  "outro": "Se a coenzima energética envolvida fosse a Coenzima A (ácido pantotênico) ou NAD/NADP (niacina), o princípio do estoque limitado também se aplicaria.",
+  "ref": "Seção 2 - Introdução, B1 e B2 (pág. 3)"
+ },
+ "D1": {
+  "t": "D",
+  "ang": "Identificação",
+  "q": "Num lote de aves surgem perose, encurtamento do bico, deficiência no empenamento, menor eficiência alimentar e queda na fertilidade dos ovos; nos suínos observam-se baixo crescimento, pelagem eriçada e anemia. Qual vitamina hidrossolúvel está deficiente?",
+  "ok": "Vitamina B12 (cobalamina / cianocobalamina)",
+  "er": [
+   [
+    "Vitamina B6 (piridoxina), que causa perose, bico curto em aves e pelagem eriçada em suínos",
+    "B6 gera baixo peso e edema nas pálpebras em aves, e dermatite ao redor dos olhos/focinho + convulsões em suínos."
+   ],
+   [
+    "Ácido pantotênico, cujo déficit gera encurtamento do bico em aves e anemia com pelagem eriçada em leitões",
+    "Pantotênico causa lesões nos ângulos do bico/pálpebras/pés em aves e 'passo de ganso'/exsudato castanho em suínos."
+   ],
+   [
+    "Niacina, por produzir perose clássica nas aves além de queda na fertilidade e anemia",
+    "Niacina causa lesões SEMELHANTES à perose (sem deslocar o tendão) em aves, além de curvamento das pernas."
+   ]
+  ],
+  "pista": "Perose + encurtamento do bico + falha de empenamento (aves) + pelagem eriçada e anemia (suínos).",
+  "outro": "Se os sinais incluíssem edema nas pálpebras em aves e dermatite periocular/focinho com convulsões em suínos, seria piridoxina (B6).",
+  "ref": "Seção 2 - Vitamina B12 (págs. 3–4)"
+ },
+ "D2": {
+  "t": "D",
+  "ang": "Princípio",
+  "q": "Que rotas metabólicas específicas justificam o impacto da falta de B6 sobre o sistema nervoso/pele e da falta de B12 sobre síntese proteica, crescimento e eritropoiese?",
+  "ok": "B6 (piridoxal fosfato) é coenzima de transaminases proteicas; B12 atua no metabolismo do propionato, síntese de metionina e proteínas",
+  "er": [
+   [
+    "B6 sintetiza compostos monocarbonados para purinas de DNA/RNA, enquanto B12 atua exclusivamente na síntese de oxalacetato e malonil-CoA",
+    "Compostos monocarbonados/purinas pertencem ao ácido fólico; oxalacetato/malonil-CoA pertencem à biotina."
+   ],
+   [
+    "B6 forma NADP para oxidação lipídica e B12 atua como agente lipotrópico removendo triglicerídeos acumulados no fígado",
+    "NADP é da niacina e papel lipotrópico hepático é da colina."
+   ],
+   [
+    "Ambas atuam apenas como antioxidantes celulares em sinergia com o selênio para preservar a membrana de fibras musculares",
+    "Antioxidação com selênio é da vitamina E; B6 e B12 são coenzimas específicas do metabolismo de aminoácidos/proteínas e propionato/metionina."
+   ]
+  ],
+  "pista": "Transaminases/proteínas-AA (B6) vs. propionato/metionina/síntese proteica (B12).",
+  "outro": "Se a síntese proteica estivesse conectada especificamente ao metabolismo de compostos monocarbonados e purinas (DNA/RNA), a coenzima seria o ácido fólico.",
+  "ref": "Seção 2 - Vitamina B6 e Vitamina B12 (pág. 3)"
+ },
+ "D3": {
+  "t": "D",
+  "ang": "Armadilha",
+  "q": "Um veterinário vê suínos com dermatite ao redor dos olhos e focinho e convulsões, mas descarta piridoxina (B6) dizendo que ela só afeta aves (com bico curto e perose), e que o sinal facial dos suínos é típico de vitamina B12. Onde está a dupla troca?",
+  "ok": "Dermatite ao redor dos olhos/focinho e convulsões em suínos (e edema palpebral em aves) são da B6; bico curto e perose são da B12",
+  "er": [
+   [
+    "O sinal facial ao redor dos olhos/focinho em suínos realmente é da B12, porém perose com bico curto pertence exclusivamente à colina",
+    "Em suínos, a B12 dá pelagem eriçada e anemia; dermatite periocular/focinho + convulsões é literalmente o bloco da B6 na página 3."
+   ],
+   [
+    "Convulsões e edema palpebral pertencem à biotina, enquanto a vitamina B6 manifesta-se apenas por fissuras nos cascos e passos de ganso",
+    "Fissuras nos cascos são da biotina e 'passo de ganso' é do ácido pantotênico."
+   ],
+   [
+    "Nenhuma dessas duas vitaminas envolve sintomas dermatológicos ou nervosos, restringindo-se ambas apenas a baixo crescimento isolado",
+    "B6 tem dermatite + convulsões (suínos) e edema palpebral (aves); B12 tem perose/bico curto (aves) e pelagem eriçada/anemia (suínos)."
+   ]
+  ],
+  "pista": "Troca direta entre as fichas de B6 (pág. 3) e B12 (págs. 3–4).",
+  "outro": "Se o achado ao redor dos olhos em suínos fosse um 'exsudato castanho' acompanhado de 'passo de ganso' e distúrbio adrenal, aí seria ácido pantotênico.",
+  "ref": "Seção 2 - Vitamina B6 e Vitamina B12 (págs. 3–4)"
+ },
+ "D4": {
+  "t": "D",
+  "ang": "Inversão",
+  "q": "O que a deficiência de vitamina B6 provoca respectivamente em aves e em suínos conforme o resumo clínico da página 3?",
+  "ok": "Aves: baixo peso, crescimento reduzido e edema nas pálpebras; suínos: retardo no crescimento, distúrbio digestivo, dermatite olhos/focinho e convulsões",
+  "er": [
+   [
+    "Aves: lesões nos ângulos do bico e pés com hemorragia subcutânea; suínos: 'passo de ganso', exsudato castanho ocular e anemia",
+    "Este conjunto exato descreve deficiência de ácido pantotênico em aves e suínos."
+   ],
+   [
+    "Aves: membrana entre os dedos das patas e deformação do crânio; suínos: perda de pelos, fissuras nos cascos e espasmos posteriores",
+    "Este quadro corresponde à deficiência de biotina (vitamina H)."
+   ],
+   [
+    "Aves: diarreia e paralisia dos dedos curvos; suínos: dermatite seca/escamosa generalizada e comprometimento da visão",
+    "Estes sinais descrevem a deficiência de riboflavina (vitamina B2)."
+   ]
+  ],
+  "pista": "Tema dado (deficiência de B6); pede sinais exatos em aves vs. suínos.",
+  "outro": "Se os sinais fossem de falta de B12, as aves apresentariam perose, bico curto e falha no empenamento, e os suínos pelagem eriçada e anemia.",
+  "ref": "Seção 2 - Vitamina B6 (pág. 3)"
+ },
+ "D5": {
+  "t": "D",
+  "ang": "Ponte",
+  "ponte": "Perose em aves (B12, Fólico, Colina) ↔ Pseudoperose (Niacina)",
+  "q": "Várias hidrossolúveis (B12, ácido fólico e colina) citam 'perose' entre as deficiências em aves, mas qual detalhe específico diferencia a deficiência de Niacina nesse grupo e quais sinais extras ajudam a separar B12 de Fólico/Colina?",
+  "ok": "Niacina dá lesão semelhante à perose SEM deslocar o tendão; B12 soma bico curto, Colina soma fígado gorduroso e Fólico soma baixa eclodibilidade/anemia",
+  "er": [
+   [
+    "Na verdade a niacina é a única que desloca o tendão com necrose da moela, enquanto B12, colina e fólico causam apenas edema de pálpebras",
+    "O texto especifica na Niacina: 'lesões semelhantes à perose (sem deslocar o tendão)'; edema palpebral é da B6 e moela da Vit E."
+   ],
+   [
+    "B12 e ácido fólico nunca produzem perose em aves, ficando essa alteração restrita ao déficit de vitamina D (com bico mole)",
+    "Vitamina D causa raquitismo e ossos/bicos moles; o PDF lista explicitamente 'perose' em B12, ácido fólico e colina."
+   ],
+   [
+    "Colina separa-se por causar fissuras nos cascos de frangos e B12 por causar diátese exsudativa verde-azulada no peito",
+    "Fissura nos cascos é de suínos deficientes em biotina e diátese verde-azulada é de aves deficientes em vitamina E."
+   ]
+  ],
+  "pista": "Cruza todas as citações de perose (págs. 4–5) e seus marcadores diferenciais por vitamina.",
+  "outro": "Se o sinal articular nas aves fosse raquitismo na 2ª–3ª semana com ossos/bicos dobráveis e nódulos costela-vértebra, trataria de vitamina D.",
+  "ref": "Seção 2 - B12, Niacina, Ác. Fólico e Colina (págs. 4–5)"
+ },
+ "E1": {
+  "t": "E",
+  "ang": "Identificação",
+  "q": "Atua como coenzima em reações de carboxilação (síntese de oxalacetato e malonil-CoA para lipídios); sua falta gera deformação óssea das pernas/crânio e membrana entre os dedos das patas em aves, além de dermatite (orelhas, pescoço, dorso), perda de pelos, rachaduras nos cascos e espasmos posteriores em suínos. Qual é ela?",
+  "ok": "Biotina (vitamina H)",
+  "er": [
+   [
+    "Niacina (ácido nicotínico), componente de NAD/NADP cujo déficit produz membrana entre os dedos das patas",
+    "Niacina causa curvamento das pernas e lesões semelhantes à perose (sem deslocar tendão) em aves, não membrana interdigital ou rachadura de casco."
+   ],
+   [
+    "Riboflavina (vitamina B2), que atua em carboxilações e causa fissuras nos cascos de suínos e dedos curvos em aves",
+    "B2 compõe FAD/FMN (sem carboxilação de malonil-CoA) e gera paralisia dos dedos curvos (não membrana interdigital ou lesão de casco)."
+   ],
+   [
+    "Ácido pantotênico, coenzima do malonil-CoA cuja falta produz fissuras nos cascos e deformação craniana",
+    "Ácido pantotênico forma Coenzima A e causa 'passo de ganso' e exsudato castanho ocular em suínos, não rachaduras nos cascos."
+   ]
+  ],
+  "pista": "Carboxilação (oxalacetato + malonil-CoA) + membrana entre dedos (aves) + fissuras nos cascos/espasmos posteriores (suínos).",
+  "outro": "Se as coenzimas fossem NAD/NADP e o sinal em aves fosse lesão semelhante à perose sem deslocar tendão, seria niacina.",
+  "ref": "Seção 2 - Biotina (pág. 4)"
+ },
+ "E2": {
+  "t": "E",
+  "ang": "Princípio",
+  "q": "Que vias bioquímicas distinguem a função da niacina da função da biotina no metabolismo energético e lipídico de aves e suínos?",
+  "ok": "Niacina compõe NAD e NADP (oxidação de CHO, lipídios e AA); biotina atua em carboxilações (oxalacetato e malonil-CoA lipídico)",
+  "er": [
+   [
+    "Niacina forma FAD e FMN na cadeia respiratória, enquanto biotina atua no ciclo das pentoses por meio do pirofosfato de tiamina",
+    "FAD/FMN pertencem à B2 e TPP/ciclo das pentoses pertencem à tiamina (B1)."
+   ],
+   [
+    "Niacina age como agente lipotrópico hepático formando lecitina, enquanto biotina converte L-glutâmico em Gla na protrombina",
+    "Lecitina hepática é da colina e carboxilação L-glutâmico → Gla pertence à vitamina K."
+   ],
+   [
+    "Ambas formam exclusivamente piridoxal fosfato para transaminar aminoácidos no músculo esquelético e na pele",
+    "Piridoxal fosfato pertence à vitamina B6."
+   ]
+  ],
+  "pista": "NAD/NADP (niacina) vs. carboxilação oxalacetato/malonil-CoA (biotina).",
+  "outro": "Se a pergunta fosse sobre a carboxilação dependente de vitamina lipossolúvel (ácido glutâmico → Gla na coagulação/osteocalcina), a vitamina seria a K.",
+  "ref": "Seção 2 - Niacina e Biotina (pág. 4)"
+ },
+ "E3": {
+  "t": "E",
+  "ang": "Armadilha",
+  "q": "Em um diagnóstico em suínos com lesões cutâneas na orelha, pescoço e dorso, perda de pelos, rachaduras nos cascos e espasmos nos membros posteriores, um estudante culpa a niacina porque ela também causa dermatite suína. Como refutar pelo texto?",
+  "ok": "Niacina dá dermatite com quadro digestivo (e pseudoperose); queda de pelos, casco rachado e espasmo são biotina",
+  "er": [
+   [
+    "Na verdade fissuras nos cascos e perda de pelos em suínos pertencem ao ácido fólico, pois a biotina afeta apenas o crânio de aves",
+    "Ácido fólico dá baixo crescimento, anemia e falha reprodutiva em suínos; fissuras nos cascos e perda de pelos estão literalmente em Biotina."
+   ],
+   [
+    "Espasmos posteriores e rachaduras nos cascos caracterizam deficiência de vitamina A por queratinização do trato digestivo",
+    "Vitamina A em suínos gera baixa resistência respiratória, ataxia total, cegueira noturna e falhas reprodutivas."
+   ],
+   [
+    "Todas as dermatites de suínos no texto (B2, B6, niacina, biotina e pantotênico) vêm acompanhadas de rachadura no casco e queda de pelos",
+    "Fissuras/rachaduras nos cascos e espasmos posteriores são exclusivos da deficiência de biotina."
+   ]
+  ],
+  "pista": "Marcadores diferenciais entre dermatites suínas (Niacina = digestivo vs. Biotina = pelos, orelha/pescoço/dorso, cascos e espasmos).",
+  "outro": "Se a dermatite suína ficasse concentrada ao redor dos olhos e focinho junto com convulsões, indicaria piridoxina (B6).",
+  "ref": "Seção 2 - Niacina e Biotina (pág. 4)"
+ },
+ "E4": {
+  "t": "E",
+  "ang": "Inversão",
+  "q": "Quando ocorre deficiência de niacina em frangos ou poedeiras, que alterações esqueléticas específicas surgem nos membros inferiores?",
+  "ok": "Retardo no crescimento, engrossamento das articulações, curvamento das pernas e lesões semelhantes à perose (sem deslocar o tendão)",
+  "er": [
+   [
+    "Membrana entre os dedos das patas e deformação óssea do crânio acompanhadas de dermatite severa",
+    "Membrana entre os dedos e deformação do crânio são da deficiência de biotina em aves."
+   ],
+   [
+    "Paralisia completa dos dedos curvos associada a diarreia intensa desde a primeira semana",
+    "Paralisia dos dedos curvos e diarreia pertencem à riboflavina (B2)."
+   ],
+   [
+    "Encurtamento do bico, deficiência no empenamento e perose clássica associada à queda de fertilidade",
+    "Encurtamento do bico + falha de empenamento + perose correspondem à vitamina B12 em aves."
+   ]
+  ],
+  "pista": "Tema dado (deficiência de niacina em aves); detalhe-chave: sem deslocar o tendão.",
+  "outro": "Se a alteração óssea em aves envolvesse bicos e ossos moles/dobráveis e nódulos na junção costela-vértebra, seria vitamina D.",
+  "ref": "Seção 2 - Niacina (pág. 4)"
+ },
+ "E5": {
+  "t": "E",
+  "ang": "Ponte",
+  "ponte": "Lesões podais/ósseas em aves e suínos (Biotina vs. Vit D e Niacina)",
+  "q": "Comparando os três grandes quadros de pernas/articulações/cascos em suínos e aves do texto (Vitamina D, Niacina e Biotina), como diferenciá-los clinicamente no exame do lote?",
+  "ok": "Vit D amolece ossos/bicos e dá osteomalácia; Niacina curva pernas (sem deslocar tendão); Biotina fissura cascos",
+  "er": [
+   [
+    "Vitamina D causa fissuras nos cascos de suínos, Niacina causa bico mole em aves e Biotina promove osteomalácia por falha de Ca/P",
+    "Mistura completamente os marcadores: D = mineralização/Ca-P/bico mole/osteomalácia; Biotina = cascos/membrana interdigital; Niacina = curvamento/pseudoperose."
+   ],
+   [
+    "Todos os três ocorrem por falha na síntese de proteína ligadora de cálcio no intestino delgado de aves que só usam vitamina D2",
+    "Só a Vit D age via proteína ligadora de cálcio (e aves usam D3, não D2); Niacina usa NAD/NADP e Biotina carboxilações."
+   ],
+   [
+    "A única diferença é a idade: Vitamina D atinge adultos, enquanto Niacina e Biotina atingem exclusivamente leitões abaixo de 6 semanas",
+    "Biotina/Niacina também têm papel em crescimento geral e o recorte explícito de 6 semanas no texto é da síntese de vitamina C em leitões."
+   ]
+  ],
+  "pista": "Integra anatomia clínica de patas/ossos/cascos das páginas 1 e 4.",
+  "outro": "Se o distúrbio locomotor em suínos fosse andar de 'passo de ganso' ou 'membros traseiros abertos', apontaria respectivamente para ácido pantotênico ou colina.",
+  "ref": "Seções 1 e 2 - Vit D, Niacina e Biotina (págs. 1 e 4)"
+ },
+ "F1": {
+  "t": "F",
+  "ang": "Identificação",
+  "q": "É precursor fundamental da Coenzima A (CoA); sua deficiência provoca lesões nos ângulos do bico, pálpebras e pés com hemorragias subcutâneas e empenamento anormal em aves, e em suínos causa 'passo de ganso', exsudato castanho ao redor dos olhos e distúrbios digestivos e adrenais. Que vitamina é essa?",
+  "ok": "Ácido pantotênico",
+  "er": [
+   [
+    "Ácido fólico, cuja carência gera 'passo de ganso' em suínos e lesões nos ângulos do bico em aves",
+    "Ácido fólico atua em grupos monocarbonados/purinas e provoca anemia, perose (aves) e falha reprodutiva (suínos)."
+   ],
+   [
+    "Piridoxina (vitamina B6), por gerar exsudato castanho nos olhos de suínos e hemorragia subcutânea em aves",
+    "B6 causa edema palpebral em aves e dermatite (olhos/focinho) com convulsões em suínos — sem 'passo de ganso' nem distúrbio adrenal."
+   ],
+   [
+    "Biotina, precursora da CoA cujo déficit causa lesões nos ângulos do bico e exsudato castanho periocular",
+    "Biotina atua em carboxilações (oxalacetato/malonil-CoA) e causa membrana interdigital em aves e rachaduras nos cascos de suínos."
+   ]
+  ],
+  "pista": "Coenzima A + ângulos do bico/pés/hemorragia subcutânea (aves) + 'passo de ganso'/exsudato castanho/adrenais (suínos).",
+  "outro": "Se o composto envolvesse grupos monocarbonados, síntese de purinas (DNA/RNA) e baixa eclodibilidade com anemia, seria o ácido fólico.",
+  "ref": "Seção 2 - Ácido Pantotênico (pág. 4)"
+ },
+ "F2": {
+  "t": "F",
+  "ang": "Princípio",
+  "q": "Que papéis metabólicos fundamentais distinguem o ácido pantotênico do ácido fólico nas células em crescimento de aves e suínos?",
+  "ok": "Pantotênico forma CoA (CHO, lipídios, proteínas e pele/mucosas); Fólico atua em 1C, purinas (DNA/RNA) e proteína",
+  "er": [
+   [
+    "Pantotênico atua no metabolismo monocarbonado para formar DNA e Fólico atua como agente lipotrópico hepático formando acetilcolina",
+    "Troca com ácido fólico (1C/DNA) e colina (lipotrópico/acetilcolina)."
+   ],
+   [
+    "Pantotênico carboxila L-glutâmico na síntese de osteocalcina e Fólico mantém o ferro no estado ferroso para produzir colágeno",
+    "Osteocalcina/Gla é vitamina K e colágeno/ferro ferroso pertencem à vitamina C."
+   ],
+   [
+    "Ambos funcionam exclusivamente como componentes de FAD e FMN na cadeia transportadora de elétrons da mitocôndria",
+    "FAD e FMN são as coenzimas da riboflavina (B2)."
+   ]
+  ],
+  "pista": "Coenzima A (CHO, proteínas, gorduras, pele/mucosas) vs. monocarbonados + purinas (DNA/RNA) + síntese proteica.",
+  "outro": "Se a síntese proteica envolvesse também propionato e metionina com cianose ou anemia suína, o foco incluiria a vitamina B12.",
+  "ref": "Seção 2 - Ácido Pantotênico e Ácido Fólico (pág. 4)"
+ },
+ "F3": {
+  "t": "F",
+  "ang": "Armadilha",
+  "q": "Ao observar leitões caminhando com incoordenação típica ('passo de ganso') e crostas/exsudato castanho nos olhos, um estagiário conclui ser déficit de B1 ou de B6. Por que ambas as suspeitas erram frente ao material?",
+  "ok": "'Passo de ganso' e exsudato castanho ocular são de pantotênico (B1: 'estrelas'; B6: dermatite/convulsões)",
+  "er": [
+   [
+    "Na verdade 'passo de ganso' é sintoma clássico de tiamina em suínos, porém o exsudato castanho ocular indica deficiência de ácido fólico",
+    "No PDF, tanto o 'passo de ganso' quanto o exsudato castanho ao redor dos olhos estão no bloco de Ácido Pantotênico."
+   ],
+   [
+    "Ambos os sinais correspondem à deficiência de colina, porque lecitina e esfingomielina controlam o exsudato ao redor dos olhos",
+    "Colina causa membros traseiros abertos, rigidez articular e fígado gorduroso em suínos."
+   ],
+   [
+    "'Passo de ganso' ocorre apenas em aves com perose sem deslocar tendão por falta de niacina, nunca em suínos",
+    "'Passo de ganso' está listado explicitamente sob 'Deficiências em Suínos' de Ácido Pantotênico."
+   ]
+  ],
+  "pista": "Diferenciação precisa das incoordenações motoras e sinais oculares em suínos (Pantotênico vs. B1 vs. B6).",
+  "outro": "Se os leitões apresentassem membros traseiros abertos e infiltração gordurosa hepática em vez de 'passo de ganso' e distúrbio adrenal, seria colina.",
+  "ref": "Seção 2 - Tiamina, B6 e Ácido Pantotênico (págs. 3–4)"
+ },
+ "F4": {
+  "t": "F",
+  "ang": "Inversão",
+  "q": "Quando aves e suínos apresentam carência de ácido fólico, que alterações produtivas, sanguíneas e reprodutivas aparecem segundo as páginas 4 e 5?",
+  "ok": "Aves: retardo no crescimento, anemia, perose, empenamento anormal e baixa eclodibilidade; suínos: baixo crescimento, anemia e falha reprodutiva",
+  "er": [
+   [
+    "Aves: hemorragias subcutâneas com lesões nos ângulos do bico; suínos: pele escamosa e distúrbios adrenais graves",
+    "Esses sinais pertencem à deficiência de ácido pantotênico, não ao ácido fólico."
+   ],
+   [
+    "Aves: infiltração gordurosa no fígado sem anemia; suínos: membros traseiros abertos e rigidez articular progressiva",
+    "Fígado gorduroso e membros traseiros abertos caracterizam a carência de colina."
+   ],
+   [
+    "Aves: edema verde-azulado no peito e erosão de moela; suínos: hepatose dietética e degeneração muscular severa",
+    "Este é o quadro completo da carência de vitamina E."
+   ]
+  ],
+  "pista": "Tema dado (deficiência de Ácido Fólico); junta anemia, perose/empenamento/eclodibilidade (aves) e anemia/reprodução (suínos).",
+  "outro": "Se a anemia em aves viesse com pontos hemorrágicos na pele/TGI e retardo de coagulação sem perose, a falta seria de vitamina K.",
+  "ref": "Seção 2 - Ácido Fólico (págs. 4–5)"
+ },
+ "F5": {
+  "t": "F",
+  "ang": "Ponte",
+  "ponte": "Sinais oculares e neurológicos em suínos (Vit A, B1, B6, Pantotênico)",
+  "q": "Quatro vitaminas do material causam alterações ao redor dos olhos ou na visão de suínos acompanhadas de distúrbios motores. Qual associação liga corretamente cada vitamina ao par olho + marcha/sistema nervoso?",
+  "ok": "Vit A: cegueira noturna + ataxia; B2: visão afetada; B6: dermatite olhos/focinho + convulsões; Pantotênico: exsudato castanho + 'passo de ganso'",
+  "er": [
+   [
+    "Vitamina A dá exsudato castanho ocular; B2 dá 'passo de ganso'; B6 dá cegueira noturna; Pantotênico dá convulsões com ataxia",
+    "Embaralha todas as quatro combinações descritas nas páginas 1, 3 e 4."
+   ],
+   [
+    "Todas as quatro provocam exatamente os mesmos dois sinais: cegueira noturna com 'passo de ganso' e dilatação cardíaca",
+    "Coração dilatado pertence à B1 ('observação de estrelas'); cada uma das quatro vitaminas tem quadro próprio bem definido."
+   ],
+   [
+    "Vitamina B6 causa cegueira noturna por falha na rodopsina e Ácido Pantotênico causa dermatite apenas nos cascos e orelhas",
+    "Rodopsina/cegueira noturna é Vit A e dermatite em orelhas/cascos pertence à biotina."
+   ]
+  ],
+  "pista": "Mapa diferencial cruzado dos quatro quadros oculares+motores de suínos ao longo das págs. 1–4.",
+  "outro": "Se o sinal neurológico suíno envolvesse posição de 'observação de estrelas' + hiperestesia sem exsudato ocular, seria tiamina (B1).",
+  "ref": "Seções 1 e 2 - Vit A, B2, B6 e Ácido Pantotênico (págs. 1, 3 e 4)"
+ },
+ "G1": {
+  "t": "G",
+  "ang": "Identificação",
+  "q": "Nutriente hidrossolúvel que integra membranas celulares (lecitina e esfingomielina), atua como neurotransmissor (acetilcolina) e funciona como agente lipotrópico no fígado; sua falta causa infiltração gordurosa hepática em aves e suínos, perose em aves e membros traseiros abertos em suínos. Qual é?",
+  "ok": "Colina",
+  "er": [
+   [
+    "Vitamina E (alfa-tocoferol), cujo papel lipotrópico evita hepatose dietética em suínos e erosão de moela em aves",
+    "Vitamina E é lipossolúvel antioxidante (não agente lipotrópico por lecitina/acetilcolina) e em suínos causa hepatose/microangiopatia, não membros abertos."
+   ],
+   [
+    "Ácido pantotênico, componente da acetilcolina cuja falta provoca membros traseiros abertos e infiltração gordurosa",
+    "Pantotênico forma Coenzima A e causa 'passo de ganso' e exsudato castanho ocular em suínos."
+   ],
+   [
+    "Vitamina B12, agente lipotrópico hepático responsável por prevenir fígado gorduroso e membros abertos em suínos",
+    "Embora B12 também dê perose em aves, em suínos causa pelagem eriçada e anemia — quem mobiliza gordura via lecitina é a colina."
+   ]
+  ],
+  "pista": "Lecitina + esfingomielina + acetilcolina + agente lipotrópico (fígado gorduroso) + membros traseiros abertos.",
+  "outro": "Se o quadro hepático em suínos fosse descrito como 'hepatose dietética' associada a distrofia muscular e microangiopatia (sem membros abertos), seria vitamina E.",
+  "ref": "Seção 2 - Colina (pág. 5)"
+ },
+ "G2": {
+  "t": "G",
+  "ang": "Princípio",
+  "q": "Por que a deficiência de colina culmina especificamente em infiltração/fígado gorduroso em aves e suínos, além de comprometer função nervosa?",
+  "ok": "Age como agente lipotrópico (mobiliza gordura hepática via lecitina) e forma acetilcolina e esfingomielina",
+  "er": [
+   [
+    "Porque bloqueia a enzima gulonolactona redutase no fígado, impedindo a conversão de glicose em ácidos graxos poli-insaturados",
+    "Gulonolactona redutase sintetiza vitamina C em aves; a colina age via fosfolipídios (lecitina/esfingomielina) e acetilcolina."
+   ],
+   [
+    "Porque impede o armazenamento de vitaminas lipossolúveis e reduz a síntese de piruvato descarboxilase nas células hepáticas",
+    "Piruvato descarboxilase depende da tiamina (B1); o efeito hepático da colina é diretamente lipotrópico."
+   ],
+   [
+    "Porque reduz a absorção intestinal de cálcio mediada pela paratireoide, causando deposição compensatória de lipídios no fígado",
+    "Absorção de cálcio mediada por proteína ligadora é da vitamina D."
+   ]
+  ],
+  "pista": "Mecanismo lipotrópico (lecitina mobilizando gordura do fígado) + acetilcolina/esfingomielina.",
+  "outro": "Se o acúmulo metabólico em suínos fosse de ácido pirúvico e láctico dilatando o coração (sem fígado gorduroso), seria déficit de B1.",
+  "ref": "Seção 2 - Colina (pág. 5)"
+ },
+ "G3": {
+  "t": "G",
+  "ang": "Armadilha",
+  "q": "Um técnico vê necropsia de frangos com perose e infiltração gordurosa no fígado, e de leitões com rigidez articular e membros traseiros abertos, e conclui imediatamente que faltam vitaminas A e D porque há envolvimento articular e hepático. Qual é o erro?",
+  "ok": "Infiltração gordurosa no fígado + perose em aves + membros traseiros abertos e rigidez articular em suínos formam a ficha da colina",
+  "er": [
+   [
+    "De fato o fígado gorduroso em aves confirma deficiência de vitamina D associada ao acúmulo de uratos nos ureteres",
+    "Uratos nos ureteres são da vitamina A, e vitamina D causa bicos/ossos moles e osteomalácia — nunca fígado gorduroso."
+   ],
+   [
+    "Membros traseiros abertos e rigidez articular comprovam deficiência de vitamina B12 combinada com excesso de vitamina K",
+    "B12 gera pelagem eriçada e anemia em suínos; K em déficit causa hemorragia, sem membros abertos ou fígado gorduroso."
+   ],
+   [
+    "Perose com fígado gorduroso só ocorre na carência de niacina porque ela bloqueia a síntese de malonil-CoA no fígado",
+    "Niacina dá lesão semelhante à perose (sem deslocar tendão) e malonil-CoA pertence à biotina."
+   ]
+  ],
+  "pista": "Não confundir rigidez articular de Vit D (paralisia/osteomalácia) com rigidez articular + membros traseiros abertos + fígado gorduroso da colina.",
+  "outro": "Se a rigidez articular suína viesse sem fígado gorduroso e acompanhada de osteomalácia em adultos e ossos moles em aves jovens, aí seria vitamina D.",
+  "ref": "Seções 1 e 2 - Vit D e Colina (págs. 1 e 5)"
+ },
+ "G4": {
+  "t": "G",
+  "ang": "Inversão",
+  "q": "Quando suínos entram em carência clínica de colina em contraste com aves deficientes no mesmo nutriente, o que muda e o que se mantém igual entre as duas espécies?",
+  "ok": "Mantêm-se baixo crescimento e infiltração gordurosa hepática; aves desenvolvem perose, enquanto suínos mostram membros traseiros abertos e rigidez articular",
+  "er": [
+   [
+    "Mantém-se apenas hemorragia digestiva grave; aves apresentam paralisia dos dedos curvos e suínos exibem 'passo de ganso'",
+    "Hemorragia digestiva é Vit K, dedos curvos são B2 e 'passo de ganso' é ácido pantotênico."
+   ],
+   [
+    "Suínos desenvolvem perose e queda de postura, enquanto aves apresentam pele escamosa e fissuras profundas nos cascos",
+    "Fissura de casco é biotina em suínos, postura é aves (A/D/E), e aqui é exatamente o inverso."
+   ],
+   [
+    "Apenas aves sofrem infiltração gordurosa hepática por colina, enquanto suínos nunca acumulam gordura no fígado por síntese endógena total",
+    "O PDF lista 'infiltração/fígado gorduroso' explicitamente tanto em aves quanto em suínos."
+   ]
+  ],
+  "pista": "Tema dado (deficiência de colina em aves vs. suínos); compara traço hepático comum vs. expressão locomotora por espécie.",
+  "outro": "Se comparássemos aves vs. suínos na vitamina C, o ponto comum não seria fígado gorduroso, mas a capacidade de síntese endógena (salvo janela de 6 semanas em leitões e estresse).",
+  "ref": "Seção 2 - Colina (pág. 5)"
+ },
+ "H1": {
+  "t": "H",
+  "ang": "Identificação",
+  "q": "Participa de reações de oxirredução, síntese de colágeno, manutenção do ferro no estado ferroso e suporte imune; aves a sintetizam via gulonolactona redutase e suínos também a produzem naturalmente — exceto leitões nas primeiras 6 semanas de vida. Qual é essa vitamina?",
+  "ok": "Vitamina C (ácido ascórbico)",
+  "er": [
+   [
+    "Ácido fólico (vitamina B9), sintetizado por gulonolactona redutase em aves para manter ferro ferroso nas hemácias",
+    "Ácido fólico atua em compostos monocarbonados e purinas (DNA/RNA), sem síntese via gulonolactona redutase."
+   ],
+   [
+    "Vitamina E (alfa-tocoferol), sintetizada em leitões após 6 semanas de vida para sustentar o colágeno da moela",
+    "Vitamina E é lipossolúvel dietética (não sintetizada por gulonolactona redutase) e previne encefalomalácia/diátese/distrofia."
+   ],
+   [
+    "Vitamina B12 (cianocobalamina), cuja produção endógena pela gulonolactona redutase só começa após as 6 semanas em suínos",
+    "B12 envolve propionato, metionina e síntese proteica; a enzima gulonolactona redutase e janela de 6 semanas são da Vit C."
+   ]
+  ],
+  "pista": "Gulonolactona redutase + manutenção do ferro ferroso + colágeno + exceção em leitões nas primeiras 6 semanas.",
+  "outro": "Se a vitamina descrita prevenisse anemia junto com síntese de DNA/RNA em compostos monocarbonados sem gulonolactona redutase, seria ácido fólico.",
+  "ref": "Seção 2 - Vitamina C (pág. 5)"
+ },
+ "H2": {
+  "t": "H",
+  "ang": "Princípio",
+  "q": "Se tanto aves quanto suínos adultos sintetizam vitamina C endogenamente, por que o texto aponta cenários em que a carência dessa vitamina reduz imunidade ou torna a suplementação benéfica?",
+  "ok": "Aves demandam mais sob estresse (apesar da gulonolactona redutase); leitões até 6 semanas ainda não sintetizam e sofrem queda imune sob estresse",
+  "er": [
+   [
+    "Porque sob estresse térmico a gulonolactona redutase converte toda vitamina C em ácido pirúvico, provocando encefalomalácia aguda",
+    "Encefalomalácia pertence à vitamina E e ácido pirúvico acumulado à B1; sob estresse, a demanda supera a síntese ou cai a resposta imune."
+   ],
+   [
+    "Porque suínos adultos perdem para sempre a capacidade de síntese após o desmame devido à atrofia das glândulas adrenais",
+    "O texto afirma o inverso: suínos sintetizam normalmente, COM EXCEÇÃO de leitões jovens nas primeiras 6 semanas de vida."
+   ],
+   [
+    "Porque a vitamina C é estocada em veículos lipídicos durante o estresse, causando hipercalcemia semelhante à da vitamina D",
+    "Vitamina C é hidrossolúvel (armazenamento limitado) e não causa hipercalcemia."
+   ]
+  ],
+  "pista": "Capacidade normal de síntese vs. gargalo em estresse (aves/suínos) e imaturidade até 6 semanas (leitões).",
+  "outro": "Se o gargalo de idade em aves ocorresse da 2ª à 4ª semana com ataxia/pescoço curvo ou da 3ª à 6ª semana com edema verde-azulado, o déficit seria de vitamina E.",
+  "ref": "Seção 2 - Vitamina C (pág. 5)"
+ },
+ "H3": {
+  "t": "H",
+  "ang": "Armadilha",
+  "q": "Um nutricionista afirma: 'Como nem aves nem suínos produzem vitamina C no organismo em nenhuma idade (sendo exatamente iguais ao ser humano), devemos suplementá-la o tempo inteiro como item essencial básico'. Por que essa afirmação contradiz a página 5?",
+  "ok": "Aves sintetizam via gulonolactona redutase e suínos sintetizam normalmente (salvo até 6 semanas), importando sobretudo sob estresse",
+  "er": [
+   [
+    "Aves realmente não sintetizam vitamina C nunca por falta da gulonolactona redutase, mas todos os suínos produzem desde o primeiro dia de vida",
+    "Inverte os dois fatos da página 5: aves sintetizam pela gulonolactona redutase e leitões jovens falham nas primeiras 6 semanas."
+   ],
+   [
+    "A vitamina C só é necessária para evitar bicos moles em poedeiras porque substitui completamente a vitamina D3 na casca do ovo",
+    "Bicos moles e casca pertencem à vitamina D3 em aves; vit C participa de colágeno, oxirredução, ferro ferroso e imunidade."
+   ],
+   [
+    "Na verdade suínos não usam vitamina C em nenhum processo imunológico, atuando ela apenas na formação de lecitina hepática",
+    "Formação de lecitina hepática pertence à colina; o texto afirma explicitamente que carência de vit C sob estresse reduz resposta imune."
+   ]
+  ],
+  "pista": "Síntese normal em aves e suínos (com janela de 6 semanas em leitões e efeito do estresse).",
+  "outro": "Se a diferença real de aproveitamento entre aves e suínos fosse de formas químicas dietéticas (D2 vs. D3), trataria da vitamina D.",
+  "ref": "Seção 2 - Vitamina C (pág. 5)"
+ },
+ "H4": {
+  "t": "H",
+  "ang": "Ponte",
+  "ponte": "Proteção imune e ferro/sanguínea (Vit C, E, A, K, Fólico, B12)",
+  "q": "Integrando as funções hematológicas e imunes vistas ao longo das 5 páginas, como a vitamina C se articula com Vitamina A, Vitamina E, Vitamina K e Ácido Fólico/B12 sem repetir funções?",
+  "ok": "Vit C sustenta ferro/imunidade/colágeno; A mucosas; E anticorpos; K coagulação; B12/fólico combatem anemia",
+  "er": [
+   [
+    "Todas as seis atuam exclusivamente como coenzimas de transaminação de aminoácidos e formação de lecitina na medula óssea",
+    "Transaminação é exclusiva da B6 e lecitina é da colina; cada grupo cumpre papel distinto descrito no PDF."
+   ],
+   [
+    "Vitamina C previne encefalomalácia com selênio, enquanto A e K reduzem diretamente acúmulo de ácido láctico no coração suíno",
+    "Encefalomalácia + Se é Vit E e ácido láctico cardíaco é tiamina (B1)."
+   ],
+   [
+    "Apenas vitamina C e biotina agem no sistema imune, enquanto vitamina A e vitamina E restringem-se à carboxilação da protrombina",
+    "Protrombina pertence à vitamina K; A dá suporte imunológico/mucosas e E estimula anticorpos."
+   ]
+  ],
+  "pista": "Síntese integradora das funções hematopoiéticas/imunes across páginas 1–5.",
+  "outro": "Se a integração comparasse apenas as causas de anemia listadas no texto, os nomes diretos em suínos/aves seriam K, B12, ácido pantotênico (suínos) e ácido fólico.",
+  "ref": "Seções 1 e 2 - Págs. 1 a 5"
+ }
+};
+var ORDER = ["C1","A1","F1","D1","H1","B1","G1","E1","F2","B2","H2","E2","A2","D2","G2","C2","A3","E3","C3","G3","B3","F3","D3","H3","B4","F4","D4","A4","G4","E4","C4","E5","A5","H4","C5","B5","F5","D5"];
+var app=document.getElementById('app');
+var queue,pos,answers,t0,cur,locked,optList,famSeen,FAMQ;
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x}return a}
+function start(ids){queue=ids;pos=0;answers=[];t0=Date.now();famSeen={};FAMQ={};ids.forEach(function(id){FAMQ[Q[id].t]=(FAMQ[Q[id].t]||0)+1});render()}
+function render(){
+  if(pos>=queue.length){return finish()}
+  var id=queue[pos],q=Q[id];cur=id;locked=false;
+  var opts=[{x:q.ok,ok:true,why:''}].concat(q.er.map(function(e){return{x:e[0],ok:false,why:e[1]}}));
+  optList=shuffle(opts);
+  var L='ABCD';
+  var h='<h1>Vitaminas em Aves e Suínos</h1><p class="sub">Funções e deficiências de lipossolúveis e hidrossolúveis (págs. 1 a 5)</p>';
+  h+='<div class="meta"><span>Questão '+(pos+1)+' de '+queue.length+'</span><span>'+answers.filter(function(a){return a.ok}).length+' acertos</span></div>';
+  h+='<div class="bar"><i style="width:'+(pos/queue.length*100)+'%"></i></div>';
+  h+='<p class="stem">'+q.q+'</p><div id="opts">';
+  optList.forEach(function(o,i){h+='<button class="opt" data-i="'+i+'"><b>'+L[i]+'</b><span>'+o.x+'</span></button>'});
+  h+='</div><div id="fb"></div><p class="hint">Atalhos: 1–4 escolhem a alternativa; Enter avança.</p>';
+  app.innerHTML=h;
+  Array.prototype.forEach.call(app.querySelectorAll('.opt'),function(b){b.onclick=function(){pick(+b.getAttribute('data-i'))}});
+}
+function pick(i){
+  if(locked||!optList[i])return;locked=true;
+  var q=Q[cur],o=optList[i];
+  var btns=app.querySelectorAll('.opt');
+  Array.prototype.forEach.call(btns,function(b,k){b.disabled=true;if(optList[k].ok)b.classList.add('ok');else if(k===i)b.classList.add('ko')});
+  famSeen[q.t]=(famSeen[q.t]||0)+1;
+  var nth=famSeen[q.t];
+  answers.push({id:cur,t:q.t,ok:o.ok,ang:q.ang});
+  var th=T[q.t];
+  var f='<div class="fb"><p class="h '+(o.ok?'ok':'ko')+'">'+(o.ok?'Correto.':'Errado.')+'</p>';
+  f+='<p><em>Tema:</em> '+th.nome+' <em>('+q.ang+')</em></p>';
+  f+='<p><em>Pista que entregou:</em> '+q.pista+'</p>';
+  f+='<p><em>Núcleo:</em> '+th.nucleo+'</p>';
+  if(!o.ok)f+='<p><em>Por que a sua escolha está errada:</em> '+o.why+'</p>';
+  f+='<p><em>Se fosse o outro tema:</em> '+q.outro+'</p>';
+  f+='<p><em>Referência:</em> '+q.ref+'</p>';
+  f+='<p><em>Progresso da família:</em> '+th.nome.split(' - ')[0]+' - '+nth+' de '+FAMQ[q.t]+'</p>';
+  f+='<button class="main" id="nx">'+(pos+1>=queue.length?'Ver fechamento':'Próxima')+'</button></div>';
+  document.getElementById('fb').innerHTML=f;
+  document.getElementById('nx').onclick=next;
+  document.getElementById('nx').focus();
+}
+function next(){pos++;render();window.scrollTo(0,0)}
+document.addEventListener('keydown',function(e){
+  if(!queue||pos>=queue.length)return;
+  if(!locked&&e.key>='1'&&e.key<='4'){pick(+e.key-1)}
+  else if(locked&&e.key==='Enter'){e.preventDefault();next()}
+});
+function fmt(ms){var s=Math.round(ms/1000);return Math.floor(s/60)+'min '+('0'+(s%60)).slice(-2)+'s'}
+function finish(){
+  var tot=answers.length,ac=answers.filter(function(a){return a.ok}).length;
+  var by={};answers.forEach(function(a){by[a.t]=by[a.t]||{n:0,k:0};by[a.t].n++;if(a.ok)by[a.t].k++});
+  var h='<h1>Fechamento - Vitaminas em Aves e Suínos</h1><p class="sub">Lipossolúveis e hidrossolúveis (págs. 1 a 5)</p>';
+  h+='<div class="score">'+(ac/tot*10).toFixed(1)+' / 10</div><p>'+ac+' de '+tot+' acertos · tempo '+fmt(Date.now()-t0)+'</p>';
+  h+='<h2>Mapa</h2><table><tr><th>Tema</th><th>Núcleo</th><th>Pistas</th><th>Confusão</th><th>Acertos</th></tr>';
+  Object.keys(T).forEach(function(k){
+    if(!by[k])return;var p=by[k].k/by[k].n;
+    h+='<tr><td>'+T[k].nome+'</td><td>'+T[k].nucleo+'</td><td>'+T[k].pistas+'</td><td>'+T[k].conf+'</td><td class="p'+(p<0.7?' low':'')+'">'+by[k].k+'/'+by[k].n+'</td></tr>';
+  });
+  h+='</table>';
+  h+='<h2>Pontes</h2><ul>';
+  answers.filter(function(a){return a.ang==='Ponte'}).forEach(function(a){h+='<li>'+Q[a.id].ponte+' '+(a.ok?'(acertou)':'(errou)')+'</li>'});
+  h+='</ul>';
+  var soltos=Object.keys(by).filter(function(k){return by[k].k/by[k].n<0.7});
+  h+='<h2>Pontos soltos (abaixo de 70%)</h2>';
+  h+=soltos.length?'<ul>'+soltos.map(function(k){return'<li>'+T[k].nome+' - '+by[k].k+'/'+by[k].n+'</li>'}).join('')+'</ul>':'<p>Nenhum tema abaixo de 70%.</p>';
+  h+='<p class="note">Famílias menores que 5 por extensão/peso do texto: Tema G (Colina: 4 questões, sem Ponte isolada) e Tema H (Vitamina C: 4 questões, sem Inversão isolada).</p>';
+  var erros=answers.filter(function(a){return!a.ok}).map(function(a){return a.id});
+  h+='<button class="sec" id="rs">Recomeçar</button>';
+  if(erros.length)h+='<button class="main" id="re">Refazer só os erros ('+erros.length+')</button>';
+  if(soltos.length)h+='<p class="hint">Para uma rodada extra com ângulos novos dos temas abaixo de 70%, peça ao Ultron: este arquivo só repete as questões existentes.</p>';
+  app.innerHTML=h;
+  document.getElementById('rs').onclick=function(){start(ORDER)};
+  if(erros.length)document.getElementById('re').onclick=function(){start(erros)};
+}
+start(ORDER);
+</script>
+</body>
+</html>

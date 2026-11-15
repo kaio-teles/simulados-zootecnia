@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fenação - Curso Completo na Ordem dos Slides</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:20px;font-family:system-ui,-apple-system,sans-serif;background:transparent;color:var(--foreground,#18181b);font-size:15px;line-height:1.5}
+  @media (prefers-color-scheme:dark){body{color:var(--foreground,#e4e4e7)}}
+  .app{
+    --c-card:var(--card,#ffffff);--c-bd:var(--border,#d4d4d8);--c-fg:var(--foreground,#18181b);
+    --c-mut:var(--muted-foreground,#52525b);--c-pri:var(--primary,#15803d);--c-prifg:var(--primary-foreground,#ffffff);
+    --ok:#16a34a;--ko:#dc2626;
+    max-width:780px;margin:0 auto;background:var(--c-card);color:var(--c-fg);border:1px solid var(--c-bd);border-radius:14px;padding:24px;box-shadow:0 4px 12px rgba(0,0,0,0.05)
+  }
+  @media (prefers-color-scheme:dark){.app{--c-card:var(--card,#1c1c1f);--c-bd:var(--border,#3f3f46);--c-fg:var(--foreground,#e4e4e7);--c-mut:var(--muted-foreground,#a1a1aa);--c-pri:var(--primary,#22c55e);--c-prifg:var(--primary-foreground,#0b1220);--ok:#4ade80;--ko:#f87171}}
+  h1{font-size:20px;margin:0 0 2px;color:var(--c-fg)}
+  .sub{color:var(--c-mut);font-size:13px;margin:0 0 14px}
+  .bar{height:6px;background:var(--c-bd);border-radius:99px;overflow:hidden;margin:6px 0 16px}
+  .bar>i{display:block;height:100%;background:var(--c-pri);width:0;transition:width .25s ease-out}
+  .meta{display:flex;justify-content:space-between;font-size:13px;color:var(--c-mut);font-weight:500}
+  .badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase;background:color-mix(in srgb,var(--c-pri) 15%,transparent);color:var(--c-pri);margin-bottom:8px}
+  .stem{font-size:16px;font-weight:600;margin:0 0 14px;line-height:1.45}
+  .opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--c-bd);border-radius:10px;padding:12px 14px;margin:0 0 9px;cursor:pointer;transition:border-color .15s, background .15s}
+  .opt:hover:not(:disabled){border-color:var(--c-pri);background:color-mix(in srgb,var(--c-pri) 5%,transparent)}
+  .opt b{min-width:22px;color:var(--c-pri);font-size:15px}
+  .opt:disabled{cursor:default;opacity:.6}
+  .opt.ok{opacity:1;border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent);font-weight:500}
+  .opt.ko{opacity:1;border-color:var(--ko);background:color-mix(in srgb,var(--ko) 16%,transparent)}
+  .fb{border-top:1px dashed var(--c-bd);margin-top:16px;padding-top:14px;font-size:14px}
+  .fb p{margin:0 0 7px}
+  .fb .h{font-weight:700;font-size:16px}
+  .fb .h.ok{color:var(--ok)} .fb .h.ko{color:var(--ko)}
+  .fb em{color:var(--c-mut);font-style:normal;font-weight:600}
+  button.main{font:inherit;font-weight:600;background:var(--c-pri);color:var(--c-prifg);border:0;border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  button.sec{font:inherit;font-weight:600;background:transparent;color:var(--c-fg);border:1px solid var(--c-bd);border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0 16px}
+  th,td{border:1px solid var(--c-bd);padding:7px 10px;text-align:left;vertical-align:top}
+  th{color:var(--c-mut);background:color-mix(in srgb,var(--c-bd) 20%,transparent)}
+  td.p{white-space:nowrap;font-weight:700}
+  .low{color:var(--ko);font-weight:700}
+  .score{font-size:38px;font-weight:800;margin:6px 0;color:var(--c-pri)}
+  h2{font-size:16px;margin:18px 0 6px}
+  ul{margin:4px 0 10px;padding-left:20px;font-size:14px}
+  .hint{font-size:12px;color:var(--c-mut);margin-top:14px}
+  .note{font-size:13px;color:var(--c-mut);border-left:3px solid var(--c-pri);padding-left:10px;margin:12px 0}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+var Q = [
+  {
+    "sec": "1. Introdução, Conceitos e Objetivos",
+    "ref": "Slides 2 e 3",
+    "tema": "Por que conservar forragem (Estacionalidade)",
+    "q": "Na introdução sobre conservação de forragens, o contraste entre a estação chuvosa e a seca em regiões como Sobral-CE ilustra a estacionalidade produtiva. Quais motivos justificam guardar alimento na propriedade?",
+    "ok": "Compensar a escassez no inverno/seca, manter a qualidade e a produtividade anual e auxiliar o manejo de pastagens",
+    "er": [
+      [
+        "Evitar que o pasto cresça rápido no verão e impedir a rebrota natural da pastagem durante o período das chuvas",
+        "Guardar alimento aproveita o excesso do verão/chuva para cobrir o inverno/seca, não para frear a rebrota."
+      ],
+      [
+        "Substituir integralmente o consumo de água pelos animais, eliminando a necessidade de bebedouros na seca",
+        "Feno é alimento desidratado (10–20% umidade) e não fornece água; pelo contrário, exige oferta hídrica normal."
+      ],
+      [
+        "Aumentar a dependência de compra de rações concentradas externas no mercado justamente na estação das chuvas",
+        "A conservação busca autonomia alimentar na escassez e estabilidade produtiva ao longo do ano inteiro."
+      ]
+    ],
+    "pista": "Estacionalidade (excesso no verão e escassez no inverno), manter qualidade/produtividade e auxiliar o manejo.",
+    "nucleo": "Guardar o excedente da estação favorável estabiliza a oferta, a qualidade nutricional e a produtividade do rebanho o ano todo.",
+    "outro": "Se a região tivesse chuvas idênticas nos 12 meses do ano com crescimento uniforme, a pressão por estoque seria mínima."
+  },
+  {
+    "sec": "1. Introdução, Conceitos e Objetivos",
+    "ref": "Slide 5",
+    "tema": "Definição de Feno e Fenação",
+    "q": "Como o material diferencia tecnicamente 'feno' de 'fenação' e qual faixa final de umidade precisa ser atingida na forragem?",
+    "ok": "Feno é o alimento obtido; fenação é o conjunto de operações de rápida desidratação reduzindo a umidade para 10 a 20%",
+    "er": [
+      [
+        "Feno é o processo de corte no campo; fenação é a fermentação ácida em ambiente fechado com 65 a 80% de umidade",
+        "65–80% é a umidade da forragem verde antes de secar; fermentação sem ar define a ensilagem, não a fenação."
+      ],
+      [
+        "Feno é a planta fresca picada; fenação é o armazenamento em silos trincheira com 30 a 35% de umidade final",
+        "30–35% de MS (65–70% umidade) em trincheira refere-se à silagem; feno exige desidratação severa até 10–20% de umidade."
+      ],
+      [
+        "Feno é o resíduo seco da colheita; fenação é a queima controlada da leira até restar apenas 2% de umidade",
+        "Feno preserva alto valor nutritivo pela rápida desidratação solar, nunca por queima nem a 2% de umidade."
+      ]
+    ],
+    "pista": "Feno (alimento obtido) vs Fenação (conjunto de operações) → umidade removida para 10 a 20%.",
+    "nucleo": "Fenação é o conjunto de práticas para desidratar rapidamente o volumoso até 10–20% de umidade, resultando no feno estável.",
+    "outro": "Se o método conservasse a planta úmida (30–35% MS) por ácidos em ausência de oxigênio, o processo seria ensilagem."
+  },
+  {
+    "sec": "1. Introdução, Conceitos e Objetivos",
+    "ref": "Slide 6",
+    "tema": "Objetivo Biológico da Fenação",
+    "q": "Qual mecanismo biológico explica por que a desidratação rápida cumpre o objetivo central da fenação de conservar ao máximo o valor nutritivo da planta?",
+    "ok": "A remoção de água paralisa tanto a respiração celular das plantas quanto a atividade dos microrganismos deteriorantes",
+    "er": [
+      [
+        "A secagem rápida estimula as bactérias láticas a fermentarem os açúcares solúveis em ácido butírico protetor",
+        "Fenação não busca fermentação; pelo contrário, a falta de água livre paralisa microrganismos e respiração."
+      ],
+      [
+        "O sol transforma toda a fibra indigestível da parede celular em proteína bruta solúvel dentro do fardo",
+        "A desidratação apenas conserva o que a planta já possuía no corte; ela não cria proteína a partir de fibra."
+      ],
+      [
+        "A perda de água acelera a respiração celular vegetal por semanas, gerando calor que cozinha e esteriliza o capim",
+        "Respiração celular prolongada consome açúcares e gera calor prejudicial; o objetivo é paralisá-la o mais rápido possível."
+      ]
+    ],
+    "pista": "Paralisação da respiração celular das plantas e da atividade dos microrganismos, com mínimo de perdas.",
+    "nucleo": "Sem água disponível, as enzimas celulares e os fungos/bactérias não conseguem metabolizar nutrientes, congelando a qualidade da planta.",
+    "outro": "Na silagem, o freio biológico vem da ausência de ar e do pH baixo; no feno, o freio vem da remoção da água."
+  },
+  {
+    "sec": "2. Vantagens, Desvantagens e Produção",
+    "ref": "Slide 8",
+    "tema": "Vantagens da Fenação e Custo por kg de MS",
+    "q": "Ao comparar as vantagens do feno frente à silagem (inclusive no cálculo econômico do slide 8), qual afirmação reflete corretamente a realidade técnica e financeira apresentada?",
+    "ok": "O feno é estável em contato com o oxigênio, fácil de transportar/comercializar e entrega 1 kg de MS mais barato no exemplo",
+    "er": [
+      [
+        "O feno deteriora imediatamente ao tocar o ar, tornando sua comercialização inviável fora da propriedade rural",
+        "Ao contrário da silagem, o feno é estável na presença de oxigênio, leve e facilmente comercializável."
+      ],
+      [
+        "No cálculo comparativo (30% MS vs 80% MS), o quilo de MS da silagem (R$ 3,13) custa metade do quilo de MS do feno",
+        "Os valores estão invertidos: a MS do feno (80%) saiu a R$ 3,13/kg, enquanto a da silagem (30%) saiu a R$ 6,66/kg."
+      ],
+      [
+        "A fenação exige exclusivamente maquinário de grande porte, sendo impossível o manejo manual ou em pequena escala",
+        "O slide lista explicitamente que a fenação permite pequena e grande escala, em processo manual ou mecanizado."
+      ]
+    ],
+    "pista": "Estável com O2, comercializável; MS feno 80% (R$ 2,50 → R$ 3,13/kg MS) vs MS silagem 30% (R$ 2,00 → R$ 6,66/kg MS).",
+    "nucleo": "Por concentrar ~80% de matéria seca, o feno dilui o custo de frete e armazenagem por quilo seco e não estraga ao contato com o ar.",
+    "outro": "Se o clima fosse constantemente chuvoso durante a safra, a estabilidade ao oxigênio não impediria grandes perdas na secagem no campo."
+  },
+  {
+    "sec": "2. Vantagens, Desvantagens e Produção",
+    "ref": "Slide 9",
+    "tema": "Desvantagens e Soluções por Escala",
+    "q": "Quais são as duas grandes desvantagens da fenação apontadas no material e qual estratégia organizacional é recomendada especificamente para pequenas propriedades?",
+    "ok": "Alto custo de máquinas adequadas e de mão de obra por kg em pequenas áreas; recomenda-se associações e cooperativas",
+    "er": [
+      [
+        "Risco de fermentação alcoólica no galpão e perda de água no cocho; recomenda-se comprar dois tratores por sítio",
+        "Fermentação alcoólica é problema da silagem de cana; em pequenas áreas a compra individual de máquinas é inviável."
+      ],
+      [
+        "Baixo tempo de armazenamento (máximo 15 dias) e cheiro rançoso; recomenda-se o descarte imediato das sobras",
+        "Feno bem feito armazena-se por longos períodos; cheiro rançoso indica silagem mal fermentada."
+      ],
+      [
+        "Falta de espécies tropicais compatíveis e toxidez elevada; recomenda-se abandonar a fenação em pequenas propriedades",
+        "Várias espécies adaptam-se à fenação; o gargalo econômico nas pequenas propriedades é contornado pelo cooperativismo."
+      ]
+    ],
+    "pista": "Elevado custo de máquinas + mão de obra por kg → Pequenas propriedades: formação de associações e cooperativas.",
+    "nucleo": "O custo do conjunto mecanizado (segadora, ancinho, enfardadora) onera propriedades menores, exigindo uso compartilhado via cooperativas.",
+    "outro": "Em grandes propriedades com alto volume de produção, a decisão passa por analisar a viabilidade econômica de compra própria do maquinário."
+  },
+  {
+    "sec": "2. Vantagens, Desvantagens e Produção",
+    "ref": "Slide 10",
+    "tema": "Etapas Agronômicas da Produção de Feno",
+    "q": "Na cadeia lógica de implantação de uma área exclusiva para fenação (campo de feno), qual sequência agronômica antecede o processo de fenação propriamente dito?",
+    "ok": "Escolha da espécie → escolha da área → preparo, correção e adubação do solo → controle de daninhas → estabelecimento",
+    "er": [
+      [
+        "Preparo da terra e plantio imediato no mato, deixando a correção de solo e escolha da espécie para depois da primeira colheita",
+        "A escolha da espécie e a correção do solo vêm antes do estabelecimento para garantir estande limpo e produtivo."
+      ],
+      [
+        "Construção de galpão coberto e compra de prensa manual antes mesmo de definir o solo ou plantar a forrageira",
+        "O fluxo agronômico parte da seleção da espécie e do preparo de solo até o estabelecimento da cultura."
+      ],
+      [
+        "Corte direto da vegetação nativa sem preparo de área, pois plantas daninhas melhoram a secagem do feno",
+        "Plantas daninhas depreciam a qualidade do feno e devem ser controladas antes e durante o estabelecimento."
+      ]
+    ],
+    "pista": "Fluxo: Escolha da espécie → escolha da área → preparo → correção/adubação → daninhas → estabelecimento → fenação.",
+    "nucleo": "Um campo de feno exige agricultura intensiva e nivelamento de solo livre de tocos/daninhas para permitir o trabalho das máquinas.",
+    "outro": "Além do plantio, o planejamento inclui dimensionar as áreas de corte para sincronizar com a capacidade diária de enfardamento."
+  },
+  {
+    "sec": "3. Escolha da Espécie Forrageira",
+    "ref": "Slides 11 a 13",
+    "tema": "Características Ideais da Planta para Feno",
+    "q": "Por que a morfologia da planta — especificamente a alta relação folha/colmo e caules finos — é critério decisivo na escolha de uma espécie para fenação?",
+    "ok": "Porque proporciona melhor valor nutritivo e maior facilidade de corte e desidratação uniforme na leira",
+    "er": [
+      [
+        "Porque folhas grossas e caules espessos retêm mais água, impedindo que o feno atinja 80% de matéria seca",
+        "Caules grossos retardam a secagem e geram mofo no armazenamento enquanto as folhas já estão quebradiças."
+      ],
+      [
+        "Porque plantas com poucas folhas reduzem a capacidade de rebrota e eliminam a necessidade de adubação do solo",
+        "Busca-se exatamente o oposto: boa relação folha/colmo e alta capacidade de rebrota para múltiplos cortes."
+      ],
+      [
+        "Porque caules lenhosos aumentam a resistência ao corte das segadoras, poupando o combustível do trator",
+        "Caules macios e hábito propício facilitam o corte; plantas lenhosas exigem força extra e danificam lâminas."
+      ]
+    ],
+    "pista": "Características desejáveis: bom valor nutritivo, boa relação folha/colmo, facilidade de corte, desidratação e rebrota.",
+    "nucleo": "Folhas concentram nutrientes e secam rápido; caules finos acompanham a velocidade de secagem das folhas sem apodrecer o fardo.",
+    "outro": "Quando se utilizam gramíneas de colmo mais grosso (como capim-elefante), exige-se equipamento condicionador para acelerar a secagem."
+  },
+  {
+    "sec": "3. Escolha da Espécie Forrageira",
+    "ref": "Slide 12",
+    "tema": "Hábito de Crescimento: Cespitosa vs Estolonífera",
+    "q": "Ao analisar a 'facilidade de corte' na escolha da forrageira, o slide opõe plantas cespitosas a plantas estoloníferas. Qual é o impacto prático dessa diferença morfológica?",
+    "ok": "Plantas estoloníferas formam tapete uniforme próximo ao solo, enquanto cespitosas formam touceiras que dificultam o corte rente",
+    "er": [
+      [
+        "Plantas cespitosas crescem em estolões rasteiros que se quebram sozinhos, dispensando qualquer tipo de lâmina de corte",
+        "Estolões rasteiros pertencem ao grupo das estoloníferas (como Tifton); cespitosas formam touceiras eretas."
+      ],
+      [
+        "Plantas estoloníferas atingem 4 metros de altura com caules grossos de bambu, impossibilitando o uso de segadoras",
+        "Gramíneas estoloníferas (ex: Cynodon) são de porte baixo/prostrado com colmos finos ideais para segadoras."
+      ],
+      [
+        "Não há diferença prática no campo, pois todas as forrageiras possuem o mesmo formato de touceira e altura de corte",
+        "O formato da touceira versus tapete estolonífero afeta diretamente a regulagem da altura da barra e a regularidade do corte."
+      ]
+    ],
+    "pista": "Facilidade de corte: Cespitosa (em touceiras, solo exposto entre elas) x Estolonífera (relvado contínuo).",
+    "nucleo": "Espécies estoloníferas de colmo fino (como Tifton 85 e Coast-cross) produzem relvado denso e uniforme, sendo favoritas para fenação.",
+    "outro": "Espécies cespitosas como Mombaça e Massai também podem ser fenadas, mas requerem maior cuidado com altura do resíduo e touceiras."
+  },
+  {
+    "sec": "3. Escolha da Espécie Forrageira",
+    "ref": "Slides 14 a 17",
+    "tema": "Principais Espécies Usadas na Fenação",
+    "q": "Quais são as três forrageiras destacadas no material como as MAIS utilizadas na produção de feno comercial e de alta qualidade?",
+    "ok": "Alfafa (Medicago sativa), Tifton 85 (Cynodon spp.) e Coast-cross (Cynodon dactylon)",
+    "er": [
+      [
+        "Milho (Zea mays), Sorgo (Sorghum bicolor) e Cana-de-açúcar (Saccharum officinarum)",
+        "Milho, sorgo e cana são culturas clássicas de ensilagem, por terem colmos espessos difíceis de desidratar ao sol."
+      ],
+      [
+        "Capim-elefante, Capim-andropogon e Capim-corrente exclusivamente em monocultivo de grande porte",
+        "Essas espécies figuram como 'outras espécies utilizadas' na fenação, atrás do trio clássico Alfafa/Tifton/Coast-cross."
+      ],
+      [
+        "Mandioca brava, Girassol ornamental e Palma forrageira triturada no campo",
+        "Palma forrageira possui ~90% de água em cladódios suculentos, sendo inadequada para desidratação em feno."
+      ]
+    ],
+    "pista": "Mais utilizadas: Alfafa, Tifton 85 e Coast-cross.",
+    "nucleo": "A leguminosa Alfafa e as gramíneas finas do gênero Cynodon (Tifton 85 e Coast-cross) reúnem alto valor nutricional e secagem veloz.",
+    "outro": "Outras gramíneas tropicais (capim-elefante, Massai, Mombaça, Andropogon, corrente) também são usadas, porém com maiores desafios de secagem."
+  },
+  {
+    "sec": "4. Processo de Fenação: Corte",
+    "ref": "Slides 18 e 19",
+    "tema": "Fluxograma e Condições Ambientais para o Corte",
+    "q": "Seguindo a ordem do processo (Corte → Secagem → Enfardamento → Armazenamento), quais condições climáticas devem coincidir no momento de realizar o corte?",
+    "ok": "Dias ensolarados, baixa umidade relativa do ar, ventos e temperaturas elevadas, evitando absolutamente a ocorrência de chuvas",
+    "er": [
+      [
+        "Dias nublados com alta umidade relativa do ar e chuvas constantes, para evitar que a planta murche depressa",
+        "Chuvas e alta umidade do ar são indesejáveis porque impedem a evaporação da água e lavam nutrientes."
+      ],
+      [
+        "Noites frias sem vento e com neblina pesada, para manter o metabolismo vegetal ativo por uma semana inteira",
+        "Noites frias e úmidas interrompem a desidratação e prolongam perdas por respiração celular."
+      ],
+      [
+        "Qualquer época climática, pois a chuva durante o corte ajuda a amolecer o colmo e acelerar o enfardamento, comprometendo o resultado técnico esperado na fenação",
+        "A chuva sobre o material cortado causa lixiviação de nutrientes e perdas de até 30% do valor nutritivo."
+      ]
+    ],
+    "pista": "Condições ambientais: Ocorrência de chuvas (indesejável!); Ideal: dias ensolarados, baixa UR (%), ventos e T(°C) elevadas.",
+    "nucleo": "O cultivo ocorre na estação chuvosa ou sob irrigação, mas o corte para fenação exige uma janela seca de sol, vento e ar seco.",
+    "outro": "Se o produtor depender de cortar em semanas continuamente chuvosas sem janela de sol, a ensilagem torna-se a técnica mais segura."
+  },
+  {
+    "sec": "4. Processo de Fenação: Corte",
+    "ref": "Slide 20",
+    "tema": "Efeito da Idade da Planta no Momento do Corte",
+    "q": "Qual é o efeito fisiológico de atrasar o corte e colher a planta forrageira em idade mais avançada?",
+    "ok": "Queda do valor nutricional (PB e DMS), queda da relação folha/colmo pelo alongamento do caule e menor consumo animal",
+    "er": [
+      [
+        "Aumento expressivo da proteína bruta e da digestibilidade da matéria seca acompanhado de caules mais tenros",
+        "Ocorre o exato inverso: à medida que a planta envelhece, ela lignifica, cai a proteína (PB) e cai a digestibilidade (DMS)."
+      ],
+      [
+        "Aumento exponencial da relação folha/colmo com desaparecimento completo de folhas mortas na base da touceira",
+        "O alongamento do caule e o acúmulo de folhas senescentes derrubam a proporção de folhas verdes na planta."
+      ],
+      [
+        "Maior facilidade de desidratação e maior aceitação voluntária pelos animais em comparação à planta jovem",
+        "Plantas velhas e fibrosas têm menor palatabilidade e reduzem o consumo voluntário pelo rebanho."
+      ]
+    ],
+    "pista": "Com o avançar da idade: ↓ VN (PB, DMS); ↓ relação folha/colmo; ↓ consumo pelos animais.",
+    "nucleo": "Cortar no estágio vegetativo concilia máximo teor nutritivo e folhas tenras; esperar demais transforma massa em fibra pouco digestível.",
+    "outro": "Por outro lado, cortar muito jovem demais reduz o rendimento total de massa por hectare e exige maior energia para evaporar mais água."
+  },
+  {
+    "sec": "4. Processo de Fenação: Corte",
+    "ref": "Slide 21",
+    "tema": "Horário Ideal de Corte no Dia",
+    "q": "Em que período do dia deve-se iniciar o corte manual ou mecânico da forrageira para otimizar a qualidade e velocidade de desidratação?",
+    "ok": "Nas primeiras horas da manhã, logo após a dissipação do orvalho sobre as folhas",
+    "er": [
+      [
+        "Às 18h00 no início da noite, para que o capim passe a madrugada inteira absorvendo o orvalho noturno",
+        "Cortar à noite expõe o material à umidade noturna sem radiação solar, atrasando a secagem e gerando perdas respiratórias."
+      ],
+      [
+        "Às 4h00 da madrugada sob chuva fina ou neblina densa, antes mesmo de nascer o sol",
+        "O excesso de água superficial do orvalho ou chuva dificulta a operação e retarda o início da secagem solar."
+      ],
+      [
+        "Exclusivamente após as 16h00, aproveitando as últimas duas horas de sombra antes do anoitecer",
+        "Cortar no fim da tarde desperdiça toda a radiação solar do dia seguinte para a primeira fase crítica de secagem."
+      ]
+    ],
+    "pista": "Primeiras horas da manhã, após o orvalho → facilita o corte e possibilita maior desidratação.",
+    "nucleo": "Cortar logo após secar o orvalho garante que a planta aproveite todas as horas de sol e calor daquele mesmo dia para fechar o ciclo rápido.",
+    "outro": "Se o corte for executado com as folhas ainda encharcadas de orvalho, a massa recém-cortada embola na segadora e demora mais a secar."
+  },
+  {
+    "sec": "4. Processo de Fenação: Corte",
+    "ref": "Slides 22 a 26",
+    "tema": "Equipamentos Mecanizados: A Segadora Condicionadora",
+    "q": "Entre as diversas máquinas apresentadas para o corte mecanizado (disco, barra, tambor, condicionadora), quando se indica especificamente o uso da Segadora Condicionadora?",
+    "ok": "Para forrageiras de alta relação folha/colmo (como Brachiaria e Tanzânia) ou espécies de colmos grossos (como capim-elefante)",
+    "er": [
+      [
+        "Apenas para triturar o capim em pedaços de 0,5 cm e soprá-los diretamente dentro de carretas de silagem, comprometendo o resultado técnico esperado na fenação",
+        "Quem pica e sopra na carreta é a colhedora/ensiladora de forragem; a condicionadora apenas ceifa e esmaga/macera os colmos."
+      ],
+      [
+        "Exclusivamente em pequenas áreas manuais de quintal usando alfange ou roçadora costal motorizada, comprometendo o resultado técnico esperado na fenação",
+        "Segadora condicionadora é um implemento tratorizado de alta capacidade operacional, não manual."
+      ],
+      [
+        "Apenas para recolher o feno já completamente seco a 12% de umidade e amarrá-lo em fardos cilíndricos, comprometendo o resultado técnico esperado na fenação",
+        "Recolher e amarrar feno seco é papel da enfardadora/rotoenfardadora; a condicionadora atua no momento do corte."
+      ]
+    ],
+    "pista": "Segadora de Condicionadora: Forrageiras de alta relação folha/colmo (Brachiaria, Tanzânia) ou colmos mais grossos (capim elefante).",
+    "nucleo": "Os rolos condicionadores esmagam ou maceram a cera e a epiderme dos caules grossos, equalizando sua velocidade de secagem à das folhas.",
+    "outro": "Sem o condicionamento em plantas de colmo grosso, as folhas secam e se quebram no campo antes que o talo perca água suficiente."
+  },
+  {
+    "sec": "5. Processo de Fenação: Secagem",
+    "ref": "Slide 27",
+    "tema": "Importância e Meta da Etapa de Secagem",
+    "q": "Qual é a relevância crítica da etapa de secagem na fenação e quais valores de umidade e matéria seca marcam a transição da forragem verde até o ponto de feno?",
+    "ok": "É a etapa de maiores perdas; reduz a umidade de 65–80% na planta verde para 10–20% no feno (80–90% de MS)",
+    "er": [
+      [
+        "É a etapa em que não ocorrem perdas; reduz a umidade de 10% na planta verde para 80% no feno final",
+        "Os números e o risco estão invertidos: a planta verde é úmida (65–80% água) e a secagem no campo é a fase mais vulnerável."
+      ],
+      [
+        "É uma etapa puramente opcional; reduz a umidade de 90% para 65% utilizando silos plásticos bem vedados",
+        "65% de umidade ainda estragaria o feno rapidamente; silos vedados são da ensilagem, nunca da fenação."
+      ],
+      [
+        "É a etapa mais lenta do processo; busca manter 50% de umidade para conservar o peso comercial dos fardos",
+        "Feno enfardado com 50% de umidade entra em combustão espontânea ou mofa totalmente no galpão."
+      ]
+    ],
+    "pista": "Forragem verde (65–80% umidade) → Feno (10–20% umidade; 80–90% MS). Etapa onde ocorrem as maiores perdas.",
+    "nucleo": "Quanto maior a rapidez na desidratação no campo, menor o tempo de respiração e menor o risco de chuva, garantindo feno de maior qualidade.",
+    "outro": "Se a secagem for lenta, as folhas caem, o açúcar queima por respiração e o risco de mofo se multiplica."
+  },
+  {
+    "sec": "5. Processo de Fenação: Secagem",
+    "ref": "Slide 28",
+    "tema": "Efeito da Maceração e Morte Celular (Hintz et al.)",
+    "q": "Analisando o gráfico da taxa de desidratação de alfafa com e sem maceração (Hintz et al., 1999), o que a maceração promove em comparação ao grupo controle e por que a morte celular reduz perdas?",
+    "ok": "A maceração derruba a umidade para ~20% em cerca de 4 horas (vs ~37% no controle em 8h); a morte celular paralisa o metabolismo",
+    "er": [
+      [
+        "A maceração retarda a secagem mantendo a planta viva por 12 horas para que continue fazendo fotossíntese no chão",
+        "O gráfico mostra exatamente a queda vertiginosa da curva macerada, atingindo morte celular rápida e estancando perdas."
+      ],
+      [
+        "O grupo controle não macerado seca duas vezes mais rápido e atinge 8% de umidade antes da terceira hora, comprometendo o resultado técnico esperado na fenação",
+        "A linha pontilhada (controle) cai lentamente, permanecendo ainda úmida (~37%) ao final de 8 horas de exposição."
+      ],
+      [
+        "A morte celular estimula a respiração vegetal acelerada, dobrando a perda de carboidratos solúveis na leira, comprometendo o resultado técnico esperado na fenação",
+        "Pelo texto do slide: 'Morte celular: paralisa o metabolismo = ↓ perdas'. Célula morta não consome açúcar respirando."
+      ]
+    ],
+    "pista": "Gráfico: Macerado atinge 20% em ~4h; caixa destacada: 'Morte celular: paralisa o metabolismo = ↓ perdas'.",
+    "nucleo": "Romper a cutícula via maceração acelera brutalmente a saída de água, antecipando a morte celular e encerrando a queima de nutrientes.",
+    "outro": "Na ausência de condicionamento mecânico (controle), a planta permanece metabolicamente ativa por horas a fio queimando carboidratos."
+  },
+  {
+    "sec": "5. Processo de Fenação: Secagem",
+    "ref": "Slide 29",
+    "tema": "Curva de Secagem em Três Fases (Jones e Harris)",
+    "q": "A curva clássica de secagem das plantas forrageiras divide a desidratação em Fases I, II e III. O que caracteriza o comportamento da planta em cada fase e em qual delas se recomendam as viragens?",
+    "ok": "Fase I (estômatos abertos, 2–3h, perda rápida >1,0 g/g MS/h); Fase II (epiderme/cutícula, momento das viragens); Fase III (plasmólise celular, lenta)",
+    "er": [
+      [
+        "Fase I (plasmólise celular em 60 horas); Fase II (abertura dos estômatos após 2 dias); Fase III (secagem rápida ao final), comprometendo o resultado técnico esperado na fenação",
+        "A ordem cronológica e fisiológica está invertida: os estômatos fecham nas primeiras 2–3h (Fase I) e a plasmólise é a etapa final (Fase III)."
+      ],
+      [
+        "A água é perdida na mesma velocidade constante (>1,0 g/g MS/h) da primeira hora até a hora 60 sem desacelerar, comprometendo o resultado técnico esperado na fenação",
+        "A curva mostra queda exponencial inicial seguida de longo platô lento na Fase III (apenas 0,01 g/g MS/h)."
+      ],
+      [
+        "As viragens da leira devem ser feitas apenas na Fase III após 50 horas, quando a planta já está quebradiça, comprometendo o resultado técnico esperado na fenação",
+        "Virar feno muito seco (Fase III) esfarela e derruba todas as folhas no chão; as viragens ocorrem durante a Fase II."
+      ]
+    ],
+    "pista": "Gráfico: I (Estômatos abertos 2–3h, >1,0 g); II (Epiderme e Cutícula + caixa amarela 'Viragens'); III (Plasmólise celular, 0,01 g).",
+    "nucleo": "Os estômatos fecham rápido com o estresse hídrico; a partir da Fase II a água precisa atravessar a cutícula, exigindo viragens suaves para expor o material ao sol.",
+    "outro": "Na Fase III ocorre a plasmólise celular, onde a água restante está fortemente ligada e sai muito devagar até o ponto de feno."
+  },
+  {
+    "sec": "5. Processo de Fenação: Secagem",
+    "ref": "Slides 30 a 33",
+    "tema": "Dinâmica da Leira: Viragem versus Enleiramento",
+    "q": "Durante a secagem no campo, qual é a diferença operacional e de objetivo entre o revolvimento (viragens) e o enleiramento da forragem ao final do dia ou sob ameaça de chuva?",
+    "ok": "Revolver espalha a forragem para captar sol/vento; enleirar junta a massa em cordões à noite ou pré-chuva para proteger da umidade e lixiviação",
+    "er": [
+      [
+        "Enleirar serve para molhar a base da forragem no solo e virar serve para esconder o capim da luz solar direta, comprometendo o resultado técnico esperado na fenação",
+        "Revolver expõe as camadas inferiores (meio e base da leira) à radiação solar e ao vento; enleirar reduz a superfície exposta."
+      ],
+      [
+        "As leiras formadas no final do dia nunca devem ser desfeitas na manhã seguinte, mantendo o monte fechado por uma semana, comprometendo o resultado técnico esperado na fenação",
+        "O slide 33 afirma expressamente: 'desfazendo-se as leiras na manhã seguinte' para retomar a secagem ao sol."
+      ],
+      [
+        "Se houver previsão de chuva, deve-se espalhar ainda mais a forragem no chão plano para que a água lave toda a terra, comprometendo o resultado técnico esperado na fenação",
+        "Sob previsão de chuva, o enleiramento é obrigatório justamente para evitar que a água atinja e 'lave' (lixivie) a forragem cortada."
+      ]
+    ],
+    "pista": "Revolvimento (sol e vento) → Enleiramento ao fim do dia (desfazer de manhã) ou se houver previsão de chuva (evitar 'lavar').",
+    "nucleo": "A leira cria um microclima úmido na base próxima ao solo; revolver homogeneíza a secagem de dia e enleirar protege contra sereno e chuva.",
+    "outro": "A operação mecanizada usa o ancinho espalhador para distribuir/virar e o ancinho enleirador para juntar o feno em cordões."
+  },
+  {
+    "sec": "5. Processo de Fenação: Secagem",
+    "ref": "Slides 34 e 35",
+    "tema": "Fatores Climáticos e Umidade de Equilíbrio (Tabela 1)",
+    "q": "Considerando os fatores climáticos que governam a evaporação e a Tabela 1 (Raymond et al., 1991) sobre umidade de equilíbrio do feno, qual é a relação com a umidade relativa do ar (UR)?",
+    "ok": "Só se consegue equilibrar o feno abaixo de 16% de umidade (ponto seguro) quando a UR do ar cai para 70% ou menos",
+    "er": [
+      [
+        "Com umidade relativa do ar de 95%, o feno seca espontaneamente no campo até atingir 12,5% de umidade de equilíbrio",
+        "A 95% de UR, o feno reabsorve água ou estaciona em 35% de umidade, apodrecendo rapidamente."
+      ],
+      [
+        "A umidade relativa do ar não interfere na desidratação; apenas a velocidade do vento define a umidade final do feno",
+        "A UR do ar dita o limite termodinâmico até onde a planta consegue secar no campo."
+      ],
+      [
+        "Com 60% de UR no ar, o feno fica retendo 30% de água interna e não pode ser armazenado em fardos",
+        "Na Tabela 1 destacada em vermelho, 70% UR corresponde a 16,0% e 60% UR corresponde a 12,5% de umidade do feno."
+      ]
+    ],
+    "pista": "Tabela 1 (quadro vermelho): 70% UR → 16,0% umidade do feno; 60% UR → 12,5%. (95% UR → 35,0%).",
+    "nucleo": "Ar úmido impede a saída de água por falta de gradiente de pressão de vapor; é preciso ar relativamente seco (≤70% UR) para fechar o feno.",
+    "outro": "Além da baixa UR, radiação solar intensa, temperatura elevada e ventos aceleram a retirada da camada de ar úmido sobre as folhas."
+  },
+  {
+    "sec": "5. Processo de Fenação: Secagem",
+    "ref": "Slide 36",
+    "tema": "Fatores Intrínsecos da Planta na Desidratação",
+    "q": "Quanto às características físicas da própria planta forrageira que interferem na desidratação, quais fatores atuam positivamente (+) acelerando a perda de água e quais atuam negativamente (-)?",
+    "ok": "Aceleram (+): razão de peso de folha, relação folha/caule e densidade de estômatos; Retardam (-): espessura de caule e cutícula",
+    "er": [
+      [
+        "Cutícula muito espessa e caules grossos aceleram (+) a secagem por servirem como dutos metálicos de evaporação",
+        "Cutícula espessa (cera) e caule comprido/espesso funcionam como barreiras físicas (-), retendo a água interna."
+      ],
+      [
+        "Alta densidade de estômatos e maior proporção de folhas impedem (-) a saída de água por abafarem o caule, comprometendo o resultado técnico esperado na fenação",
+        "Estômatos são as vias naturais de transpiração inicial (+) e folhas possuem alta área superficial para secagem."
+      ],
+      [
+        "Nenhuma característica física da planta interfere na desidratação, dependendo tudo exclusivamente do ancinho",
+        "As características anatômicas da forrageira definem se ela seca em 1 dia (Tifton) ou exige vários dias e maceração."
+      ]
+    ],
+    "pista": "(+) Razão peso folha, relação folha/caule, densidade de estômatos; (-) Comprimento/espessura do caule, espessura da cutícula.",
+    "nucleo": "Plantas folhosas, com muitos estômatos, cutícula fina e caules delgados desidratam muito mais rápido do que plantas de caule grosso e ceroso.",
+    "outro": "Quando a planta tem cutícula muito espessa e caule grosso, recorre-se ao manejo com condicionamento físico ou químico."
+  },
+  {
+    "sec": "5. Processo de Fenação: Secagem",
+    "ref": "Slide 37",
+    "tema": "Condicionadores Físicos e Químicos no Manejo",
+    "q": "Entre os fatores de manejo para acelerar a secagem de campo, como atuam os condicionadores químicos baseados em carbonato de potássio/sódio em contraste com a quinetina ou azida sódica?",
+    "ok": "Carbonato de potássio/sódio reduz a resistência da cutícula; quinetina/azida sódica retardam o fechamento dos estômatos",
+    "er": [
+      [
+        "Ambos fecham todos os estômatos imediatamente após o corte para aprisionar a umidade interna do colmo, comprometendo o resultado técnico esperado na fenação",
+        "A estratégia química visa justamente manter as vias de saída abertas ou romper a barreira cerosa externa."
+      ],
+      [
+        "Carbonato de potássio age como adubo nitrogenado no fardo pronto e a azida transforma água em etanol, comprometendo o resultado técnico esperado na fenação",
+        "Essas substâncias atuam sobre a fisiologia e cutícula da planta recém-cortada para acelerar a perda de água."
+      ],
+      [
+        "Quinetina dissolve o caule inteiro em pó, enquanto herbicidas dessecantes servem para regar o feno no galpão",
+        "Herbicidas dessecantes e carbonatos reduzem a resistência cuticular à saída de água na fase de campo."
+      ]
+    ],
+    "pista": "Quinetina/azida sódica (retarda fechamento dos estômatos); Carbonato de K/Na e dessecantes (redução na resistência cuticular).",
+    "nucleo": "O condicionamento pode acelerar a Fase I (estômatos abertos por mais tempo) ou a Fase II (desestruturando a cera da cutícula).",
+    "outro": "Como alternativa puramente mecânica sem uso de químicos, emprega-se a maceração física pela segadora condicionadora."
+  },
+  {
+    "sec": "5. Processo de Fenação: Secagem",
+    "ref": "Slides 38 a 40 e 49",
+    "tema": "Determinação Prática do Ponto de Feno",
+    "q": "Como o produtor verifica em campo, pelo 'Método da corda' e pelo 'Teste do sal', se a forragem já atingiu o ponto seguro (12–18% de umidade) para enfardar?",
+    "ok": "Na corda torcida não deve escorrer água nem quebrar seca; no teste do sal em vidro fechado, o sal deve permanecer solto e recuperável",
+    "er": [
+      [
+        "No teste do sal, o feno está pronto se o sal derreter completamente e virar salmoura aderida nas paredes do vidro, comprometendo o resultado técnico esperado na fenação",
+        "Se o sal absorver umidade da forragem e grudar/empedrar no vidro, significa que a planta ainda está úmida demais."
+      ],
+      [
+        "No método da corda, a forragem está pronta somente quando pinga caldo verde abundantemente ao ser torcida, comprometendo o resultado técnico esperado na fenação",
+        "Se gotejar água ao torcer o feixe, está muito úmido; se partir em estilhaços secos com facilidade, passou do ponto."
+      ],
+      [
+        "A amostragem deve ser feita apenas numa folha isolada do topo da leira, ignorando a base junto ao solo, comprometendo o resultado técnico esperado na fenação",
+        "O slide 38 exige explicitamente 'Amostragem em diferentes pontos da leira', pois a base seca bem mais devagar que o topo."
+      ]
+    ],
+    "pista": "Corda (muito úmido vs muito seco); Teste do sal: se o sal puder ser recuperado (solto), está no ponto.",
+    "nucleo": "Testes práticos empíricos (corda, unha, sal) ou instrumentais (micro-ondas, higrômetro) confirmam se a base e o meio da leira atingiram 12–18% de umidade.",
+    "outro": "Caso haja dúvida sobre o ponto, o uso do testador eletrônico de umidade (higrômetro) ou pesagem no micro-ondas traz precisão exata."
+  },
+  {
+    "sec": "6. Enfardamento e Armazenamento",
+    "ref": "Slides 41 a 44",
+    "tema": "Modalidades e Dimensões de Enfardamento",
+    "q": "Comparando os sistemas de enfardamento manual e mecanizado apresentados no material, quais são os pesos e formatos típicos produzidos em cada modalidade?",
+    "ok": "Prensa manual produz fardos de 13–15 kg; prensa prismática faz 1 m³ (90–100 kg); rotoenfardadora gera cilindros de 1,5–1,8 m",
+    "er": [
+      [
+        "Prensa manual gera fardos cilíndricos de 500 kg com rendimento de 2 fardos/homem por semana, comprometendo o resultado técnico esperado na fenação",
+        "A prensa manual da Embrapa Tabuleiros Costeiros gera fardos pequenos (13–15 kg) com rendimento de 150 fardos/homem x dia."
+      ],
+      [
+        "Rotoenfardadora produz fardos prismáticos minúsculos de 5 kg ideais para transporte em sacolas, comprometendo o resultado técnico esperado na fenação",
+        "Rotoenfardadora produz grandes fardos cilíndricos (rolos) com largura de 1,50–1,70 m e diâmetro de 1,60–1,80 m."
+      ],
+      [
+        "O enfardamento em buraco utiliza prensas hidráulicas industriais de 100 toneladas enterradas em concreto, comprometendo o resultado técnico esperado na fenação",
+        "O enfardamento em buraco é um processo puramente manual de pisoteio sobre lona para pequenas propriedades."
+      ]
+    ],
+    "pista": "Manual (13–15 kg; 150/dia); Prismático (1 m³ = 90–100 kg); Cilíndrico/rotoenfardadora (1,50–1,70m x 1,60–1,80m).",
+    "nucleo": "O enfardamento compacta o feno para otimizar o transporte e reduzir o volume ocupado no armazenamento, variando do manual ao rolo pesado.",
+    "outro": "Em sistemas muito rudimentares sem prensa nenhuma, o feno pode ser armazenado solto na forma de medas cônicas no campo."
+  },
+  {
+    "sec": "6. Enfardamento e Armazenamento",
+    "ref": "Slides 46 a 48",
+    "tema": "Armazenamento em Medas, Campo e Galpões",
+    "q": "Quando o feno enfardado é armazenado em galpões fechados em grandes pilhas, quais duas medidas de segurança e manejo são recomendadas no slide 48?",
+    "ok": "Organizar as pilhas de modo a permitir ventilação entre os fardos e acompanhar a temperatura constantemente",
+    "er": [
+      [
+        "Empilhar os fardos hermeticamente colados sem nenhuma fresta de ar e vedar o galpão com fogo controlado",
+        "Empilhar sem ventilação retém calor e umidade residual, favorecendo mofo e até combustão espontânea."
+      ],
+      [
+        "Regar o topo das pilhas diariamente com mangueira para manter a temperatura interna acima de 55°C",
+        "Temperatura alta e umidade são os maiores inimigos do galpão de feno; o fardo deve estar sempre frio e seco."
+      ],
+      [
+        "Remover todas as amarras dos fardos após o empilhamento para que o feno se misture em meda solta no piso",
+        "Cortar as amarras desmancha os fardos e inviabiliza o manejo ordenado das pilhas e o transporte."
+      ]
+    ],
+    "pista": "Enfardado em galpões: Organizar as pilhas de modo a ter ventilação; Acompanhar temperatura constantemente.",
+    "nucleo": "Ventilação evita acúmulo de bolsas de umidade, e o monitoramento térmico denuncia imediatamente se algum lote foi enfardado úmido e está fermentando.",
+    "outro": "Na falta de galpão, fardos podem ficar no campo em pirâmides cobertas com lona bem presa por pneus contra chuvas."
+  },
+  {
+    "sec": "6. Enfardamento e Armazenamento",
+    "ref": "Slide 49",
+    "tema": "Monitoramento Instrumental da Umidade",
+    "q": "Além dos métodos práticos de campo (corda, unha e teste do sal), qual equipamento portátil é exibido no slide 49 para aferir diretamente a umidade dentro do fardo?",
+    "ok": "Higrômetro, um testador eletrônico de umidade com haste de penetração",
+    "er": [
+      [
+        "Potenciômetro de pH ácido usado para verificar se o feno fermentou a 3,8 no galpão",
+        "Medidor de pH avalia silagem (fermentação láctica); feno seco não sofre fermentação ácida."
+      ],
+      [
+        "Termômetro de mercúrio exclusivo para medir a temperatura superficial das folhas antes do corte no sol",
+        "A imagem mostra um higrômetro digital com haste longa inserida dentro do fardo já pronto."
+      ],
+      [
+        "Balança mecânica de mola utilizada para pesar apenas o rendimento diário da prensa manual",
+        "O aparelho mede eletronicamente o teor percentual de água no fardo, não a massa total."
+      ]
+    ],
+    "pista": "Higrômetro: Testador eletrônico de umidade.",
+    "nucleo": "O higrômetro eletrônico permite checar rapidamente dezenas de fardos antes ou depois do armazenamento, evitando guardar lotes com >20% de umidade.",
+    "outro": "Como alternativa de baixo custo sem higrômetro, usa-se o forno de micro-ondas doméstico para secar e calcular a MS por diferença de peso."
+  },
+  {
+    "sec": "7. Perdas Durante o Processo",
+    "ref": "Slide 50",
+    "tema": "Perdas no Corte, Secagem e Colheita",
+    "q": "Quais são os principais fatores que causam perdas quantitativas e qualitativas ainda no campo (corte, secagem e colheita), podendo atingir até 30% em um único evento?",
+    "ok": "Ocorrência de chuvas (até 30%) e lixiviação, respiração durante a secagem, queda de folhas por manuseio excessivo e altura de resíduo",
+    "er": [
+      [
+        "Excesso de produção de efluentes no silo trincheira e ataque de bactérias anaeróbicas do gênero Clostridium, comprometendo o resultado técnico esperado na fenação",
+        "Efluente e Clostridium em silo são perdas exclusivas da ensilagem de material muito úmido."
+      ],
+      [
+        "Volatilização de etanol produzido por leveduras epífitas quando o fardo é aberto para os bovinos, comprometendo o resultado técnico esperado na fenação",
+        "Fermentação alcoólica e volatilização de etanol são características típicas da silagem de cana-de-açúcar."
+      ],
+      [
+        "Congelamento súbito das folhas na leira durante os dias de sol forte e baixa umidade relativa do ar, comprometendo o resultado técnico esperado na fenação",
+        "Sol e baixa UR favorecem a desidratação rápida; as perdas mecânicas vêm de viragens brutas ou chuva sobre o material cortado."
+      ]
+    ],
+    "pista": "Perdas com chuvas (até 30%!), lixiviação, manuseio excessivo (folhas), respiração, resíduo e recolhimento.",
+    "nucleo": "A perda de folhas (fração mais nutritiva) por excesso de revolvimento quando seco e a lavagem de nutrientes solúveis pela chuva lideram as perdas de campo.",
+    "outro": "Se o recolhimento pelo ancinho e enfardadora for mal regulado, parte considerável da forragem sequer chega ao fardo."
+  },
+  {
+    "sec": "7. Perdas Durante o Processo",
+    "ref": "Slide 51",
+    "tema": "Perdas no Armazenamento (> 20% de Umidade)",
+    "q": "O que acontece dentro do fardo se a forragem for armazenada com alto teor de umidade (> 20%)?",
+    "ok": "Proliferam bactérias, fungos e leveduras; a respiração eleva a T°C gerando reações de Maillard, escurecimento e perda nutricional",
+    "er": [
+      [
+        "O fardo desidrata sozinho de modo uniforme dentro do galpão fechado, elevando a proteína digestível e ficando verde claro",
+        "Sem ventilação forçada, água presa dentro do fardo dispara o metabolismo microbiano e fúngico."
+      ],
+      [
+        "Ocorre produção benéfica de ácido lático que transforma o feno úmido em uma silagem de milho de altíssima qualidade",
+        "Feno não está em anaerobiose compactada; a água >20% com oxigênio resulta em mofo, calor e podridão."
+      ],
+      [
+        "A temperatura cai rapidamente abaixo de zero, congelando os nutrientes digestíveis e melhorando o aroma do fardo",
+        "A respiração celular aeróbica libera calor intenso, provocando superaquecimento, cheiro ruim e escurecimento."
+      ]
+    ],
+    "pista": "Umidade > 20%: bactérias/fungos/leveduras + respiração → ↑T°C → reações de Maillard → escurecimento e mau odor.",
+    "nucleo": "Água acima de 20% em presença de ar reativa fungos e respiração, aquecendo o fardo e inutilizando proteínas e açúcares pela reação de Maillard.",
+    "outro": "Note a semelhança bioquímica: na silagem seca (>35% MS) mal compactada, o ar residual também causa calor e reação de Maillard."
+  },
+  {
+    "sec": "7. Perdas Durante o Processo",
+    "ref": "Slides 52 e 53",
+    "tema": "Perdas no Fornecimento e Balanço Geral (Tabela 2)",
+    "q": "De acordo com o balanço da Tabela 2 (Macdonald e Clark, 1987) e o slide de fornecimento, qual faixa de perda no cocho é aceitável e quanto da forragem cortada é conservada sob condições climáticas adversas?",
+    "ok": "No fornecimento aceita-se 3 a 6% de perdas; em condições adversas conserva-se apenas 18% da forragem original (vs 74% nas ótimas)",
+    "er": [
+      [
+        "No fornecimento aceita-se 40% de perdas; em condições adversas conserva-se 85% da forragem original, comprometendo o resultado técnico esperado na fenação",
+        "Perder 40% no cocho é desperdício inaceitável; condições adversas são devastadoras, restando apenas 18% aproveitáveis."
+      ],
+      [
+        "No fornecimento as perdas são obrigatoriamente 0%; em condições normais e adversas conserva-se sempre 95%, comprometendo o resultado técnico esperado na fenação",
+        "Sempre existem perdas por pisoteio, queda de folhas e contaminação fecal no cocho (3–6% aceitáveis)."
+      ],
+      [
+        "Em condições ótimas conserva-se 18%, enquanto em condições climáticas adversas conserva-se 74% por conta da lixiviação",
+        "Os percentuais da Tabela 2 estão invertidos: 74% conservados ocorrem sob condições ÓTIMAS; apenas 18% sob condições ADVERSAS."
+      ]
+    ],
+    "pista": "Fornecimento: aceitável perdas de 3 a 6%. Tabela 2: Ótimas (74% conservado), Normais (44–48%), Adversas (18%).",
+    "nucleo": "A soma das perdas ao longo das etapas (corte, respiração, ancinho, chuva, armazenamento) pode destruir mais de 80% da lavoura em tempo adverso.",
+    "outro": "Sob tempo ótimo, sem lixiviação (0%) e manejo preciso, é possível entregar cerca de três quartos da forragem inicial aos animais."
+  },
+  {
+    "sec": "8. Avaliação de Qualidade e Classificação",
+    "ref": "Slides 54 e 55",
+    "tema": "Parâmetros Sensoriais e Físicos de um Bom Feno",
+    "q": "Ao inspecionar lotes de feno para compra ou fornecimento, qual conjunto de características indica um feno de excelente qualidade?",
+    "ok": "Coloração esverdeada clara, odor característico, ausência de fungos/daninhas, alta proporção folhas:hastes e temperatura fria",
+    "er": [
+      [
+        "Coloração marrom-escura ou preta, pó branco fúngico abundante no centro e temperatura do fardo morna ao toque",
+        "Cor marrom, presença de fungos/bolores e calor interno são os indicadores diretos de deterioração e feno ruim."
+      ],
+      [
+        "Alta proporção de hastes duras com muitas sementes de plantas daninhas, pendões florais e fardos frouxos, comprometendo o resultado técnico esperado na fenação",
+        "Pendões florais significam corte tardio e pobre; daninhas e fardos desuniformes depreciam gravemente o produto."
+      ],
+      [
+        "Umidade heterogênea (molhado por dentro e esturricado por fora) com cheiro forte de vinagre azedo, comprometendo o resultado técnico esperado na fenação",
+        "Umidade heterogênea causa bolsões de mofo interno; odor de vinagre/fermentação é estranho ao feno bem secado."
+      ]
+    ],
+    "pista": "Coloração esverdeada, ausência de fungos/daninhas/pendões, T°C sempre fria, alta proporção folhas:hastes, amarração firme.",
+    "nucleo": "Um bom feno mantém a cor verde-clara da planta viva, cheira a capim seco limpo, é frio ao toque e concentra folhas intactas sem mofo.",
+    "outro": "A presença de placas cinzentas ou esbranquiçadas de fungos no interior do fardo (slide 55) condena o lote por risco sanitário e baixa aceitação."
+  },
+  {
+    "sec": "8. Avaliação de Qualidade e Classificação",
+    "ref": "Slide 56",
+    "tema": "Classificação da Embrapa Gado de Leite (Tabela 3)",
+    "q": "Pela classificação da Embrapa Gado de Leite (Tabela 3), quais exigências nutricionais de Proteína Bruta (PB) e FDN definem um feno de GRAMÍNEA Tipo A em contraste com um de LEGUMINOSA Tipo A?",
+    "ok": "Gramínea Tipo A exige PB > 13% e FDN < 65%; Leguminosa Tipo A exige PB > 22% e FDN < 41%",
+    "er": [
+      [
+        "Gramínea Tipo A exige PB > 22% e FDN < 41%, enquanto Leguminosa Tipo A aceita PB < 9% e FDN > 69%",
+        "As duas categorias e os patamares A e C foram completamente trocados: leguminosas (como alfafa) têm PB bem maior e FDN menor."
+      ],
+      [
+        "Ambos os grupos Tipo A exigem umidade entre 20 e 25% e teor de proteína bruta obrigatoriamente abaixo de 9%",
+        "Umidade de 20–25% em leguminosa caracteriza Tipo C (ruim); PB < 9% é classificação de gramínea Tipo C."
+      ],
+      [
+        "Gramínea Tipo A aceita FDN acima de 69%, enquanto Leguminosa Tipo A deve ter FDN entre 65 e 69%",
+        "FDN acima de 69% indica fibra excessiva de gramínea Tipo C (baixa qualidade); Tipo A sempre exige os menores valores de FDN."
+      ]
+    ],
+    "pista": "Tabela 3: Gramínea A (PB > 13%, FDN < 65%); Leguminosa A (PB > 22%, FDN < 41%).",
+    "nucleo": "Fenos padrão A aliam alta proteína bruta e baixa fibra (FDN), refletindo colheita no ponto vegetativo ideal e preservação das folhas.",
+    "outro": "Fenos classificados como Tipo C (PB < 9% em gramíneas ou < 19% em leguminosas, com FDN alto) resultam de corte tardio ou perda de folhas."
+  }
+];
+
+var app = document.getElementById('app');
+var queue, pos, answers, t0, cur, locked, optList;
+
+function shuffle(a){
+  a = a.slice();
+  for(var i=a.length-1; i>0; i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var x = a[i]; a[i] = a[j]; a[j] = x;
+  }
+  return a;
+}
+
+function start(list){
+  queue = list.slice();
+  pos = 0;
+  answers = [];
+  t0 = Date.now();
+  render();
+}
+
+function render(){
+  if(pos >= queue.length){ return finish(); }
+  var q = queue[pos];
+  cur = q;
+  locked = false;
+  
+  var opts = [{x: q.ok, ok: true, why: ''}].concat(q.er.map(function(e){ return {x: e[0], ok: false, why: e[1]}; }));
+  optList = shuffle(opts);
+  var L = 'ABCD';
+  
+  var h = '<h1>Fenação - Curso Completo</h1>';
+  h += '<p class="sub">Progressão linear na ordem dos slides (Slides 1 a 56 · Forragicultura)</p>';
+  h += '<div class="meta"><span>Questão ' + (pos+1) + ' de ' + queue.length + '</span><span>' + answers.filter(function(a){return a.ok}).length + ' acertos</span></div>';
+  h += '<div class="bar"><i style="width:' + (pos/queue.length*100) + '%"></i></div>';
+  h += '<div class="badge">' + q.sec + '</div>';
+  h += '<p class="stem">' + q.q + '</p><div id="opts">';
+  
+  optList.forEach(function(o, i){
+    h += '<button class="opt" data-i="' + i + '"><b>' + L[i] + '</b><span>' + o.x + '</span></button>';
+  });
+  
+  h += '</div><div id="fb"></div><p class="hint">Teclas: [1-4] escolhem a alternativa; [Enter] avança para a próxima.</p>';
+  app.innerHTML = h;
+  
+  Array.prototype.forEach.call(app.querySelectorAll('.opt'), function(b){
+    b.onclick = function(){ pick(+b.getAttribute('data-i')); };
+  });
+}
+
+function pick(i){
+  if(locked || !optList[i]) return;
+  locked = true;
+  var q = cur;
+  var o = optList[i];
+  
+  var btns = app.querySelectorAll('.opt');
+  Array.prototype.forEach.call(btns, function(b, k){
+    b.disabled = true;
+    if(optList[k].ok) b.classList.add('ok');
+    else if(k === i) b.classList.add('ko');
+  });
+  
+  answers.push({q: q, ok: o.ok, chosen: o.x});
+  
+  var f = '<div class="fb"><p class="h ' + (o.ok ? 'ok' : 'ko') + '">' + (o.ok ? 'Correto.' : 'Errado.') + '</p>';
+  f += '<p><em>Tema:</em> ' + q.tema + '</p>';
+  f += '<p><em>Pista no Enunciado:</em> ' + q.pista + '</p>';
+  f += '<p><em>Núcleo Conceitual:</em> ' + q.nucleo + '</p>';
+  if(!o.ok) {
+    f += '<p><em>Por que sua escolha está incorreta:</em> ' + o.why + '</p>';
+  }
+  f += '<p><em>Contraste com outro conceito:</em> ' + q.outro + '</p>';
+  f += '<p><em>Referência no PDF:</em> ' + q.ref + '</p>';
+  f += '<button class="main" id="nx">' + (pos+1 >= queue.length ? 'Concluir e Ver Relatório' : 'Próxima Questão') + '</button></div>';
+  
+  document.getElementById('fb').innerHTML = f;
+  document.getElementById('nx').onclick = next;
+  document.getElementById('nx').focus();
+}
+
+function next(){
+  pos++;
+  render();
+  window.scrollTo(0, 0);
+}
+
+document.addEventListener('keydown', function(e){
+  if(!queue || pos >= queue.length) return;
+  if(!locked && e.key >= '1' && e.key <= '4'){
+    pick(+e.key - 1);
+  } else if(locked && e.key === 'Enter'){
+    e.preventDefault();
+    next();
+  }
+});
+
+function fmt(ms){
+  var s = Math.round(ms/1000);
+  return Math.floor(s/60) + ' min ' + ('0' + (s%60)).slice(-2) + ' s';
+}
+
+function finish(){
+  var tot = answers.length;
+  var ac = answers.filter(function(a){ return a.ok; }).length;
+  var bySec = {};
+  
+  answers.forEach(function(a){
+    var s = a.q.sec;
+    bySec[s] = bySec[s] || { tot: 0, ok: 0 };
+    bySec[s].tot++;
+    if(a.ok) bySec[s].ok++;
+  });
+  
+  var h = '<h1>Fechamento do Curso - Fenação</h1>';
+  h += '<p class="sub">Auditoria completa do desempenho (Ordem sequencial do PDF)</p>';
+  h += '<div class="score">' + (ac/tot*10).toFixed(1) + ' <span style="font-size:18px;color:var(--c-mut)">/ 10</span></div>';
+  h += '<p><strong>' + ac + ' de ' + tot + '</strong> questões corretas (' + Math.round(ac/tot*100) + '%) · Tempo total: ' + fmt(Date.now() - t0) + '</p>';
+  
+  h += '<h2>Aproveitamento por Seção do Material</h2>';
+  h += '<table><tr><th>Seção do PDF</th><th>Acertos</th><th>Aproveitamento</th></tr>';
+  Object.keys(bySec).forEach(function(s){
+    var st = bySec[s];
+    var pct = Math.round(st.ok/st.tot*100);
+    h += '<tr><td>' + s + '</td><td>' + st.ok + ' / ' + st.tot + '</td><td class="p' + (pct < 70 ? ' low' : '') + '">' + pct + '%</td></tr>';
+  });
+  h += '</table>';
+  
+  var erros = answers.filter(function(a){ return !a.ok; }).map(function(a){ return a.q; });
+  if(erros.length > 0){
+    h += '<h2>Tópicos a Revisar (' + erros.length + ' falhas)</h2><ul>';
+    erros.forEach(function(err){
+      h += '<li><strong>' + err.sec + ' (' + err.ref + '):</strong> ' + err.tema + '</li>';
+    });
+    h += '</ul>';
+  } else {
+    h += '<div class="note"><strong>Desempenho Impecável:</strong> Domínio integral de todas as etapas, curvas de secagem e classificações de feno.</div>';
+  }
+  
+  h += '<div style="margin-top:20px">';
+  h += '<button class="sec" id="rs">Reiniciar Simulado Completo</button>';
+  if(erros.length > 0){
+    h += '<button class="main" id="re">Refazer Somente os Erros (' + erros.length + ')</button>';
+  }
+  h += '</div>';
+  
+  app.innerHTML = h;
+  document.getElementById('rs').onclick = function(){ start(Q); };
+  if(erros.length > 0){
+    document.getElementById('re').onclick = function(){ start(erros); };
+  }
+}
+
+start(Q);
+</script>
+</body>
+</html>

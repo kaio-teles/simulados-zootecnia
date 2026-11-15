@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vitaminas em Ruminantes - Rodada 1 de 2</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:20px;font-family:system-ui,-apple-system,sans-serif;background:transparent;color:var(--foreground,#18181b);font-size:15px;line-height:1.5}
+  @media (prefers-color-scheme:dark){body{color:var(--foreground,#e4e4e7)}}
+  .app{
+    --c-card:var(--card,#ffffff);--c-bd:var(--border,#d4d4d8);--c-fg:var(--foreground,#18181b);
+    --c-mut:var(--muted-foreground,#52525b);--c-pri:var(--primary,#15803d);--c-prifg:var(--primary-foreground,#ffffff);
+    --ok:#16a34a;--ko:#dc2626;
+    max-width:780px;margin:0 auto;background:var(--c-card);color:var(--c-fg);border:1px solid var(--c-bd);border-radius:14px;padding:24px;box-shadow:0 4px 12px rgba(0,0,0,0.05)
+  }
+  @media (prefers-color-scheme:dark){.app{--c-card:var(--card,#1c1c1f);--c-bd:var(--border,#3f3f46);--c-fg:var(--foreground,#e4e4e7);--c-mut:var(--muted-foreground,#a1a1aa);--c-pri:var(--primary,#22c55e);--c-prifg:var(--primary-foreground,#0b1220);--ok:#4ade80;--ko:#f87171}}
+  h1{font-size:20px;margin:0 0 2px;color:var(--c-fg)}
+  .sub{color:var(--c-mut);font-size:13px;margin:0 0 14px}
+  .bar{height:6px;background:var(--c-bd);border-radius:99px;overflow:hidden;margin:6px 0 16px}
+  .bar>i{display:block;height:100%;background:var(--c-pri);width:0;transition:width .25s ease-out}
+  .meta{display:flex;justify-content:space-between;font-size:13px;color:var(--c-mut);font-weight:500}
+  .stem{font-size:16px;font-weight:600;margin:0 0 14px;line-height:1.45}
+  .opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--c-bd);border-radius:10px;padding:12px 14px;margin:0 0 9px;cursor:pointer;transition:border-color .15s, background .15s}
+  .opt:hover:not(:disabled){border-color:var(--c-pri);background:rgba(21,128,61,0.07)}
+  .opt b{min-width:22px;color:var(--c-pri);font-size:15px}
+  .opt:disabled{cursor:default;opacity:.6}
+  .opt.ok{opacity:1;border-color:var(--ok);background:rgba(22,163,74,0.16);font-weight:500}
+  .opt.ko{opacity:1;border-color:var(--ko);background:rgba(220,38,38,0.16)}
+  @media (prefers-color-scheme:dark){
+    .opt:hover:not(:disabled){background:rgba(34,197,94,0.10)}
+    .opt.ok{background:rgba(74,222,128,0.16)}
+    .opt.ko{background:rgba(248,113,113,0.16)}
+  }
+  .fb{border-top:1px dashed var(--c-bd);margin-top:16px;padding-top:14px;font-size:14px}
+  .fb p{margin:0 0 7px}
+  .fb .h{font-weight:700;font-size:16px}
+  .fb .h.ok{color:var(--ok)} .fb .h.ko{color:var(--ko)}
+  .fb em{color:var(--c-mut);font-style:normal;font-weight:600}
+  button.main{font:inherit;font-weight:600;background:var(--c-pri);color:var(--c-prifg);border:0;border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  button.sec{font:inherit;font-weight:600;background:transparent;color:var(--c-fg);border:1px solid var(--c-bd);border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0 16px}
+  th,td{border:1px solid var(--c-bd);padding:7px 10px;text-align:left;vertical-align:top}
+  th{color:var(--c-mut);background:rgba(113,113,122,0.12)}
+  td.p{white-space:nowrap;font-weight:700}
+  .low{color:var(--ko);font-weight:700}
+  .score{font-size:38px;font-weight:800;margin:6px 0;color:var(--c-pri)}
+  h2{font-size:16px;margin:18px 0 6px}
+  ul{margin:4px 0 10px;padding-left:20px;font-size:14px}
+  .hint{font-size:12px;color:var(--c-mut);margin-top:14px}
+  .note{font-size:13px;color:var(--c-mut);border-left:3px solid var(--c-pri);padding-left:10px;margin:12px 0}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+var T = {
+ "A": {
+  "nome": "A - Origem histórica e classificação das vitaminas",
+  "nucleo": "Compostos orgânicos essenciais em pequenas doses; lipossolúveis (A, D, E, K) acumulam em gordura/fígado e não são coenzimas (exceto K), enquanto hidrossolúveis (B e C) formam coenzimas e têm excreção urinária.",
+  "pistas": "Amina vital/beribéri, 15 vitaminas (McDowell), reserva em gordura vs. urina, apenas vit K como coenzima entre as lipossolúveis.",
+  "conf": "Confundir vit K com as demais lipossolúveis ou achar que todas as vitaminas têm grupo amina ou vêm só da dieta."
+ },
+ "B": {
+  "nome": "B - Fontes dietéticas para ruminantes",
+  "nucleo": "Forragens verdes fornecem β-caroteno, α-tocoferol e riboflavina (B2); grãos e subprodutos são pobres em caroteno e B2; o complexo B nos tecidos vegetais também resulta de síntese microbiana.",
+  "pistas": "Forragens verdes vs. grãos pobres em β-caroteno e B2, alfafa em B2, levedo (>125 mg/g), B12 só em origem animal.",
+  "conf": "Achar que grãos compensam a falta de β-caroteno e B2 do pasto ou que plantas suprem vitamina B12."
+ },
+ "C": {
+  "nome": "C - Fatores da planta, clima e maturidade na disponibilidade",
+  "nucleo": "Folhas superam colmos; verão fresco e úmido preserva mais β-caroteno e vit E que verão quente e seco; a maturidade reduz caroteno e tocoferol, mas aumenta vitamina D nas folhas senescentes expostas ao UV.",
+  "pistas": "Gramíneas 2× α-tocoferol no início vs. leguminosas na maturação; temperatura/luz > água; relação negativa com MS vs. positiva para vit D.",
+  "conf": "Inverter o efeito da maturidade sobre a vitamina D ou atribuir mais α-tocoferol inicial às leguminosas."
+ },
+ "D": {
+  "nome": "D - Conservação e estocagem de forragens",
+  "nucleo": "Lipoxigenases, O2, calor e luz UV oxidam caroteno e vit E após o corte e na estocagem (chuva agrava); ensilagem preserva mais A e E que feno, mas fenação ao sol multiplica vitamina D.",
+  "pistas": "Tab. 2 (silagem 81/155 vs. feno 36/61; vit D feno 1156 vs. silagem 440), perda aeróbica de 30%, Tab. 3 (100% → 14% → 2% em 28 sem).",
+  "conf": "Achar que o feno conserva mais β-caroteno que a silagem ou que a silagem supera o feno ao sol em vitamina D."
+ },
+ "E": {
+  "nome": "E - Absorção e excreção das vitaminas",
+  "nucleo": "Lipossolúveis acompanham lipídios (micelas mistas → quilomícrons → linfa → fezes via bile); hidrossolúveis usam co-transporte com Na+ ou difusão facilitada (urina), exceto B12 (proteínas R → Fator Intrínseco → íleo).",
+  "pistas": "Micelas/linfa/bile vs. Na+/urina, pH gástrico, proteínas R (saliva), proteases pancreáticas e Fator Intrínseco no íleo.",
+  "conf": "Colocar a B12 em absorção simples por Na+ no duodeno ou atribuir excreção urinária às lipossolúveis."
+ },
+ "F": {
+  "nome": "F - Função antioxidante e imunológica",
+  "nucleo": "Vitaminas C, E e β-caroteno neutralizam radicais livres (inclusive os gerados por leucócitos na fagocitose), protegendo as membranas das células imunes e elevando imunidade celular e não-celular.",
+  "pistas": "Trio C + E + β-caroteno, radicais livres da fagocitose leucocitária, imunidade celular e não-celular.",
+  "conf": "Restringir a ação à proteção hepática ou ignorar a origem leucocitária dos radicais livres neutralizados."
+ },
+ "G": {
+  "nome": "G - Microbiota ruminal e fatores que afetam requerimentos",
+  "nucleo": "Biotina é a mais exigida por bactérias celulolíticas e, com B6, tem 0% de degradabilidade ruminal (vs. 99–100% de B2 e C); síntese de B12 exige cobalto; dieta, parasitas, estresse e antimicrobianos alteram demanda.",
+  "pistas": "Tab. 4 (biotina, PABA, fólico; F. succinogenes/Ruminococcus), Tab. 5 (B6 e biotina 0%, B1 48%, B2 99%, C 100%), cobalto/metilmalonil-CoA.",
+  "conf": "Achar que vit C ou B2 resistem ao rúmen ou que a falta de cobalto reduz o acúmulo de succinato."
+ },
+ "H": {
+  "nome": "H - Suprimento ruminal, categoria animal e padrões nutricionais",
+  "nucleo": "Síntese ruminal supre B e K em adultos, mas não em ruminantes jovens; adultos precisam de A e E exógenas; NRC removeu margens de segurança (presentes no RPAN 1998) e dobra vit E em vacas secas (1,6 vs. 0,8 UI/kg PV).",
+  "pistas": "Tab. 6 (24h: B2 440%, B3 480%, B5 150%), jovem vs. adulto, NRC 1953 vs. RPAN 1998, lactante 0,8 vs. seca 1,6 UI/kg PV.",
+  "conf": "Tratar bezerro lactente como autossuficiente em B/K ou achar que vaca em lactação tem exigência maior por kg PV de vit E que vaca seca."
+ }
+};
+var Q = {
+ "A1": {
+  "t": "A",
+  "ang": "Identificação",
+  "q": "Um grupo de nutrientes orgânicos é requerido em pequenas doses metabólicas, armazena-se em grande escala no tecido adiposo e no fígado, elimina-se lentamente e não atua como coenzima — salvo uma única exceção. Qual grupo e exceção correspondem a essa descrição?",
+  "ok": "Lipossolúveis (A, D, E e K), sendo a vitamina K a única coenzima",
+  "er": [
+   [
+    "Hidrossolúveis (complexo B e C), sendo a vitamina C a única que atua como coenzima na respiração celular",
+    "Hidrossolúveis têm armazenamento limitado, eliminação urinária e atuam como precursoras de coenzimas."
+   ],
+   [
+    "Lipossolúveis (A, D, E e K), sendo a vitamina D a única que atua diretamente como coenzima hepática",
+    "Champe et al. (2006) apontam exatamente a vitamina K, e não a D, como a única lipossolúvel coenzima."
+   ],
+   [
+    "Lipossolúveis (A, D, E e K), todas exigindo ingestão diária estrita para repor perdas contínuas na urina",
+    "Excreção urinária rápida e dependência de suprimento diário pertencem às hidrossolúveis em não-ruminantes."
+   ]
+  ],
+  "pista": "Armazenamento em gordura/fígado + eliminação lenta + apenas uma exceção atuando como coenzima.",
+  "outro": "Se o armazenamento fosse restrito e a função central fosse atuar como precursoras de coenzimas energéticas e hematopoiéticas, seriam as hidrossolúveis.",
+  "ref": "Seções 1 e 2 (págs. 2–4) e Tabela 1"
+ },
+ "A2": {
+  "t": "A",
+  "ang": "Princípio",
+  "q": "De acordo com o artigo, o que distingue a função nutricional das vitaminas frente aos demais nutrientes e por que a ideia do 'quanto mais, melhor' é um erro?",
+  "ok": "Não têm papel estrutural nem calórico, e doses excessivas geram toxicidade ou perdas econômicas",
+  "er": [
+   [
+    "Fornecem energia direta ao epitélio ruminal e formam proteína muscular, elevando apenas o custo financeiro sem risco de toxicidade",
+    "Vitaminas não entram como substrato energético nem plástico estrutural, além de poderem gerar toxicidade (ex.: A e D)."
+   ],
+   [
+    "Dependem de excesso de nitrogênio proteico na dieta para atuar no rúmen e são eliminadas totalmente intactas nas fezes quando sobram",
+    "Vitaminas regulam reações em pequenas doses e excessos de lipossolúveis acumulam nos tecidos."
+   ],
+   [
+    "Atuam somente no intestino grosso como tamponantes de pH, de modo que doses altas apenas aceleram a passagem fecal sem efeito tóxico",
+    "Elas regulam reações metabólicas sistêmicas, e o texto alerta contra superdosagens pelo risco de toxicidade e menor retorno econômico."
+   ]
+  ],
+  "pista": "Critério funcional (sem papel energético/estrutural) e limite biológico do consumo excessivo.",
+  "outro": "Se a discussão fosse sobre absorção, o critério separador passaria a ser solubilidade em lipídios versus água.",
+  "ref": "Seção 1 (págs. 2–3)"
+ },
+ "A3": {
+  "t": "A",
+  "ang": "Armadilha",
+  "q": "Um estudante afirma: 'Toda vitamina é uma amina vital que mamíferos não produzem, devendo obrigatoriamente ingeri-la pronta na dieta'. Por que essa frase falha duplamente em ruminantes?",
+  "ok": "Nem todas têm grupo amina, e ruminantes sintetizam B e K (microbiota), C (glicose/galactose), D (UV) e niacina (triptofano)",
+  "er": [
+   [
+    "Todas contêm amina vital, porém ruminantes só sintetizam vitaminas A e E no fígado via AGVs",
+    "Nem todas possuem amina, e justamente A e E não são sintetizadas pelos ruminantes em quantidade útil sem precursores."
+   ],
+   [
+    "Nenhuma possui amina, e apenas a vitamina B12 é sintetizada endogenamente no fígado sem micróbios",
+    "Várias têm nitrogênio/amina (como tiamina), e a B12 depende diretamente da microbiota ruminal e de cobalto."
+   ],
+   [
+    "Só as lipossolúveis têm aminas, enquanto bactérias ruminais sintetizam só vitamina A da celulose",
+    "Lipossolúveis não são aminas, e a vitamina A depende de carotenoides da dieta, não de síntese de celulose."
+   ]
+  ],
+  "pista": "Origem do termo 'vita + amina' de Casimir Funk versus estrutura química real e rotas endógenas/microbianas.",
+  "outro": "Se o animal fosse um não-ruminante monogástrico sem síntese ruminal expressiva de complexo B e K, a dependência dietética seria bem maior.",
+  "ref": "Seção 1 e Tabela 1 (págs. 2–4)"
+ },
+ "A4": {
+  "t": "A",
+  "ang": "Inversão",
+  "q": "Dado o quadro das 15 vitaminas metabolicamente essenciais (McDowell, 2001) divididas pela solubilidade (Tabela 1), que consequência prática isso impõe sobre a frequência de suprimento e o risco de toxicidade?",
+  "ok": "Lipossolúveis acumulam em gordura/fígado (maior risco tóxico); hidrossolúveis vão à urina e pedem aporte regular em não-ruminantes",
+  "er": [
+   [
+    "Lipossolúveis são excretadas rapidamente na urina exigindo reposição diária estrita, enquanto hidrossolúveis acumulam na gordura corporal causando intoxicação crônica",
+    "Inverte exatamente os dois grupos descritos na Tabela 1."
+   ],
+   [
+    "Ambos os grupos se acumulam igualmente no tecido adiposo e no fígado, tornando desnecessária a reposição frequente até em espécies monogástricas",
+    "Hidrossolúveis têm reserva corporal mínima, salvo particularidades como a B12 hepática citada no texto."
+   ],
+   [
+    "Hidrossolúveis não formam coenzimas metabólicas e, por ficarem retidas nos músculos, apresentam maior potencial tóxico que as vitaminas A e D",
+    "É o oposto: hidrossolúveis formam coenzimas vitais e o excesso costuma ser excretado na urina."
+   ]
+  ],
+  "pista": "Solubilidade → armazenamento e via de eliminação → frequência de aporte e risco de excesso.",
+  "outro": "Se a pergunta focasse apenas ruminantes adultos, o suprimento microbiano de complexo B e K mudaria a exigência dietética prática.",
+  "ref": "Seção 2 e Tabela 1 (págs. 3–4)"
+ },
+ "A5": {
+  "t": "A",
+  "ang": "Ponte",
+  "ponte": "Classificação química ↔ Absorção e excreção",
+  "q": "Como a divisão das vitaminas em lipossolúveis e hidrossolúveis se conecta ao destino pós-absorção e à via de excreção no organismo?",
+  "ok": "Lipossolúveis vão pela linfa (quilomícrons), estocam e saem nas fezes via bile; hidrossolúveis vão ao sangue e saem na urina",
+  "er": [
+   [
+    "Lipossolúveis seguem diretamente ao sangue portal e saem rápido na urina, enquanto hidrossolúveis dependem da bile para serem eliminadas nas fezes",
+    "Quilomícrons e excreção biliar-fecal pertencem às lipossolúveis; excreção urinária pertence às hidrossolúveis."
+   ],
+   [
+    "Ambas as classes cruzam o enterócito exclusivamente por co-transporte com Na+ e dividem a excreção biliar após filtração renal contínua",
+    "Co-transporte dependente de Na+ ocorre em hidrossolúveis no intestino delgado, não em lipossolúveis."
+   ],
+   [
+    "Lipossolúveis precisam de Fator Intrínseco gástrico para ir ao íleo, enquanto hidrossolúveis dependem de micelas mistas e circulação linfática",
+    "Fator Intrínseco é exclusivo da B12 (hidrossolúvel), e micelas/linfa são das lipossolúveis."
+   ]
+  ],
+  "pista": "Liga propriedades da Tabela 1 (solubilidade/reserva/excreção) às rotas anatômicas da Seção 5.",
+  "outro": "Se a exceção avaliada fosse a vitamina B12, apesar de hidrossolúvel ela exige proteínas R e fator intrínseco, além de possuir reserva hepática relevante.",
+  "ref": "Seções 2 e 5 (págs. 3–6)"
+ },
+ "B1": {
+  "t": "B",
+  "ang": "Identificação",
+  "q": "Na dieta de ruminantes, certos alimentos concentram β-caroteno, vitamina E e riboflavina (B2), enquanto outros ingredientes comuns de confinamento são descritos como pobres em β-caroteno e B2. A que par de alimentos o artigo atribui isso?",
+  "ok": "Forragens verdes (como alfafa) são ricas; grãos e subprodutos são pobres",
+  "er": [
+   [
+    "Grãos de cereais são ricos em β-caroteno, e forragens verdes frescas são pobres em α-tocoferol e riboflavina",
+    "Inverte os papéis descritos na Seção 3: grãos são pobres em β-caroteno e B2."
+   ],
+   [
+    "Silagens envelhecidas são ricas em B12 vegetal, e pastagens em crescimento vegetativo não possuem carotenoides",
+    "Pastagens verdes jovens são justamente ricas em β-caroteno e tocoferol, e plantas não contêm B12."
+   ],
+   [
+    "Sementes de oleaginosas secas lideram em vitamina D2, e folhas verdes de alfafa são deficientes em riboflavina",
+    "Alfafa se destaca justamente em riboflavina (B2), não por deficiência."
+   ]
+  ],
+  "pista": "Contraste entre tecidos vegetais verdes/folhosos e sementes/subprodutos concentrados.",
+  "outro": "Se o nutriente citado fosse riboflavina em um ingrediente microbiano concentrado, o texto destaca o levedo com mais de 125 mg/g.",
+  "ref": "Seção 3 (pág. 3)"
+ },
+ "B2": {
+  "t": "B",
+  "ang": "Princípio",
+  "q": "Por que a revisão faz uma ressalva importante ao afirmar que a origem primária das vitaminas está nos tecidos vegetais quando analisa o complexo B (e a B12) nos ruminantes?",
+  "ok": "Nos vegetais, a vitamina B pode resultar também de síntese microbiana — e B12 só existe naturalmente em origem animal ou microbiota",
+  "er": [
+   [
+    "Porque plantas sintetizam apenas vitaminas lipossolúveis puras e retiram toda a vitamina C já pronta das micorrizas do solo",
+    "Forragens verdes são ricas em B2 e precursores; o ponto específico de exceção microbiana é o complexo B."
+   ],
+   [
+    "Porque a vitamina E só é formada por bactérias anaeróbicas dentro do endosperma dos grãos secos após a colheita",
+    "Vitamina E (α-tocoferol) é de origem vegetal em forragens verdes e cai após o corte."
+   ],
+   [
+    "Porque o β-caroteno das folhas já equivale à vitamina A pré-formada ativa, dispensando clivagem enzimática intestinal",
+    "Plantas têm provitamina (β-caroteno), enquanto vitamina A pré-formada e B12 associam-se a tecidos animais/microbiota."
+   ]
+  ],
+  "pista": "Exceção na origem vegetal (síntese microbiana do complexo B) e exclusividade de fonte da B12.",
+  "outro": "Se a pergunta fosse sobre onde os animais obtêm B12 sem suplemento, a resposta recairia sobre a síntese microbiana ruminal dependente de cobalto.",
+  "ref": "Seção 3 (pág. 3) e Seção 9 (pág. 14)"
+ },
+ "B3": {
+  "t": "B",
+  "ang": "Armadilha",
+  "q": "Um técnico formula uma dieta de alto grão sem forragem verde confiando que o milho e farelos vão compensar o fornecimento de β-caroteno, vitamina E e B2 perdido do pasto. Qual erro técnico há nessa decisão?",
+  "ok": "Grãos e subprodutos são pobres em β-caroteno e B2, e tirar o pasto verde suprime a fonte natural de vitaminas A (via caroteno) e E",
+  "er": [
+   [
+    "Grãos concentram excesso tóxico de β-caroteno e geram hipervitaminose A sem silagem ou feno",
+    "O texto afirma exatamente que grãos e seus subprodutos são pobres em β-caroteno e riboflavina."
+   ],
+   [
+    "O milho seco substitui o α-tocoferol do pasto porque a secagem estabiliza a vit E contra o O2",
+    "A colheita e secagem degradam fortemente a vitamina E; pastagem fresca é a referência rica."
+   ],
+   [
+    "Tirar o pasto reduz apenas a síntese cutânea de vitamina D, mantendo caroteno e E pelo grão",
+    "Vitamina D cutânea depende de radiação UV solar; ausência de pasto derruba primariamente A e E."
+   ]
+  ],
+  "pista": "Perfil vitamínico de grãos/subprodutos versus forragens verdes.",
+  "outro": "Se o animal estivesse a pasto verde em crescimento ativo, as exigências suplementares de vitaminas A e E cairiam drasticamente.",
+  "ref": "Seções 3 e 7 (págs. 3 e 6)"
+ },
+ "B4": {
+  "t": "B",
+  "ang": "Inversão",
+  "q": "Considerando as fontes dietéticas de vitaminas para ruminantes, o que acontece quando o rebanho sai do pasto verde e passa a receber dieta confinada com volumoso conservado antigo e alto grão?",
+  "ok": "Cai fortemente o aporte dietético de β-caroteno e vitamina E, exigindo atenção à suplementação exógena dessas vitaminas",
+  "er": [
+   [
+    "Sobe espontaneamente a concentração de β-caroteno e α-tocoferol na dieta total pelo maior teor de matéria seca dos grãos e farelos",
+    "A concentração de MS em grãos e forragem envelhecida coincide com teores muito menores de caroteno e vit E."
+   ],
+   [
+    "Ocorre colapso na oferta alimentar de vitamina B12 porque gramíneas verdes seriam a única fonte vegetal desse cofator cobalamínico",
+    "Plantas não fornecem B12; sua origem no ruminante é síntese microbiana ruminal (desde que haja cobalto)."
+   ],
+   [
+    "O animal adulto deixa de necessitar suplementação de vitamina A e passa a requerer sobretudo riboflavina proveniente de levedura seca",
+    "Em adultos, o problema recai sobre A e E; a microbiota normalmente supre o complexo B."
+   ]
+  ],
+  "pista": "Tema dado (fontes dietéticas); pede a consequência nutricional ao trocar pasto verde por grãos/estoque.",
+  "outro": "Se a dúvida fosse sobre a vitamina D no volumoso seco ao sol versus pasto verde, a direção se inverteria (o feno ao sol tem mais D).",
+  "ref": "Seções 3, 4 e 8 (págs. 3–5 e 8)"
+ },
+ "C1": {
+  "t": "C",
+  "ang": "Identificação",
+  "q": "Em análises de plantas forrageiras no início do desenvolvimento, um grupo apresenta o dobro de α-tocoferol em relação ao outro, igualando-se no florescimento; além disso, verões quentes e secos reduzem β-caroteno e α-tocoferol frente a verões frescos e úmidos. Qual grupo tem o dobro de α-tocoferol no estádio inicial?",
+  "ok": "Gramíneas possuem 2× mais α-tocoferol que leguminosas no estádio inicial",
+  "er": [
+   [
+    "Leguminosas possuem 2× mais α-tocoferol que gramíneas no estádio inicial, mantendo superioridade contínua após o florescimento",
+    "O texto descreve o inverso para α-tocoferol inicial: gramíneas têm 2× mais que leguminosas."
+   ],
+   [
+    "Gramíneas mantêm sempre o dobro de β-caroteno que leguminosas na fase de maturação avançada",
+    "Na maturação, são as leguminosas que passam a apresentar maior riqueza relativa de β-caroteno."
+   ],
+   [
+    "Leguminosas exibem metade da tiamina das gramíneas, com enorme variação genética entre cultivares de alfafa",
+    "Para tiamina em variedades de alfafa estudadas, não houve diferença significativa entre cultivares."
+   ]
+  ],
+  "pista": "2× α-tocoferol no estádio inicial + igualdade no florescimento + comparação gramíneas vs. leguminosas.",
+  "outro": "Se o parâmetro fosse o teor de β-caroteno na maturação da planta, a vantagem passaria para as leguminosas.",
+  "ref": "Seção 4 (pág. 4)"
+ },
+ "C2": {
+  "t": "C",
+  "ang": "Princípio",
+  "q": "Por que a maturidade da planta forrageira gera direções opostas sobre β-caroteno e vitamina E em comparação com a vitamina D?",
+  "ok": "Mais colmos e matéria seca diluem β-caroteno e E, enquanto folhas senescentes sob raios UV (230–300 nm) acumulam vitamina D",
+  "er": [
+   [
+    "Folhas jovens bloqueiam os raios UV e produzem mais vitamina D nas raízes, enquanto colmos maduros concentram α-tocoferol resistente à luz",
+    "Folhas são mais ricas em caroteno e E; a vitamina D aumenta com a maturidade via UV nas folhas senescentes."
+   ],
+   [
+    "A água da chuva no verão seco lava o α-tocoferol das folhas novas e converte lignina dos colmos maduros em precursores de β-caroteno",
+    "Colmos aumentam com a maturidade e reduzem β-caroteno; é a luz solar UV (230–300 nm) que gera D."
+   ],
+   [
+    "O aumento de proteína bruta na planta madura destrói a vitamina E nas folhas e reduz paralelamente a concentração de vitamina D no colmo",
+    "Na planta madura a proteína e as folhas diminuem; ainda assim a vitamina D aumenta, não diminui."
+   ]
+  ],
+  "pista": "Folha vs. colmo + MS (correlação negativa para caroteno/E) contra ação UV (230–300 nm) na senescência (positiva para D).",
+  "outro": "Se a condição avaliada fosse o clima de verão (fresco/úmido vs. quente/seco), luz e temperatura pesariam mais que água para derrubar A e E.",
+  "ref": "Seção 4 (págs. 3–4)"
+ },
+ "C3": {
+  "t": "C",
+  "ang": "Armadilha",
+  "q": "Um técnico afirma que, como β-caroteno e vitamina E caem quando a forrageira envelhece e ganha matéria seca no campo, todas as lipossolúveis da planta têm relação negativa com maturidade e exposição solar. Por que isso está errado?",
+  "ok": "A vitamina D tem relação positiva com a maturidade, subindo nas folhas senescentes expostas ao UV solar",
+  "er": [
+   [
+    "Porque o β-caroteno também cresce linearmente junto com o aumento de colmo e matéria seca até a senescência completa",
+    "Caroteno tem relação negativa com aumento de colmo e MS; apenas a vitamina D sobe."
+   ],
+   [
+    "Porque a vitamina K vegetal se multiplica nos grãos maduros após exposição contínua ao vento seco e à geada noturna",
+    "A exceção explicitada no comportamento com maturidade e UV na forragem refere-se à vitamina D."
+   ],
+   [
+    "Porque apenas a disponibilidade hídrica do solo — nunca a temperatura ou a luz — influencia os teores de α-tocoferol e vitamina D",
+    "O texto destaca que temperatura e intensidade luminosa têm maior efeito que a disponibilidade de água."
+   ]
+  ],
+  "pista": "Generalização de 'todas as lipossolúveis' caindo com maturidade e sol.",
+  "outro": "Se ele tivesse restrito a afirmação ao β-caroteno e ao α-tocoferol em plantas que envelhecem no campo, estaria correto.",
+  "ref": "Seção 4 (pág. 4)"
+ },
+ "C4": {
+  "t": "C",
+  "ang": "Inversão",
+  "q": "Se uma pastagem enfrenta um verão quente e seco em comparação a um verão fresco e úmido, o que acontece com os teores de β-caroteno e α-tocoferol nas plantas?",
+  "ok": "Ambos ficam menores no verão quente e seco, pesando mais temperatura e luz que água",
+  "er": [
+   [
+    "Os dois teores dobram rapidamente porque o estresse hídrico concentra os carotenoides dentro das folhas parcialmente murchas",
+    "O texto mostra que verão fresco e úmido resulta em maiores níveis de β-caroteno e α-tocoferol."
+   ],
+   [
+    "Apenas o α-tocoferol cai com o calor, enquanto o β-caroteno aumenta proporcionalmente devido à maior intensidade luminosa diária",
+    "Ambos os compostos (β-caroteno e α-tocoferol) reduzem no verão quente e seco."
+   ],
+   [
+    "Não ocorre mudança mensurável pelo clima, pois apenas diferenças genéticas entre variedades de alfafa alteram caroteno e tocoferol",
+    "Clima, espécie e maturidade exercem forte efeito além da variação genética entre cultivares (22–30%)."
+   ]
+  ],
+  "pista": "Tema dado (clima de verão); pede o efeito sobre β-caroteno e α-tocoferol.",
+  "outro": "Se a pergunta tratasse do impacto do corte seguido de secagem ao sol na fenação, o elemento determinante passaria a ser oxidação por lipoxigenases, O2 e UV.",
+  "ref": "Seção 4 (págs. 3–4)"
+ },
+ "C5": {
+  "t": "C",
+  "ang": "Ponte",
+  "ponte": "Maturidade da planta ↔ Conservação por fenação",
+  "q": "Comparando o envelhecimento natural da forrageira no campo à secagem ao sol na fenação, que fator físico comum explica a subida da vitamina D e a queda de β-caroteno e vitamina E?",
+  "ok": "A exposição ao UV solar (com calor e O2), que forma vitamina D em folhas secas/senescentes enquanto oxida caroteno e E",
+  "er": [
+   [
+    "A fermentação anaeróbica espontânea dos colmos, gerando ergosterol a partir de açúcares",
+    "A fermentação anaeróbica ocorre na ensilagem e não cria vitamina D como a radiação UV solar no feno."
+   ],
+   [
+    "A lixiviação pela chuva pós-corte, que preserva o β-caroteno foliar e concentra tocoferóis",
+    "Chuva após o corte destrói quase todo o β-caroteno e tocoferol, não os preserva."
+   ],
+   [
+    "Bactérias celulolíticas epifíticas degradando colmos secos e liberando biotina e vit D",
+    "A vitamina D vegetal resulta da ação dos raios UV (230–300 nm), não de bactérias celulolíticas."
+   ]
+  ],
+  "pista": "Liga maturidade/senescência (Seção 4) ao efeito do sol no feno (Tabela 2).",
+  "outro": "Se a secagem da alfafa ocorresse à sombra em vez de ao sol, os níveis de vitamina D2 cairiam pela metade.",
+  "ref": "Seção 4 (págs. 4–5) e Tabela 2"
+ },
+ "D1": {
+  "t": "D",
+  "ang": "Identificação",
+  "q": "Na Tabela 2, um método mantém 81 mg/kg MS de β-caroteno e 155 mg/kg MS de α-tocoferol (vs. 36 e 61 no concorrente), porém entrega 440 mg/kg MS de vitamina D ante 1156 no concorrente. Que métodos são esses?",
+  "ok": "Ensilagem (melhor em β-caroteno e α-tocoferol) e fenação (maior em vitamina D)",
+  "er": [
+   [
+    "Fenação (melhor preservação de β-caroteno e α-tocoferol) e ensilagem (maior acúmulo de vitamina D)",
+    "Inverte exatamente os dados da Tabela 2: silagem preserva 81/155 e feno eleva vitamina D a 1156."
+   ],
+   [
+    "Forragem verde fresca (81 de β-caroteno e 155 de α-tocoferol) e silagem pré-secada (1156 de vitamina D)",
+    "Na Tabela 2, a forragem verde tem 141 de β-caroteno, 252 de α-tocoferol e 365 de vitamina D."
+   ],
+   [
+    "Fenação na sombra (1156 de vitamina D) e ensilagem aeróbica (155 mg/kg MS de α-tocoferol preservados)",
+    "Alfafa seca ao sol tem 2× mais D2 que à sombra, e fase aeróbica na silagem causa até 30% de perda."
+   ]
+  ],
+  "pista": "Silagem 81/155 vs. Feno 36/61 em caroteno/E; Feno 1156 vs. Silagem 440 em vit D.",
+  "outro": "Se os valores citados fossem 141 de β-caroteno, 252 de α-tocoferol e 365 de vitamina D, referir-se-iam à forragem verde original.",
+  "ref": "Seção 4 e Tabela 2 (págs. 4–5)"
+ },
+ "D2": {
+  "t": "D",
+  "ang": "Princípio",
+  "q": "Que mecanismo explica a rápida destruição de β-caroteno e vitamina E logo após o corte da forrageira e durante a conservação inadequada?",
+  "ok": "Oxidação por enzimas lipoxigenases mais oxigênio, calor e luz UV (atenuada com desidratação rápida)",
+  "er": [
+   [
+    "Hidrólise ácida causada pelo ácido lático nas primeiras horas de anaerobiose dentro do silo completamente vedado",
+    "Na silagem ocorre melhor preservação que no feno; os grandes vilões são O2, calor, UV e lipoxigenases."
+   ],
+   [
+    "Migração osmótica dos carotenoides das folhas para as raízes do solo antes que a massa cortada chegue a 20% de umidade",
+    "A planta foi cortada do solo; as perdas pós-corte decorrem de oxidação enzimática e fotoquímica."
+   ],
+   [
+    "Quelação irreversível pelo cobalto mineral da planta enquanto a umidade da leira permanece acima de 60%",
+    "Cobalto participa da síntese ruminal de B12; não destrói caroteno nem tocoferol no corte."
+   ]
+  ],
+  "pista": "Lipoxigenases + O2 + calor + luz UV + benefício da desidratação rápida.",
+  "outro": "Se a pergunta fosse sobre perda especificamente na silagem em abertura ou má vedação, a fase aeróbica responderia por perdas de até 30%.",
+  "ref": "Seção 4 (págs. 4–5)"
+ },
+ "D3": {
+  "t": "D",
+  "ang": "Armadilha",
+  "q": "Um produtor guarda feno recém-preparado com 29 mg/kg MS de caroteno (14% dos 213 iniciais da planta fresca) crendo que o nível ficará estável por 6 meses no galpão. O que mostra a Tabela 3 (Islabão, 1978)?",
+  "ok": "A perda segue contínua na estocagem: 14 mg/kg MS (13 sem), 10 (20 sem) e só 4 mg/kg MS (2%) às 28 semanas",
+  "er": [
+   [
+    "O teor realmente se estabiliza nos 14% iniciais (29 mg/kg MS) logo após o enfardamento e não desce abaixo de 25 mg/kg MS",
+    "A Tabela 3 demonstra degradação contínua: de 14% após fenação cai a 7%, 5% e 2% em 28 semanas."
+   ],
+   [
+    "Durante o armazenamento no escuro os carotenoides se regeneram parcialmente pela conversão da clorofila residual",
+    "Carotenos não se regeneram após oxidação na estocagem; seguem em queda contínua."
+   ],
+   [
+    "A queda durante o estoque ocorre apenas se chover dentro do galpão, permanecendo constante quando os fardos ficam secos",
+    "Mesmo estocado em condições usuais de armazenamento, o caroteno declina de 14% para 2% ao longo de 28 semanas."
+   ]
+  ],
+  "pista": "Tabela 3: 213 (100%) → recém-fenada 29 (14%) → 13 sem 14 (7%) → 20 sem 10 (5%) → 28 sem 4 (2%).",
+  "outro": "Se a forragem ainda tivesse tomado chuva logo após o corte no campo, quase todo o β-caroteno e tocoferol já teria sido destruído antes mesmo do galpão.",
+  "ref": "Seção 4 e Tabela 3 (pág. 5)"
+ },
+ "D4": {
+  "t": "D",
+  "ang": "Inversão",
+  "q": "Qual é o efeito de chuvas sobre a forragem cortada para feno ou de fase aeróbica prolongada na ensilagem (além de exposição no cocho) sobre as vitaminas entregues ao animal?",
+  "ok": "Chuva destrói quase todo caroteno e vit E; fase aeróbica na silagem perde até 30% e há perda extra no cocho",
+  "er": [
+   [
+    "A chuva lava enzimas oxidativas melhorando o caroteno do feno, enquanto o ar na silagem aumenta em 30% o teor de vitamina E preservada",
+    "Ambos os eventos causam destruição vitamínica grave, não preservação."
+   ],
+   [
+    "Ambos preservam o α-tocoferol ao baixarem a temperatura da massa cortada, afetando somente a concentração de niacina microbiana",
+    "Oxidação destrói caroteno e tocoferol; e mesmo no cocho há degradação adicional antes do consumo."
+   ],
+   [
+    "Apenas a vitamina D desaparece quando chove após o corte, mantendo-se preservados 100% do β-caroteno e da vitamina E foliares",
+    "Chuva pós-corte é descrita justamente como destrutiva para β-caroteno e tocoferol."
+   ]
+  ],
+  "pista": "Tema dado (chuva pós-corte e aeração na conservação/cocho); pede as consequências.",
+  "outro": "Se a desidratação no campo fosse rápida e sem chuva, ou a anaerobiose da silagem fosse imediata, as perdas seriam minimizadas.",
+  "ref": "Seção 4 (págs. 4–5)"
+ },
+ "D5": {
+  "t": "D",
+  "ang": "Ponte",
+  "ponte": "Conservação de forragens ↔ Suprimento dietético de A e E",
+  "q": "Por que as Tabelas 2 e 3 tornam uma dieta de feno estocado por mais de 6 meses criticamente diferente do pasto verde quanto à suplementação?",
+  "ok": "Após 28 semanas sobra só 2% do caroteno e cai a vit E, perdendo aporte para A e E apesar da alta vitamina D do feno ao sol",
+  "er": [
+   [
+    "O feno estocado perde só vitamina D, mantendo 85% do β-caroteno original após seis meses",
+    "É o inverso: feno seco ao sol é rico em vitamina D (1156 mg/kg MS), mas perde quase todo o caroteno (sobram 2%)."
+   ],
+   [
+    "O estoque prolongado bloqueia toda síntese ruminal de B2 e K sem reduzir caroteno do feno",
+    "Complexo B e K continuam sendo sintetizados no rúmen do adulto; a perda crítica do estoque é em caroteno e E."
+   ],
+   [
+    "Feno e silagem após 28 semanas retêm 100% do α-tocoferol inicial, dispensando suplementar vit E",
+    "A própria Tabela 2 mostra que mesmo a ensilagem reduz β-caroteno de 141 para 81 e α-tocoferol de 252 para 155 mg/kg MS."
+   ]
+  ],
+  "pista": "Cruza Tab. 2 e 3 (perda de A/E e ganho de D no feno ao sol) com Seção 8 (necessidade de A e E em adultos).",
+  "outro": "Se o rebanho recebesse feno seco à sombra, perderia ainda metade da vantagem em vitamina D2 além da perda de caroteno e E.",
+  "ref": "Seções 4 e 8, Tabelas 2 e 3 (págs. 4–5 e 8)"
+ },
+ "E1": {
+  "t": "E",
+  "ang": "Identificação",
+  "q": "Uma vitamina ligada a proteínas da dieta é liberada em pH baixo gástrico, une-se às proteínas R (saliva/suco gástrico), solta-se delas no intestino por proteases pancreáticas, liga-se a uma glicoproteína de células parietais gástricas e é absorvida no íleo. Qual é essa vitamina?",
+  "ok": "Vitamina B12 (cobalamina), via Fator Intrínseco até o íleo",
+  "er": [
+   [
+    "Vitamina B1 (tiamina), dependente de micelas mistas e quilomícrons para ganhar a circulação linfática no íleo",
+    "Micelas e quilomícrons são das lipossolúveis; B1 é absorvida por co-transporte dependente de Na+ no intestino delgado."
+   ],
+   [
+    "Vitamina E (α-tocoferol), única hidrossolúvel protegida continuamente por proteínas R salivares desde a mastigação",
+    "Vitamina E é lipossolúvel e acompanha digestão e absorção de gorduras via bile e linfa."
+   ],
+   [
+    "Ácido fólico (B9), que exige o Fator Intrínseco gástrico para depois ser eliminado pelas fezes via sais biliares",
+    "Ácido fólico entra pelos mecanismos usuais das hidrossolúveis (Na+/difusão facilitada) e excreção renal; excreção biliar é das lipossolúveis."
+   ]
+  ],
+  "pista": "Proteína dietética → pH baixo → proteínas R → proteases pancreáticas → Fator Intrínseco → íleo.",
+  "outro": "Se a absorção dependesse de ácidos biliares formando micelas mistas com produtos lipídicos para gerar quilomícrons na linfa, seria de lipossolúveis (A, D, E, K).",
+  "ref": "Seção 5 (págs. 5–6)"
+ },
+ "E2": {
+  "t": "E",
+  "ang": "Princípio",
+  "q": "Por que a absorção das vitaminas A, D, E e K depende diretamente da digestão de lipídios e da secreção biliar?",
+  "ok": "Hidrofóbicas, integram micelas mistas com ácidos biliares e seguem nos enterócitos para quilomícrons e linfa",
+  "er": [
+   [
+    "São transportadas ativamente por proteínas de membrana dependentes de sódio na borda em escova junto com glicose e aminoácidos",
+    "Co-transporte dependente de Na+ (ou difusão facilitada) descreve as vitaminas hidrossolúveis."
+   ],
+   [
+    "Precisam sofrer conversão no estômago em sais hidrossolúveis pelo ácido clorídrico antes de passarem direto ao sangue da veia porta",
+    "Micelas e quilomícrons drenam para o sistema linfático, não direto em forma livre para o sangue portal."
+   ],
+   [
+    "Dependem de proteases pancreáticas para se desligarem das proteínas R salivares antes da captura específica por receptores ileais",
+    "Essa sequência (proteínas R + Fator Intrínseco) é exclusiva da vitamina B12."
+   ]
+  ],
+  "pista": "Hidrofobicidade → micelas mistas (sais biliares + digestão lipídica) → quilomícrons → linfa.",
+  "outro": "Se a deficiência fosse de cobalamina (B12), o bloqueio estaria na ausência de Fator Intrínseco ou de secreção pancreática, não na falta de micelas biliares.",
+  "ref": "Seção 5 (págs. 5–6)"
+ },
+ "E3": {
+  "t": "E",
+  "ang": "Armadilha",
+  "q": "Um aluno lê que hidrossolúveis entram por difusão facilitada ou co-transporte com Na+ no intestino delgado e afirma que toda má absorção hidrossolúvel vem de falha nessa bomba de Na+. Qual contraexemplo do artigo refuta isso?",
+  "ok": "A vitamina B12 exige pH ácido gástrico, proteínas R, proteases pancreáticas e Fator Intrínseco até o íleo",
+  "er": [
+   [
+    "A vitamina C necessita obrigatoriamente de sais biliares e formação de quilomícrons para atravessar o epitélio do íleo terminal",
+    "Sais biliares e quilomícrons referem-se às lipossolúveis (A, D, E, K), não à vitamina C."
+   ],
+   [
+    "A riboflavina (B2) depende do Fator Intrínseco produzido pelo pâncreas para ser captada e excretada diretamente na bile",
+    "O Fator Intrínseco é glicoproteína de células parietais gástricas ligado à absorção da B12."
+   ],
+   [
+    "A biotina só atravessa a mucosa do rúmen mediante micelas mistas formadas por ácidos graxos voláteis durante a fermentação",
+    "Micelas mistas são formadas no intestino por ácidos biliares para vitaminas lipossolúveis."
+   ]
+  ],
+  "pista": "Exceção entre as hidrossolúveis citada em destaque na Seção 5.",
+  "outro": "Se a exceção fosse sobre excreção, as lipossolúveis é que saem nas fezes via bile, enquanto as hidrossolúveis saem na urina.",
+  "ref": "Seção 5 (págs. 5–6)"
+ },
+ "E4": {
+  "t": "E",
+  "ang": "Inversão",
+  "q": "Se ocorrer redução severa da digestão de gorduras ou obstrução biliar intestinal, que consequência direta incide sobre a absorção e a excreção das vitaminas lipossolúveis?",
+  "ok": "Prejudica micelas mistas, entrada de A, D, E e K via linfa e sua excreção normal pelas fezes via bile",
+  "er": [
+   [
+    "Aumenta a absorção das lipossolúveis porque sobra mais espaço para o co-transporte dependente de Na+ no intestino delgado",
+    "Lipossolúveis não utilizam co-transporte com sódio; dependem de micelas lipídicas."
+   ],
+   [
+    "Bloqueia apenas a absorção de ácido fólico e biotina no íleo terminal por ausência completa de proteína R biliar",
+    "Proteína R vem da saliva/suco gástrico e atua sobre a vitamina B12, não sobre lipídios ou biotina."
+   ],
+   [
+    "Redireciona integralmente as vitaminas A, D, E e K para eliminação renal acelerada através da urina filtrada",
+    "A eliminação típica das lipossolúveis ocorre pelas fezes via secreção biliar, não pela urina."
+   ]
+  ],
+  "pista": "Tema dado (absorção de lipossolúveis); pede a consequência de falhar a rota lipídica/biliar.",
+  "outro": "Se o fator reduzido fosse a quantidade de gordura dietética na Seção 7, o artigo também lista o teor de gordura como fator que altera os requerimentos de lipossolúveis.",
+  "ref": "Seções 5 e 7 (págs. 5–7)"
+ },
+ "E5": {
+  "t": "E",
+  "ang": "Ponte",
+  "ponte": "Absorção de vitaminas ↔ Fatores que afetam requerimentos",
+  "q": "Como os mecanismos da Seção 5 explicam simultaneamente por que doenças/parasitas no TGI e o teor de gordura dietética alteram requerimentos na Seção 7?",
+  "ok": "Parasitas/doenças reduzem a absorção na mucosa intestinal, e a gordura da dieta altera as micelas para lipossolúveis",
+  "er": [
+   [
+    "Parasitas sintetizam excesso de fator intrínseco para B12, enquanto a gordura dietética bloqueia o co-transporte de Na+ da vitamina C",
+    "Doenças e parasitas reduzem a absorção no TGI, e a gordura dietética é listada em conexão direta com as lipossolúveis."
+   ],
+   [
+    "Infecções intestinais aceleram a produção de proteínas R no rúmen, e dietas sem gordura aumentam a absorção linfática de vitamina A",
+    "Sem gordura e micelas mistas, a absorção linfática das lipossolúveis diminui, não aumenta."
+   ],
+   [
+    "Parasitas aumentam a clivagem hepática de β-caroteno, e lipídios substituem o cobalto na síntese ruminal de tiamina microbiana",
+    "Cobalto é para B12, e infecções/parasitas prejudicam absorção e saúde imune, aumentando demanda."
+   ]
+  ],
+  "pista": "Conecta transporte intestinal (Seção 5) com os fatores determinantes de requerimento (Seção 7).",
+  "outro": "Se o fator de requerimento fosse uso de antimicrobianos na ração, o mecanismo passaria a ser inibição da síntese microbiana no rúmen, e não lesão epitelial ou micelas.",
+  "ref": "Seções 5 e 7 (págs. 5–7)"
+ },
+ "F1": {
+  "t": "F",
+  "ang": "Identificação",
+  "q": "Três compostos citados na Seção 6 neutralizam radicais livres produzidos inclusive por leucócitos na fagocitose bacteriana, protegendo células imunes e elevando a imunidade celular e não-celular. Que trio é esse?",
+  "ok": "Vitamina E, vitamina C e β-caroteno",
+  "er": [
+   [
+    "Vitamina D, vitamina K e niacina",
+    "D atua no metabolismo cálcio-fósforo, K na coagulação e B3 em coenzimas NAD/NADP; não formam o trio antioxidante citado."
+   ],
+   [
+    "Tiamina (B1), biotina e B12",
+    "São vitaminas do complexo B focadas em energia, cascos/celulolíticas e metionina/propionato, não o trio citado na Seção 6."
+   ],
+   [
+    "Ácido pantotênico, B6 e colina",
+    "Não constituem o trio antioxidante imunoprotetor descrito na Seção 6."
+   ]
+  ],
+  "pista": "Neutralização de radicais livres leucocitários da fagocitose + proteção imune celular e não-celular.",
+  "outro": "Se o foco fosse apenas prevenir glândula mamária/mastite e suporte imune no periparto segundo o NRC 2001, o destaque recairia sobre a vitamina E (0,8 vs. 1,6 UI/kg PV).",
+  "ref": "Seção 6 (pág. 6)"
+ },
+ "F2": {
+  "t": "F",
+  "ang": "Princípio",
+  "q": "Por que a própria defesa bactericida normal dos leucócitos aumenta a necessidade biológica de vitaminas E, C e β-caroteno?",
+  "ok": "Na fagocitose, leucócitos geram radicais livres reativos que sem antioxidantes danificariam as próprias células imunes",
+  "er": [
+   [
+    "Bactérias fagocitadas sequestram a vitamina D mitocondrial dos leucócitos para produzir proteínas R",
+    "A agressão às células imunes vem dos radicais livres produzidos na própria fagocitose, não de sequestro de D."
+   ],
+   [
+    "Os anticorpos utilizam β-caroteno como aminoácido estrutural obrigatório na cadeia pesada",
+    "Carotenoides são antioxidantes lipofílicos, não aminoácidos constituintes de imunoglobulinas."
+   ],
+   [
+    "A fagocitose ocorre no lúmen ruminal, consumindo vitamina C durante a fermentação de celulose",
+    "Fagocitose é resposta imune do animal; na Seção 6 o ponto é proteção antioxidante das células de defesa."
+   ]
+  ],
+  "pista": "Paradoxo da fagocitose: arma oxidativa contra bactérias exige defesa antioxidante para preservar os leucócitos.",
+  "outro": "Se a discussão fosse apenas degradação de β-caroteno e E na forragem cortada, o agente oxidante seria oxigênio/luz/lipoxigenases, não leucócitos.",
+  "ref": "Seção 6 (pág. 6)"
+ },
+ "F3": {
+  "t": "F",
+  "ang": "Ponte",
+  "ponte": "Antioxidantes imunes ↔ Estresse, doenças e NRC em vacas secas",
+  "q": "Como o papel antioxidante imune (Seção 6) liga o aumento de demanda no estresse/doença (Seção 7) ao dobro de vitamina E recomendado para vacas secas pelo NRC 2001 (Tabela 9)?",
+  "ok": "Vacas secas pedem 1,6 UI/kg PV para função imune (vs. 0,8 em lactantes), protegendo leucócitos contra radicais livres sob estresse",
+  "er": [
+   [
+    "Vacas lactantes eliminam vitamina E na urina durante a ordenha, caindo a exigência pela metade",
+    "Vitamina E não é excretada livremente na urina; o NRC (2001) especifica 1,6 UI/kg PV para vacas secas visando função imune."
+   ],
+   [
+    "Vacas secas recebem menos UV e convertem β-caroteno em vitamina E nas células parietais gástricas",
+    "Vitamina E não vem de UV nem de conversão de β-caroteno; a distinção da Tabela 9 é saúde mamária (0,8) vs. função imune (1,6)."
+   ],
+   [
+    "O estresse térmico interrompe a síntese ruminal de vit E pelos fungos, zerando a exigência em lactantes",
+    "Microbiota ruminal não supre vitamina E aos ruminantes; a necessidade em lactantes é 0,8 UI/kg PV, não zero."
+   ]
+  ],
+  "pista": "Une proteção imune (Seção 6), estresse/doença (Seção 7) e 0,8 vs. 1,6 UI/kg PV (Tabela 9).",
+  "outro": "Se o padrão considerado fosse o NRC desde 1953 comparado ao RPAN (1998), notaríamos justamente que o NRC deixou de incluir margens de segurança para estresse.",
+  "ref": "Seções 6, 7 e 8 e Tabela 9 (págs. 6–9)"
+ },
+ "G1": {
+  "t": "G",
+  "ang": "Identificação",
+  "q": "Nas Tabelas 4 e 5, uma vitamina aparece tanto como a mais exigida por bactérias celulolíticas (Fibrobacter succinogenes, Ruminococcus spp.) quanto com 0% de desaparecimento no rúmen (como a piridoxina/B6). Qual é ela?",
+  "ok": "Biotina (vitamina H)",
+  "er": [
+   [
+    "Riboflavina (vitamina B2)",
+    "Na Tabela 5, a riboflavina sofre 99% de desaparecimento ruminal (quase totalmente degradada), não 0%."
+   ],
+   [
+    "Ácido ascórbico (vitamina C)",
+    "Vitamina C tem 100% de degradabilidade ruminal na Tabela 5 — o oposto de 0%."
+   ],
+   [
+    "Tiamina (vitamina B1)",
+    "Na Tabela 5, a tiamina apresenta desaparecimento intermediário de 48%, não 0%."
+   ]
+  ],
+  "pista": "Tabela 4 (nº 1 em exigência por celulolíticas) + Tabela 5 (0% de degradabilidade, junto apenas da B6).",
+  "outro": "Se o parâmetro fosse a vitamina com 100% de desaparecimento no rúmen na mesma Tabela 5, a resposta seria a vitamina C (ou 99% para B2 e 97% para ácido fólico).",
+  "ref": "Seção 7 e Tabelas 4 e 5 (págs. 6–7)"
+ },
+ "G2": {
+  "t": "G",
+  "ang": "Princípio",
+  "q": "Por que a deficiência de cobalto prejudica simultaneamente a síntese de B12 e a produção de propionato em bactérias ruminais como Prevotella ruminicola?",
+  "ok": "Sem cobalto não há coenzima B12 para a metilmalonil-CoA isomerase formar succinil-CoA/propionato, acumulando succinato",
+  "er": [
+   [
+    "O cobalto bloqueia a degradação ruminal de vitamina C, desviando glicose para ácido lático",
+    "A relação cobalto–B12 atua na rota succinil-CoA / metilmalonil-CoA isomerase, não bloqueando degradação de vit C."
+   ],
+   [
+    "Sem cobalto, a biotina cai de 48% para 0% e trava a síntese gástrica de Fator Intrínseco no rúmen",
+    "Biotina já tem 0% de degradação ruminal e Fator Intrínseco é gástrico do hospedeiro, não ruminal."
+   ],
+   [
+    "O cobalto substitui o ácido pantotênico em lipoxigenases microbianas que degradam β-caroteno",
+    "Cobalto compõe a molécula de cobalamina (B12) na via do propionato, não lipoxigenases de forragens."
+   ]
+  ],
+  "pista": "Cobalto → B12 → metilmalonil-CoA isomerase → succinil-CoA/propionato (ou acúmulo de succinato).",
+  "outro": "Se a deficiência fosse nutricional por ausência de nitrogênio (ureia/soja), amido ou celulose, o efeito descrito no texto seria queda na síntese ruminal de B3, B2 e B5.",
+  "ref": "Seção 7 (pág. 7)"
+ },
+ "G3": {
+  "t": "G",
+  "ang": "Armadilha",
+  "q": "Um técnico fornece vitamina C pura desprotegida na ração de bovinos adultos supondo que grande parte cruzará o rúmen intacta. Que dado da Tabela 5 (Zinn et al., 1987) invalida essa aposta?",
+  "ok": "Vitamina C sofre 100% de degradação ruminal (B2 99%, fólico 97%, B3 94%); só B6 e biotina têm 0%",
+  "er": [
+   [
+    "A vitamina C tem 0% de degradação no rúmen, portanto passaria intacta em excesso e provocaria acidose no abomaso",
+    "Na Tabela 5, quem tem 0% são B6 e biotina; vitamina C tem 100% de desaparecimento."
+   ],
+   [
+    "Apenas a vitamina B6 é degradada em 100% pelos microrganismos ruminais, enquanto a vitamina C escapa em 94% sem proteção",
+    "Inverte os extremos da Tabela 5: B6 = 0% e vit C = 100%."
+   ],
+   [
+    "Nenhuma vitamina hidrossolúvel exógena sofre degradação ruminal porque a microbiota utiliza apenas minerais da dieta",
+    "A Tabela 5 mostra altíssima degradação ruminal da maioria das hidrossolúveis (78% a 100%)."
+   ]
+  ],
+  "pista": "Tabela 5: C (100%), B2 (99%), fólico (97%), B3 (94%), B12 (90%), B5 (78%) vs. B1 (48%) e B6/biotina (0%).",
+  "outro": "Se ele estivesse usando biotina ou piridoxina (B6) na dieta, a taxa de desaparecimento ruminal seria de 0% segundo os mesmos autores.",
+  "ref": "Seção 7 e Tabela 5 (pág. 7)"
+ },
+ "G4": {
+  "t": "G",
+  "ang": "Inversão",
+  "q": "Considerando os moduladores da síntese ruminal na Seção 7, que efeitos opostos ocorrem ao adicionar N (ureia/soja), amido ou celulose à dieta versus administrar antimicrobianos?",
+  "ok": "N, amido e celulose elevam síntese ruminal de B (niacina, B2, pantotênico); antimicrobianos a inibem",
+  "er": [
+   [
+    "Nitrogênio e ureia zeram a síntese de B2 e B5 por toxicidade amoniacal, enquanto antimicrobianos estimulam celulolíticas a produzirem mais biotina",
+    "Inverte exatamente os efeitos: N/amido/celulose estimulam síntese de B; antimicrobianos inibem síntese microbiana."
+   ],
+   [
+    "Antimicrobianos elevam o desaparecimento ruminal de B6 de 0% para 100%, e o amido elimina totalmente a necessidade de cobalto para B12",
+    "Antimicrobianos suprimem microbiota produtora; cobalto continua indispensável para B12."
+   ],
+   [
+    "Farelo de soja e ureia substituem diretamente a vitamina A sem depender de microrganismos, e antimicrobianos protegem somente o β-caroteno",
+    "Vitamina A não é sintetizada por bactérias ruminais; o efeito positivo do N/amido/celulose recai sobre vitaminas B."
+   ]
+  ],
+  "pista": "Tema dado (fatores de síntese/requerimento); pede efeitos opostos de substrato ruminal vs. antimicrobianos.",
+  "outro": "Se o fator em jogo fosse a presença de antagonistas vitamínicos ou de estádio fisiológico (crescimento, gestação, lactação), a demanda aumentaria por clivagem molecular ou maior metabolismo, não por inibição antibiótica.",
+  "ref": "Seção 7 (págs. 6–7)"
+ },
+ "G5": {
+  "t": "G",
+  "ang": "Ponte",
+  "ponte": "Degradabilidade ruminal ↔ Necessidade de síntese líquida",
+  "q": "Integrando as Tabelas 5 e 6: se o rúmen degrada 94–100% da niacina, fólico, B2 e C vindos da dieta, por que ruminantes adultos não ficam deficientes nessas vitaminas B?",
+  "ok": "A microbiota sintetiza complexo B e K acima da demanda em 24h (B2 440%, B3 480%), cobrindo as perdas",
+  "er": [
+   [
+    "Porque em bovinos adultos o abomaso absorve integralmente B2 e vitamina C antes que o bolo alimentar alcance o rúmen-retículo",
+    "O alimento entra primeiro no rúmen-retículo, onde ocorre a degradação e a síntese microbiana."
+   ],
+   [
+    "Porque a biota aproveita apenas biotina (0% degradada) e a converte no tecido hepático em todas as outras vitaminas do complexo B",
+    "Bactérias ruminais sintetizam diretamente niacina, riboflavina, pantotênico, B12 (com cobalto), etc., não por conversão hepática da biotina."
+   ],
+   [
+    "Porque ruminantes adultos perdem completamente a exigência celular por riboflavina, niacina e ácido pantotênico após o desmame",
+    "Eles têm exigência metabólica (Tabela 6 mostra necessidade >0), que é coberta com sobra pela síntese ruminal."
+   ]
+  ],
+  "pista": "Liga alta degradabilidade de exógenas (Tab. 5) ao balanço líquido positivo de síntese em 24h (Tab. 6).",
+  "outro": "Se o animal fosse um bezerro pré-ruminante sem fermentação ruminal funcional, essa compensação microbiana não existiria.",
+  "ref": "Seções 7 e 8, Tabelas 4, 5 e 6 (págs. 6–8)"
+ },
+ "H1": {
+  "t": "H",
+  "ang": "Identificação",
+  "q": "Entre sistemas de recomendação nutricional (Seção 8, Fig. 1), um retirou desde 1953 a margem de segurança mantendo só o nível mínimo para prevenir sintomas sem estresse, enquanto outro (1998) mantém margem de segurança. Quais são?",
+  "ok": "NRC (sem margem desde 1953) e RPAN (1998, com margem)",
+  "er": [
+   [
+    "RPAN (1998, sem margem de segurança desde 1953) e NRC (adotando apenas margem máxima para estresse)",
+    "Inverte os dois referenciais citados no texto: o NRC tirou a margem em 1953 e o RPAN (1998) a inclui."
+   ],
+   [
+    "ARC (eliminando exigências de vit E em vacas secas) e NRC (proibindo suplementação de vitamina A em pasto)",
+    "O contraste explícito na Seção 8 e Figura 1 é entre o NRC (desde 1953) e o RPAN (1998)."
+   ],
+   [
+    "Islabão (1978, níveis mínimos clínicos) e Champe (2006, teores máximos de toxicidade hepática)",
+    "Islabão trata de perda de caroteno em estocagem (Tab. 3) e Champe de classificação bioquímica (pág. 4)."
+   ]
+  ],
+  "pista": "Corte histórico de 1953 (nível mínimo sem estresse) vs. edição de 1998 com margem de segurança.",
+  "outro": "Se a tabela consultada fosse exclusivamente sobre exigências de vitamina E por categoria leiteira (lactação vs. secagem), o dado específico pertenceria ao NRC (2001) na Tabela 9.",
+  "ref": "Seção 8, Figura 1 e Tabela 9 (págs. 8–9)"
+ },
+ "H2": {
+  "t": "H",
+  "ang": "Princípio",
+  "q": "Por que a dependência dietética de complexo B e vitamina K muda drasticamente entre ruminantes jovens e adultos saudáveis?",
+  "ok": "Adultos têm rúmen funcional que supre B e K; jovens ainda não têm microbiota plena e dependem da dieta",
+  "er": [
+   [
+    "Porque animais adultos perdem completamente os receptores ileais de B12 e passam a usar somente vitamina A em seu metabolismo",
+    "Adultos absorvem B12 normalmente; a diferença é a capacidade de síntese microbiana no rúmen funcional."
+   ],
+   [
+    "Porque bezerros recém-nascidos já nascem com microbiota celulolítica completa, enquanto vacas adultas perdem essa flora no parto",
+    "É o contrário: jovens ainda desenvolvem o rúmen funcional, enquanto adultos mantêm a síntese microbiana."
+   ],
+   [
+    "Porque a vitamina K passa a atuar como hormônio renal nos adultos, deixando de ser necessária para a cascata de coagulação",
+    "Vitamina K segue essencial na coagulação; adultos obtêm via síntese microbiana ruminal."
+   ]
+  ],
+  "pista": "Desenvolvimento do rúmen funcional (jovem vs. adulto) determinando autossuficiência em B e K.",
+  "outro": "Se as vitaminas analisadas fossem A e E em adultos, o princípio não valeria: o rúmen não as sintetiza para o animal, exigindo suplementação exógena básica.",
+  "ref": "Seção 8 (pág. 8) e Tabela 6"
+ },
+ "H3": {
+  "t": "H",
+  "ang": "Armadilha",
+  "q": "Um nutricionista usa 1,6 UI de vitamina E/kg PV para vacas lactantes e reduz para 0,8 UI/kg PV em vacas secas pelo NRC (2001) (Tabela 9). Qual inversão cometeu?",
+  "ok": "É o oposto: secas pedem 1,6 UI/kg PV (função imune) e lactantes 0,8 UI/kg PV (saúde mamária)",
+  "er": [
+   [
+    "Os dois valores numéricos estão certos na ordem aplicada, mas deveriam estar expressos em mg de β-caroteno por kg de matéria seca",
+    "A Tabela 9 expressa vitamina E em UI/kg de peso vivo (PV) e traz 0,8 para lactantes e 1,6 para secas."
+   ],
+   [
+    "O NRC (2001) recomenda exatamente 0 UI/kg PV para vacas secas porque o feno seco supre totalmente a vitamina E nessa fase",
+    "Vacas secas têm justamente o maior requerimento por kg PV (1,6 UI/kg PV), e o feno perde muita vitamina E."
+   ],
+   [
+    "O dobro indicado para vacas secas existe apenas para sintetizar vitamina D2 na pele durante períodos de menor radiação solar",
+    "Vitamina E não sintetiza D2; o objetivo explícito dos 1,6 UI/kg PV em secas é a função imune."
+   ]
+  ],
+  "pista": "Tabela 9: lactantes 0,8 UI/kg PV (saúde glândula mamária) vs. secas 1,6 UI/kg PV (função imune).",
+  "outro": "Se a comparação fosse de exigência de vitamina A em gado de corte versus leite em UI/kg MS ou PV (Tabelas 7 e 8), a métrica de lactação/crescimento/gestação também variaria, mas a armadilha específica 0,8 vs. 1,6 UI/kg PV é de vitamina E no NRC (2001).",
+  "ref": "Seção 8 e Tabela 9 (pág. 9)"
+ },
+ "H4": {
+  "t": "H",
+  "ang": "Inversão",
+  "q": "Com base no balanço da Tabela 6 (síntese ruminal em 24h de 440% de riboflavina, 480% de niacina e 150% de pantotênico), qual deve ser o foco básico de suplementação vitamínica em ruminantes adultos?",
+  "ok": "Focar principalmente vitaminas A e E exógenas; usar complexo B extra só em jovens, estresse ou desequilíbrio",
+  "er": [
+   [
+    "Focar exclusivamente riboflavina e niacina na ração de adultos, já que o rúmen não consegue atingir 100% da demanda em 24 horas",
+    "A Tabela 6 mostra o contrário: 440% de riboflavina e 480% de niacina em 24h."
+   ],
+   [
+    "Como o rúmen gera 480% de niacina, gera igual excedente de A e E, dispensando qualquer suplementação vitamínica em confinamento",
+    "Microrganismos ruminais não suprirão vitamina A nem vitamina E em quantidade para o animal."
+   ],
+   [
+    "Suplementar ácido pantotênico acima de 150% em bezerros recém-nascidos para substituir completamente o colostro e a vitamina A",
+    "Jovens têm exigências críticas e não têm rúmen maduro; além disso, pantotênico não substitui vitamina A."
+   ]
+  ],
+  "pista": "Tema dado (superávit ruminal em 24h de B); pede a decisão prática de suplementação em adultos.",
+  "outro": "Se o animal adulto estivesse em exposição solar abundante e pasto verde viçoso, até a suplementação de A, E e D cairia muito em relação a animais confinados.",
+  "ref": "Seção 8 e Tabela 6 (pág. 8)"
+ },
+ "H5": {
+  "t": "H",
+  "ang": "Ponte",
+  "ponte": "Exigências NRC/RPAN ↔ Degradação na conservação e estresse",
+  "q": "Num rebanho confinado recebendo feno/silagem estocados sob estresse, como o contraste NRC vs. RPAN (Fig. 1) se articula com as perdas da conservação (Tabs. 2–3)?",
+  "ok": "O NRC não inclui margem para estresse nem compensa a queda de caroteno/vit E estocados, ao contrário da margem do RPAN",
+  "er": [
+   [
+    "O NRC já embute 300% de sobra para compensar perda de caroteno no feno, tornando o RPAN redundante",
+    "É o inverso: desde 1953 o NRC retirou a margem de segurança para estresse; o RPAN (1998) é que a preserva."
+   ],
+   [
+    "Como a silagem perde 30% na fase aeróbica, o NRC manda zerar a vit E e triplicar a vitamina K",
+    "Em adultos, K é suprida pela microbiota; a vulnerabilidade das dietas conservadas sob estresse recai sobre A e E."
+   ],
+   [
+    "O estresse térmico duplica a síntese de β-caroteno pelas celulolíticas, igualando os dois sistemas",
+    "Bactérias ruminais não sintetizam β-caroteno, e estresse reduz absorção/aumenta demanda antioxidante."
+   ]
+  ],
+  "pista": "Une NRC sem margem vs. RPAN com margem + perdas pós-corte/estocagem de A e E + demanda sob estresse.",
+  "outro": "Se fosse uma dieta com cobalto deficiente no pasto, a margem extra de nada resolveria a síntese de B12 sem corrigir o mineral precursor no rúmen.",
+  "ref": "Seções 4, 7 e 8; Figura 1; Tabelas 2 e 3 (págs. 4–9)"
+ }
+};
+var ORDER = ["C1","A1","G1","E1","D1","H1","B1","F1","E2","B2","H2","A2","F2","C2","G2","D2","G3","D3","A3","H3","C3","E3","B3","E4","B4","D4","G4","A4","H4","C4","H5","C5","F3","A5","G5","D5","E5"];
+var app=document.getElementById('app');
+var queue,pos,answers,t0,cur,locked,optList,famSeen,FAMQ;
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x}return a}
+function start(ids){queue=ids;pos=0;answers=[];t0=Date.now();famSeen={};FAMQ={};ids.forEach(function(id){FAMQ[Q[id].t]=(FAMQ[Q[id].t]||0)+1});render()}
+function render(){
+  if(pos>=queue.length){return finish()}
+  var id=queue[pos],q=Q[id];cur=id;locked=false;
+  var opts=[{x:q.ok,ok:true,why:''}].concat(q.er.map(function(e){return{x:e[0],ok:false,why:e[1]}}));
+  optList=shuffle(opts);
+  var L='ABCD';
+  var h='<h1>Vitaminas em Ruminantes - Rodada 1 de 2</h1><p class="sub">Fundamentos, fontes, forragens, absorção, imunidade, rúmen e exigências (págs. 1 a 9)</p>';
+  h+='<div class="meta"><span>Questão '+(pos+1)+' de '+queue.length+'</span><span>'+answers.filter(function(a){return a.ok}).length+' acertos</span></div>';
+  h+='<div class="bar"><i style="width:'+(pos/queue.length*100)+'%"></i></div>';
+  h+='<p class="stem">'+q.q+'</p><div id="opts">';
+  optList.forEach(function(o,i){h+='<button class="opt" data-i="'+i+'"><b>'+L[i]+'</b><span>'+o.x+'</span></button>'});
+  h+='</div><div id="fb"></div><p class="hint">Atalhos: 1–4 escolhem a alternativa; Enter avança.</p>';
+  app.innerHTML=h;
+  Array.prototype.forEach.call(app.querySelectorAll('.opt'),function(b){b.onclick=function(){pick(+b.getAttribute('data-i'))}});
+}
+function pick(i){
+  if(locked||!optList[i])return;locked=true;
+  var q=Q[cur],o=optList[i];
+  var btns=app.querySelectorAll('.opt');
+  Array.prototype.forEach.call(btns,function(b,k){b.disabled=true;if(optList[k].ok)b.classList.add('ok');else if(k===i)b.classList.add('ko')});
+  famSeen[q.t]=(famSeen[q.t]||0)+1;
+  var nth=famSeen[q.t];
+  answers.push({id:cur,t:q.t,ok:o.ok,ang:q.ang});
+  var th=T[q.t];
+  var f='<div class="fb"><p class="h '+(o.ok?'ok':'ko')+'">'+(o.ok?'Correto.':'Errado.')+'</p>';
+  f+='<p><em>Tema:</em> '+th.nome+' <em>('+q.ang+')</em></p>';
+  f+='<p><em>Pista que entregou:</em> '+q.pista+'</p>';
+  f+='<p><em>Núcleo:</em> '+th.nucleo+'</p>';
+  if(!o.ok)f+='<p><em>Por que a sua escolha está errada:</em> '+o.why+'</p>';
+  f+='<p><em>Se fosse o outro tema:</em> '+q.outro+'</p>';
+  f+='<p><em>Referência:</em> '+q.ref+'</p>';
+  f+='<p><em>Progresso da família:</em> '+th.nome.split(' - ')[0]+' - '+nth+' de '+FAMQ[q.t]+'</p>';
+  f+='<button class="main" id="nx">'+(pos+1>=queue.length?'Ver fechamento':'Próxima')+'</button></div>';
+  document.getElementById('fb').innerHTML=f;
+  document.getElementById('nx').onclick=next;
+  document.getElementById('nx').focus();
+}
+function next(){pos++;render();window.scrollTo(0,0)}
+document.addEventListener('keydown',function(e){
+  if(!queue||pos>=queue.length)return;
+  if(!locked&&e.key>='1'&&e.key<='4'){pick(+e.key-1)}
+  else if(locked&&e.key==='Enter'){e.preventDefault();next()}
+});
+function fmt(ms){var s=Math.round(ms/1000);return Math.floor(s/60)+'min '+('0'+(s%60)).slice(-2)+'s'}
+function finish(){
+  var tot=answers.length,ac=answers.filter(function(a){return a.ok}).length;
+  var by={};answers.forEach(function(a){by[a.t]=by[a.t]||{n:0,k:0};by[a.t].n++;if(a.ok)by[a.t].k++});
+  var h='<h1>Fechamento - Rodada 1 de 2</h1><p class="sub">Fundamentos até exigências (págs. 1 a 9)</p>';
+  h+='<div class="score">'+(ac/tot*10).toFixed(1)+' / 10</div><p>'+ac+' de '+tot+' acertos · tempo '+fmt(Date.now()-t0)+'</p>';
+  h+='<h2>Mapa</h2><table><tr><th>Tema</th><th>Núcleo</th><th>Pistas</th><th>Confusão</th><th>Acertos</th></tr>';
+  Object.keys(T).forEach(function(k){
+    if(!by[k])return;var p=by[k].k/by[k].n;
+    h+='<tr><td>'+T[k].nome+'</td><td>'+T[k].nucleo+'</td><td>'+T[k].pistas+'</td><td>'+T[k].conf+'</td><td class="p'+(p<0.7?' low':'')+'">'+by[k].k+'/'+by[k].n+'</td></tr>';
+  });
+  h+='</table>';
+  h+='<h2>Pontes</h2><ul>';
+  answers.filter(function(a){return a.ang==='Ponte'}).forEach(function(a){h+='<li>'+Q[a.id].ponte+' '+(a.ok?'(acertou)':'(errou)')+'</li>'});
+  h+='</ul>';
+  var soltos=Object.keys(by).filter(function(k){return by[k].k/by[k].n<0.7});
+  h+='<h2>Pontos soltos (abaixo de 70%)</h2>';
+  h+=soltos.length?'<ul>'+soltos.map(function(k){return'<li>'+T[k].nome+' - '+by[k].k+'/'+by[k].n+'</li>'}).join('')+'</ul>':'<p>Nenhum tema abaixo de 70%.</p>';
+  h+='<p class="note">Famílias menores que 5 por peso/extensão do texto: Tema B (4 questões, sem Ponte isolada pois o tema cruza diretamente com C e D) e Tema F (3 questões: Identificação, Princípio e Ponte).</p>';
+  var erros=answers.filter(function(a){return!a.ok}).map(function(a){return a.id});
+  h+='<button class="sec" id="rs">Recomeçar</button>';
+  if(erros.length)h+='<button class="main" id="re">Refazer só os erros ('+erros.length+')</button>';
+  if(soltos.length)h+='<p class="hint">Para uma rodada extra com ângulos novos dos temas abaixo de 70%, peça ao Ultron: este arquivo só repete as questões existentes.</p>';
+  app.innerHTML=h;
+  document.getElementById('rs').onclick=function(){start(ORDER)};
+  if(erros.length)document.getElementById('re').onclick=function(){start(erros)};
+}
+start(ORDER);
+</script>
+</body>
+</html>

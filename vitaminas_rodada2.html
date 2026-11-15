@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vitaminas em Ruminantes - Rodada 2 de 2</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:20px;font-family:system-ui,-apple-system,sans-serif;background:transparent;color:var(--foreground,#18181b);font-size:15px;line-height:1.5}
+  @media (prefers-color-scheme:dark){body{color:var(--foreground,#e4e4e7)}}
+  .app{
+    --c-card:var(--card,#ffffff);--c-bd:var(--border,#d4d4d8);--c-fg:var(--foreground,#18181b);
+    --c-mut:var(--muted-foreground,#52525b);--c-pri:var(--primary,#15803d);--c-prifg:var(--primary-foreground,#ffffff);
+    --ok:#16a34a;--ko:#dc2626;
+    max-width:780px;margin:0 auto;background:var(--c-card);color:var(--c-fg);border:1px solid var(--c-bd);border-radius:14px;padding:24px;box-shadow:0 4px 12px rgba(0,0,0,0.05)
+  }
+  @media (prefers-color-scheme:dark){.app{--c-card:var(--card,#1c1c1f);--c-bd:var(--border,#3f3f46);--c-fg:var(--foreground,#e4e4e7);--c-mut:var(--muted-foreground,#a1a1aa);--c-pri:var(--primary,#22c55e);--c-prifg:var(--primary-foreground,#0b1220);--ok:#4ade80;--ko:#f87171}}
+  h1{font-size:20px;margin:0 0 2px;color:var(--c-fg)}
+  .sub{color:var(--c-mut);font-size:13px;margin:0 0 14px}
+  .bar{height:6px;background:var(--c-bd);border-radius:99px;overflow:hidden;margin:6px 0 16px}
+  .bar>i{display:block;height:100%;background:var(--c-pri);width:0;transition:width .25s ease-out}
+  .meta{display:flex;justify-content:space-between;font-size:13px;color:var(--c-mut);font-weight:500}
+  .stem{font-size:16px;font-weight:600;margin:0 0 14px;line-height:1.45}
+  .opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--c-bd);border-radius:10px;padding:12px 14px;margin:0 0 9px;cursor:pointer;transition:border-color .15s, background .15s}
+  .opt:hover:not(:disabled){border-color:var(--c-pri);background:rgba(21,128,61,0.07)}
+  .opt b{min-width:22px;color:var(--c-pri);font-size:15px}
+  .opt:disabled{cursor:default;opacity:.6}
+  .opt.ok{opacity:1;border-color:var(--ok);background:rgba(22,163,74,0.16);font-weight:500}
+  .opt.ko{opacity:1;border-color:var(--ko);background:rgba(220,38,38,0.16)}
+  @media (prefers-color-scheme:dark){
+    .opt:hover:not(:disabled){background:rgba(34,197,94,0.10)}
+    .opt.ok{background:rgba(74,222,128,0.16)}
+    .opt.ko{background:rgba(248,113,113,0.16)}
+  }
+  .fb{border-top:1px dashed var(--c-bd);margin-top:16px;padding-top:14px;font-size:14px}
+  .fb p{margin:0 0 7px}
+  .fb .h{font-weight:700;font-size:16px}
+  .fb .h.ok{color:var(--ok)} .fb .h.ko{color:var(--ko)}
+  .fb em{color:var(--c-mut);font-style:normal;font-weight:600}
+  button.main{font:inherit;font-weight:600;background:var(--c-pri);color:var(--c-prifg);border:0;border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  button.sec{font:inherit;font-weight:600;background:transparent;color:var(--c-fg);border:1px solid var(--c-bd);border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0 16px}
+  th,td{border:1px solid var(--c-bd);padding:7px 10px;text-align:left;vertical-align:top}
+  th{color:var(--c-mut);background:rgba(113,113,122,0.12)}
+  td.p{white-space:nowrap;font-weight:700}
+  .low{color:var(--ko);font-weight:700}
+  .score{font-size:38px;font-weight:800;margin:6px 0;color:var(--c-pri)}
+  h2{font-size:16px;margin:18px 0 6px}
+  ul{margin:4px 0 10px;padding-left:20px;font-size:14px}
+  .hint{font-size:12px;color:var(--c-mut);margin-top:14px}
+  .note{font-size:13px;color:var(--c-mut);border-left:3px solid var(--c-pri);padding-left:10px;margin:12px 0}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+var T = {
+ "I": {
+  "nome": "I - Vitamina A (carotenos, imunidade e rúmen)",
+  "nucleo": "Plantas fornecem carotenos (β-caroteno converte 100%; xantofila 0%); atua em retina/rodopsina, epitélios, IgA de mucosas, células T e fagocitose; toxicidade é rara pela extensa degradação ruminal ou competição absortiva.",
+  "pistas": "100% β vs. 57% criptoxantina vs. 53% α/γ vs. xantofila 0%; cegueira noturna, IgA intestinal, degradação ruminal.",
+  "conf": "Achar que plantas têm vitamina A pronta, que xantofila gera vitamina A ou que excesso causa intoxicação frequente a pasto."
+ },
+ "J": {
+  "nome": "J - Vitamina D (hormônio, cálcio, paresia e toxicidade)",
+  "nucleo": "Hormônio esteroidal (7-deidrocolesterol + UV → D3; D2 vegetal → 1,25-(OH)2 D3) que eleva absorção de Ca/P e reabsorção óssea com PTH; raramente falta no Brasil, previne paresia (33%→8%), mas é a vitamina mais tóxica (hipercalcemia/calcificação).",
+  "pistas": "1,25-(OH)2 D3 hormonal, 25-OH D3 + 1-hidroxi (33%→8%), raquitismo/articulações inchadas, mais tóxica (rins/artérias).",
+  "conf": "Tratar a vitamina D como pouco tóxica ou achar que sua carência é comum em rebanhos a pasto no Brasil."
+ },
+ "K": {
+  "nome": "K - Vitamina E (antioxidante, selênio, mastite e músculo branco)",
+  "nucleo": "α-tocoferol (derivado do tocol) protege membranas contra peroxidação de AGPI, atua com Selênio em leucócitos, contém virulência viral, reduz mastite (~42%) e previne 'doença do músculo branco'; sem ligação reprodutiva direta em ruminantes e quase atóxica.",
+  "pistas": "Hamster/cobaia vs. ruminantes (Church), Se + fagocitose, cepa viral virulenta (Beck), 42,2% mastite, músculo branco.",
+  "conf": "Atribuir falha reprodutiva direta da vit E aos ruminantes ou esperar alta toxicidade hepática como na vitamina D."
+ },
+ "L": {
+  "nome": "L - Vitamina K (coagulação, K2 ruminal e trevo doce)",
+  "nucleo": "Séries K1 (plantas), K2 (bactérias ruminais — principal para ruminantes) e K3 (menadiona sintética); cofator na carboxilação de glutamato para síntese de protrombina; trevo doce mofado tem cumarol (ausente no Brasil); excesso gera hemólise e porfirinúria.",
+  "pistas": "K2 ruminal, protrombina/carboxilação, trevo doce/cumarol não cultivado no Brasil, excesso → hemólise e porfirinúria.",
+  "conf": "Achar que o trevo doce hemorrágico ocorre no Brasil ou que a vitamina K não possui sinais de toxicidade."
+ },
+ "M": {
+  "nome": "M - Tiamina (B1) e Riboflavina (B2)",
+  "nucleo": "B1 forma TTP (co-carboxilase hepática); queda de pH ruminal, excesso de concentrado, enxofre e tiaminases causam poliencefalomalácia (PEM) com até 100% de mortalidade. B2 forma FMN (flavoquinase) e FAD para transferência de H+, sem toxidez (urina).",
+  "pistas": "TTP/co-carboxilase, pH baixo + enxofre + tiaminase → PEM (4m–2anos, opistótono), FMN/FAD redox.",
+  "conf": "Confundir poliencefalomalácia da B1 com deficiência de B2 ou achar que vacas em lactação são o grupo mais atingido por PEM."
+ },
+ "N": {
+  "nome": "N - Niacina (B3) e Ácido Pantotênico (B5)",
+  "nucleo": "B3 (nicotinamida/NAD) é a B mais usada em vacas leiteiras: reverte cetose (10–12 g/dia, ↓β-hidroxibutirato) e corrige queda de proteína do leite; triptofano reduz sua exigência (leucina/arginina/glicina aumentam). B5 forma Coenzima A (grupo acil); carência dá dermatite escamosa em bezerros.",
+  "pistas": "Cetose (50% alta prod., 1,24→0,74 mmol/L), triptofano vs. Leu/Arg/Gly, Coenzima A (acil), dermatite escamosa.",
+  "conf": "Inverter o efeito do triptofano versus leucina ou confundir B3 com B5 como precursora de NAD versus Coenzima A."
+ },
+ "O": {
+  "nome": "O - Piridoxina (B6) e Biotina (H)",
+  "nucleo": "B6 (piridoxal fosfato) atua em transaminação/aminoácidos, absorvida passivamente no jejuno/íleo sem transportador. D-biotina atua em gliconeogênese/propionato; 20 mg/dia eleva dureza/conformação do casco (evita casco mole/sem camada granular) e aumenta leite e proteína.",
+  "pistas": "B6 sem transportador (jejuno/íleo, metabolismo AA/Fe); D-biotina 20 mg/dia → casco mole/camada granular + leite/proteína.",
+  "conf": "Achar que B6 precisa ser fosforilada para entrar no enterócito ou restringir o ganho da biotina só aos cascos."
+ },
+ "P": {
+  "nome": "P - Ácido Fólico (B9) e Colina (B7)",
+  "nucleo": "B9 (pteridina+PABA+glutâmico; hidrolisado por γ-glutamilcarboxipeptidase a 5-metiltetrahidrofólico) doa grupos 1C para purinas/DNA/eritrócitos, promovendo crescimento mais que B12. Colina (questionada como vitamina por quantidade e papel estrutural em lecitina/acetilcolina) entra via Na+/K+ e evita gordura hepática.",
+  "pistas": "Grupos 1C, promotor > B12, colina = lecitina + acetilcolina + bomba Na+/K+ + mobilização de gordura hepática.",
+  "conf": "Achar que B12 supera B9 na promoção de crescimento ou ignorar o papel da colina/lecitina na esteatose/mobilização hepática."
+ },
+ "Q": {
+  "nome": "Q - Cobalamina (B12) e Vitamina C",
+  "nucleo": "B12 (única orgânica com ~4,5% Co em anel corina; ausente em plantas) atua na metionina, metilmalonil-CoA e redução de ribonucleotídeos; absorvida no íleo com Fator Intrínseco. Vitamina C (da glicose; homem/primatas/cobaia não sintetizam) forma colágeno e carnitina (β-oxidação no pós-parto).",
+  "pistas": "Origem animal exclusiva, 4,5% Co, homocisteína→metionina, ribonucleotídeo→DNA; colágeno + carnitina no pós-parto (-30% IMS).",
+  "conf": "Achar que plantas contêm B12 ou desconhecer a ligação da vitamina C com carnitina e β-oxidação no período de transição."
+ }
+};
+var Q = {
+ "I1": {
+  "t": "I",
+  "ang": "Identificação",
+  "q": "Um pigmento presente no milho converte-se em 57% numa vitamina lipossolúvel ligada à rodopsina da retina, pressão do fluido cérebro-espinhal e defesa por IgA secretória; outro carotenoide vegetal (xantofila) tem conversão de 0%, enquanto o precursor de referência alcança 100%. Qual é o carotenoide de 57% e qual é a vitamina formada?",
+  "ok": "Criptoxantina (57%), formando vitamina A",
+  "er": [
+   [
+    "Xantofila (57%), formando vitamina A ativa no epitélio intestinal",
+    "O artigo especifica que a xantofila é um caroteno, mas NÃO é transformada em vitamina A (0%)."
+   ],
+   [
+    "Alfa-caroteno (57%), formando vitamina E nas membranas fotorreceptoras",
+    "Alfa e gama-caroteno convertem 53% em vitamina A, não 57% nem vitamina E."
+   ],
+   [
+    "Beta-caroteno (57%), formando vitamina D2 na mucosa intestinal",
+    "Beta-caroteno tem conversão de 100% e o produto é vitamina A, nunca D2."
+   ]
+  ],
+  "pista": "Milho 57% + xantofila 0% + rodopsina + IgA secretória de mucosas.",
+  "outro": "Se os percentuais citados fossem 53%, trataria de α-caroteno ou γ-caroteno; se fosse 100%, seria o β-caroteno.",
+  "ref": "Seção 8.1 (pág. 9)"
+ },
+ "I2": {
+  "t": "I",
+  "ang": "Princípio",
+  "q": "Por que a intoxicação por vitamina A é raramente observada na prática em ruminantes, mesmo quando ingerem excesso dietético ou carotenoides em pastagens?",
+  "ok": "Sofre extensa degradação bioquímica no rúmen (ou competição absortiva com outras lipossolúveis)",
+  "er": [
+   [
+    "Porque todo excesso de vitamina A é convertido instantaneamente em xantofila e eliminado na urina em menos de uma hora",
+    "Vitamina A é lipossolúvel (excreção biliar-fecal, não urinária rápida) e xantofila é carotenoide vegetal não precursor."
+   ],
+   [
+    "Porque o fígado dos bovinos é incapaz de armazenar retinol, descartando 100% do excedente pela saliva antes do intestino",
+    "Lipossolúveis são estocadas no fígado; a proteção citada no texto é pré-absortiva (degradação ruminal) ou por competição no intestino."
+   ],
+   [
+    "Porque a biota ruminal transforma o retinol excedente em vitamina D3 para evitar calcificação renal",
+    "Rúmen degrada vitamina A em reações bioquímicas (Parish & Rhinehart, 2008), não a converte em D3."
+   ]
+  ],
+  "pista": "Ação protetora do rúmen (Berchielli; Parish & Rhinehart) e competição absortiva (NRC, 1987).",
+  "outro": "Se a pergunta fosse sobre a vitamina mais tóxica entre as lipossolúveis, a resposta seria a vitamina D (hipercalcemia e calcificação tecidual).",
+  "ref": "Seção 8.1 (págs. 9–10)"
+ },
+ "I3": {
+  "t": "I",
+  "ang": "Armadilha",
+  "q": "Um aluno afirma: 'As folhas verdes fornecem vitamina A pré-formada em alta concentração, e qualquer carotenoide medido na análise bromatológica equivale 1:1 à atividade de vitamina A'. Onde estão os dois erros?",
+  "ok": "Plantas têm só precursores (não vitamina A), e apenas o β-caroteno converte 100% — xantofila não converte nada",
+  "er": [
+   [
+    "Plantas têm vitamina A pronta somente nos grãos de milho, e todos os carotenos convertem-se em 100% salvo α-caroteno com 80%",
+    "Nem grãos têm vitamina A pronta, nem α-caroteno converte 80% (é 53%)."
+   ],
+   [
+    "Folhas verdes fornecem retinol puro apenas na forma esterificada, enquanto β-caroteno converte 53% e xantofila 57%",
+    "Vitamina A não ocorre nas plantas; β-caroteno é 100%, criptoxantina 57% e xantofila 0%."
+   ],
+   [
+    "Ruminantes não conseguem converter β-caroteno vegetal, dependendo sempre de suplementação sintética de xantofila",
+    "É exatamente o oposto: β-caroteno converte-se 100% em vitamina A, enquanto a xantofila não tem atividade pró-vitamínica A."
+   ]
+  ],
+  "pista": "Distinção entre vitamina pré-formada vs. provitaminas carotenoicas e seus rendimentos desiguais.",
+  "outro": "Se a dúvida fosse sobre a vitamina B12, ela nem sequer possui precursor vegetal — só ocorre em alimentos de origem animal ou síntese microbiana.",
+  "ref": "Seção 8.1 (pág. 9)"
+ },
+ "I4": {
+  "t": "I",
+  "ang": "Inversão",
+  "q": "Quando ocorre deficiência experimental severa de vitamina A nos ruminantes, quais repercussões imunes e reprodutivas são esperadas segundo o artigo?",
+  "ok": "Queda de IgA secretória e resposta T, menor fagocitose, atrofia ovariana, cio fraco e retenção placentária",
+  "er": [
+   [
+    "Aumento exagerado da IgA intestinal e hiperatividade fagocítica dos neutrófilos, com cios curtos e partos múltiplos",
+    "A deficiência prejudica IgA de mucosas, fagocitose de macrófagos/neutrófilos e ovulação/fecundação."
+   ],
+   [
+    "Calcificação dos túbulos renais e das artérias uterinas, seguida de poliúria e parada cardíaca aguda",
+    "Hipercalcemia e calcificação de tecidos moles são sinais clássicos da toxicidade por vitamina D."
+   ],
+   [
+    "Hemorragias internas espontâneas por queda abrupta de protrombina hepática, mantendo intacta a função retiniana",
+    "Hemorragia por queda de protrombina pertence à deficiência de vitamina K; vit A atinge a retina (cegueira noturna)."
+   ]
+  ],
+  "pista": "Tema dado (carência de vitamina A); pede efeitos imunológicos e reprodutivos específicos.",
+  "outro": "Se a carência descrita causasse distrofia muscular esquelética e cardíaca em bezerros sem cegueira noturna, o quadro apontaria para vitamina E.",
+  "ref": "Seção 8.1 (pág. 9)"
+ },
+ "I5": {
+  "t": "I",
+  "ang": "Ponte",
+  "ponte": "Vitamina A ↔ Função antioxidante e carência no campo",
+  "q": "Por que mesmo em pastagens de baixa qualidade raramente se veem os sinais clínicos graves da carência experimental de vitamina A, embora sua deficiência afete macrófagos, neutrófilos e IgA?",
+  "ok": "Teores circulantes mínimos em pasto costumam evitar sinais severos, enquanto falhas imunes sutis já ocorrem",
+  "er": [
+   [
+    "Porque a microbiota ruminal sintetiza vitamina A ativa diretamente a partir da celulose durante períodos de seca prolongada",
+    "Bactérias do rúmen não sintetizam vitamina A; o texto destaca que teores circulantes residuais costumam evitar quadros extremos."
+   ],
+   [
+    "Porque em pastagens pobres a xantofila substitui 100% a vitamina A na proteção de mucosas e síntese de rodopsina",
+    "Xantofila não se converte em vitamina A; os sinais severos vêm de condições experimentais muito extremas."
+   ],
+   [
+    "Porque o gado a pasto estoca vitamina A na pele via raios UV, igual ao colecalciferol, dispensando carotenos",
+    "Síntese cutânea por UV é exclusiva da vitamina D3; vitamina A depende de carotenoides/reservas hepáticas."
+   ]
+  ],
+  "pista": "Conecta a clínica experimental severa (NRC, 1996) e imunidade (IgA/T-dependente) à observação de campo (pág. 9).",
+  "outro": "Se o animal estivesse confinado por longo período com feno muito velho sem pasto verde, as reservas hepáticas cairiam e o risco clínico subiria.",
+  "ref": "Seção 8.1 (pág. 9)"
+ },
+ "J1": {
+  "t": "J",
+  "ang": "Identificação",
+  "q": "Um composto lipofílico tem origem na irradiação UV do 7-deidrocolesterol epidérmico (ligando-se a α-globulina até o fígado) ou nos vegetais secos ao sol, atuando na forma hormonal ativa 1,25-(OH)2 para elevar Ca e P sob influência da paratireoide. Qual é ele?",
+  "ok": "Vitamina D (D2 vegetal e D3 animal/colecalciferol)",
+  "er": [
+   [
+    "Vitamina A (retinol e ácido retinoico sintetizados na epiderme sob irradiação UV)",
+    "Vitamina A não se forma na pele por raios UV sobre 7-deidrocolesterol nem regula Ca/P com PTH."
+   ],
+   [
+    "Vitamina E (α-tocoferol convertido a forma ativa nos rins pelo paratormônio)",
+    "Vitamina E é antioxidante de membrana derivado do tocol vegetal, sem ação hormonal fosfocálcica."
+   ],
+   [
+    "Vitamina K2 (menaquinona epidérmica ligada à protrombina sanguínea)",
+    "Vitamina K2 é bacteriana e atua como cofator da carboxilação de glutamato na coagulação."
+   ]
+  ],
+  "pista": "7-deidrocolesterol + UV + α-globulina + 1,25-(OH)2 + Ca/P + paratireoide.",
+  "outro": "Se a pergunta focasse a molécula sintética ligada ao trevo doce e à coagulação, seria a menadiona/vitamina K.",
+  "ref": "Seção 8.2 (pág. 10)"
+ },
+ "J2": {
+  "t": "J",
+  "ang": "Princípio",
+  "q": "Por que a revisão afirma que a vitamina D deveria ser considerada um hormônio (semelhante aos esteroides) e por que ela ocupa o posto de vitamina mais tóxica?",
+  "ok": "É sintetizada num tecido e liberada na circulação; por acumular-se e metabolizar-se lentamente, causa hipercalcemia",
+  "er": [
+   [
+    "Porque é produzida pelas bactérias ruminais em formato peptídico e destrói hemácias levando a porfirinúria imediata",
+    "Hemólise e porfirinúria pertencem ao excesso de vitamina K; a D é lipofílica esteroidal (não peptídica) e gera hipercalcemia."
+   ],
+   [
+    "Porque sua absorção pelo intestino depende de proteína R salivar e seu excesso provoca hemorragia cerebral aguda",
+    "Proteína R é da vitamina B12 e hemorragia refere-se à deficiência de K; o excesso de D calcifica rins e artérias."
+   ],
+   [
+    "Porque atua exclusivamente como coenzima mitocondrial hidrossolúvel, saturando os rins com excreção ácida",
+    "Vitamina D é lipossolúvel (armazenada e de lenta eliminação), razão exata de sua elevada toxicidade acumulativa."
+   ]
+  ],
+  "pista": "Critério hormonal (síntese endógena + liberação circulatória) e mecanismo de toxicidade (acúmulo lipossolúvel + hipercalcemia).",
+  "outro": "Se a justificativa fosse a baixa toxicidade apesar de lipossolúvel, o exemplo contrastante do texto seria a vitamina E (ou a A por degradação ruminal).",
+  "ref": "Seção 8.2 (pág. 10)"
+ },
+ "J3": {
+  "t": "J",
+  "ang": "Armadilha",
+  "q": "Um veterinário usa doses altíssimas de vitamina D em vacas leiteiras contra paresia da parturiente assumindo que, como previne a doença e o excesso sai rápido na urina, não há perigo clínico. Que riscos descritos no artigo desmentem isso?",
+  "ok": "Altas doses podem até induzir a doença/toxidez, levando à hipercalcemia, calcificação de rins e artérias e parada cardíaca",
+  "er": [
+   [
+    "O único risco seria a coloração amarelada da gordura corporal sem afetar órgãos internos nem a função cardíaca",
+    "O texto lista calcificação dos tecidos moles (rins e artérias), letargia, poliúria, estupor e parada cardíaca."
+   ],
+   [
+    "Excesso de vitamina D sai totalmente na urina em poucas horas, podendo causar no máximo diarreia leve em bezerras",
+    "Como lipossolúvel, é lentamente metabolizada e armazenada no corpo, sendo classificada como a mais tóxica."
+   ],
+   [
+    "Doses elevadas causam exclusivamente cegueira noturna e pelos ouriçados por antagonismo direto com a proteína R",
+    "Cegueira noturna e pelos ouriçados são deficiência de vitamina A; D gera hipercalcemia tóxica."
+   ]
+  ],
+  "pista": "Hodnett et al. (1992) vs. doses altas tradicionais (toxidez/indução) e perfil da mais tóxica das vitaminas.",
+  "outro": "Se a combinação usada fosse 25-OH D3 + 1-hidroxicolecalciferol descrita por Hodnett et al. (1992), a incidência de paresia caiu de 33% para 8%.",
+  "ref": "Seção 8.2 (pág. 10)"
+ },
+ "J4": {
+  "t": "J",
+  "ang": "Inversão",
+  "q": "Em rebanhos criados totalmente confinados sem exposição solar e em fases críticas (terço final da gestação, lactação e crescimento), que quadro clínico surge caso falte vitamina D?",
+  "ok": "Raquitismo (inibição do crescimento), respiração acelerada em bezerros, articulações inchadas em vacas e infertilidade",
+  "er": [
+   [
+    "Dermatite escamosa nas orelhas, poliencefalomalácia e opistótono característico após dietas ricas em enxofre",
+    "Dermatite escamosa é de pantotênico (B5) e PEM/opistótono pertencem à tiamina (B1)."
+   ],
+   [
+    "Doença do músculo branco com necrose difusa das fibras cardíacas e elevação enzimática muscular sérica",
+    "Doença do músculo branco é a manifestação clássica de carência de vitamina E (e Selênio)."
+   ],
+   [
+    "Casco mole e quebradiço sem camada granular no bulbo, levando à queda imediata da produção de proteína do leite",
+    "Alterações de dureza e camada granular do casco correspondem à carência de biotina."
+   ]
+  ],
+  "pista": "Tema dado (deficiência de vitamina D em confinamento); pede manifestação clínica.",
+  "outro": "Se os animais fossem criados a pasto sob sol no Brasil (mesmo no inverno do Sul), a carência clínica de D seria extremamente rara.",
+  "ref": "Seção 8.2 (pág. 10)"
+ },
+ "J5": {
+  "t": "J",
+  "ang": "Ponte",
+  "ponte": "Vitamina D no campo (Seção 4 vs. 8.2) ↔ Risco clínico",
+  "q": "Integrando a síntese vegetal de D2 no feno (Rodada 1) com a síntese cutânea de D3 (Seção 8.2), por que a carência clínica de vitamina D é rara no Brasil, mas aparece em confinamento fechado?",
+  "ok": "No Brasil o sol o ano todo garante D3 cutânea (além de D2 no feno ao sol), ausente no confinamento sem UV",
+  "er": [
+   [
+    "Porque as pastagens brasileiras verdes contêm teores altíssimos de D3 antes do corte, que desaparecem apenas quando fenadas ao sol",
+    "Forragens verdes têm teor baixo de D; é o corte ao sol (ou senescência) que eleva D2, e o sol na pele gera D3."
+   ],
+   [
+    "Porque o gado confinado recebe muita silagem rica em vitamina D (1156 mg/kg MS), sofrendo apenas competição com biotina",
+    "1156 mg/kg MS é no feno, não na silagem (440); o problema no confinamento fechado é justamente falta de luz solar/UV."
+   ],
+   [
+    "Porque bactérias ruminais só sintetizam vitamina D3 em animais soltos a pasto que ingerem cobalto no solo",
+    "Vitamina D3 resulta da ação da luz UV sobre 7-deidrocolesterol da epiderme animal, não de bactérias ruminais."
+   ]
+  ],
+  "pista": "Une D2 vegetal por UV (Tab. 2/Seção 4) + D3 epidérmica por UV + clima brasileiro vs. confinamento fechado.",
+  "outro": "Se o animal confinado estivesse privado de sol E de pasto verde, faltariam também β-caroteno e α-tocoferol se a dieta fosse de grãos e feno velho.",
+  "ref": "Seções 3.3, 3.4 e 8.2 (págs. 4–5 e 10)"
+ },
+ "K1": {
+  "t": "K",
+  "ang": "Identificação",
+  "q": "Um antioxidante derivado do tocol (tendo α-tocoferol como forma mais ativa) inibe a peroxidação de ácidos graxos poli-insaturados nas membranas, atua sinergicamente com Selênio na proteção de leucócitos contra mastite e previne necrose de fibras musculares ('doença do músculo branco'). Qual vitamina é essa?",
+  "ok": "Vitamina E",
+  "er": [
+   [
+    "Vitamina C (ácido ascórbico), principal derivado do tocol que previne mastite em sinergia com cobalto",
+    "Vitamina C é hidrossolúvel derivada da glicose, não derivado do tocol; o par da mastite/músculo branco é E + Selênio."
+   ],
+   [
+    "Vitamina A (retinol), antioxidante de membranas cujo déficit provoca a doença do músculo branco em bezerros",
+    "Doença do músculo branco (distrofia muscular) é deficiência clássica de vitamina E."
+   ],
+   [
+    "Vitamina K1 (filoquinona), que protege macrófagos ao formar α-tocoferol-quinona excretada na bile",
+    "α-tocoferol-quinona é o metabólito de oxidação da vitamina E, não da vitamina K1."
+   ]
+  ],
+  "pista": "Tocol / α-tocoferol + Selênio + mastite + doença do músculo branco.",
+  "outro": "Se a associação mineral envolvesse anel corina com 4,5% de cobalto e síntese de propionato/metionina, seria a vitamina B12.",
+  "ref": "Seção 8.3 (págs. 10–11)"
+ },
+ "K2": {
+  "t": "K",
+  "ang": "Princípio",
+  "q": "Por que a deficiência de vitamina E prejudica simultaneamente a defesa contra bactérias (como na mastite) e agrava infecções virais segundo os estudos citados na Seção 8.3?",
+  "ok": "Reduz a atividade fagocítica (macrófagos/neutrófilos não resistem aos tóxicos da lise) e favorece mutação viral para maior virulência",
+  "er": [
+   [
+    "Porque a vitamina E bloqueia a transcrição do DNA bacteriano no rúmen e atua como único cofator da protrombina sanguínea",
+    "Cofator da protrombina é vitamina K; na imunidade, E protege fagócitos (com Se) e evita aumento de virulência viral (Beck)."
+   ],
+   [
+    "Porque sem α-tocoferol ocorre imediata queda da produção de Fator Intrínseco gástrico e anemia megaloblástica",
+    "Fator Intrínseco liga-se à vitamina B12 no íleo, sem relação com mastite ou virulência descritas por Beck."
+   ],
+   [
+    "Porque a falta de vitamina E impede a calcificação alveolar da glândula mamária pelo hormônio 1,25-(OH)2 D3",
+    "Vitamina E não promove calcificação mamária; reduz em 42,2% a infecção intramamária por proteção antioxidante/fagocítica."
+   ]
+  ],
+  "pista": "Badwey & Karnovsky (sobrevivência à lise na fagocitose) + Smith & Conrad/Weiss (mastite) + Beck (fenótipo viral).",
+  "outro": "Se a pergunta fosse sobre excreção e risco de superdosagem, a oxidação a α-tocoferol-quinona/hidroquinona torna o excesso de vit E quase livre de toxidez.",
+  "ref": "Seção 8.3 (págs. 10–11)"
+ },
+ "K3": {
+  "t": "K",
+  "ang": "Armadilha",
+  "q": "Um estudante lê sobre história nutricional e afirma: 'Assim como em hamsters e cobaias, a principal indicação específica da vitamina E nos ruminantes é evitar infertilidade direta por falha reprodutiva primária, além de possuir altíssima toxicidade como a vitamina D'. Qual a correção exata?",
+  "ok": "Essa ação reprodutiva direta é de espécies como hamster/cobaia (não ruminantes), e seu excesso quase não causa toxidez",
+  "er": [
+   [
+    "Em ruminantes a função reprodutiva direta é ainda mais forte que em hamsters, porém sua toxicidade iguala-se à da vitamina K",
+    "Church (1977) ressalta exatamente o oposto: a ligação estrita à reprodução é de hamster/cobaia, não de ruminantes."
+   ],
+   [
+    "Hamsters não respondem à vitamina E na reprodução, enquanto em bovinos qualquer excesso acima do NRC causa hipercalcemia renal",
+    "Hipercalcemia renal é da vitamina D; o artigo registra que o excesso de vitamina E não acarreta maiores problemas de toxidez."
+   ],
+   [
+    "A vitamina E atua nos ruminantes apenas como coenzima mitocondrial de aminoácidos, sendo rapidamente excretada na urina",
+    "Atua como antioxidante lipofílico de membranas e é oxidada a α-tocoferol-quinona / hidroquinona, sem papel exclusivo de aminoácidos."
+   ]
+  ],
+  "pista": "Church (1977) sobre espécies modelo vs. ruminantes + perfil de baixa toxicidade ao final da Seção 8.3.",
+  "outro": "Se a comparação de toxicidade fosse entre vitamina D e vitamina K em excesso, D provoca hipercalcemia/calcificação e K provoca hemólise e porfirinúria.",
+  "ref": "Seção 8.3 (págs. 10–11)"
+ },
+ "K4": {
+  "t": "K",
+  "ang": "Inversão",
+  "q": "Quando bezerros recebem dietas severamente deficientes em vitamina E (ou Se), que quadro histopatológico e bioquímico precoce anuncia a 'doença do músculo branco'?",
+  "ok": "Hipercelularidade e necrose de fibras musculares, com aumento sérico de enzimas de lesão muscular",
+  "er": [
+   [
+    "Retardo no tempo de coagulação sanguínea por queda de protrombina e hemorragias internas subcutâneas",
+    "Queda de protrombina e retardo de coagulação definem a carência de vitamina K."
+   ],
+   [
+    "Descoordenação nervosa progressiva com cegueira noturna, pelos crespos e atrofia de ovários no pós-desmame",
+    "Cegueira noturna, pelos ouriçados e atrofia ovariana caracterizam a carência de vitamina A."
+   ],
+   [
+    "Omissão da camada granular do bulbo do casco e redução dos filamentos estabilizantes no córium córneo",
+    "Falha da camada granular e filamentos do casco pertencem à deficiência de biotina."
+   ]
+  ],
+  "pista": "Tema dado (deficiência de vit E / músculo branco); pede achado precoce em bezerros.",
+  "outro": "Se o parâmetro avaliado fosse a suplementação preventiva de novilhas/vacas acima do NRC (1989) com Se, o resultado seria redução de ~40–50% na duração da mastite.",
+  "ref": "Seção 8.3 (pág. 11)"
+ },
+ "K5": {
+  "t": "K",
+  "ang": "Ponte",
+  "ponte": "Vitamina E (Seção 8.3) ↔ Saúde mamária e exigência seca/lactante (Tab. 9)",
+  "q": "Como os achados de Smith & Conrad (1987) e Weiss et al. (1990) (Seção 8.3) iluminam a justificativa do NRC (2001) (Tabela 9) para vitamina E em vacas lactantes e secas?",
+  "ok": "Níveis elevados de E e Se reduzem mastite clínica (~42%), embasando 0,8 UI/kg PV (saúde mamária) e 1,6 (imunidade seca)",
+  "er": [
+   [
+    "Os estudos mostram que vitamina E aumenta a incidência de mastite clínica na secagem, levando o NRC a zerar a dose em vacas secas",
+    "Os dados mostram relação negativa com mastite (queda de 42,2%) e a Tabela 9 dobra a exigência em vacas secas (1,6 vs. 0,8 UI/kg PV)."
+   ],
+   [
+    "Provam que apenas o selênio protege o úbere, dispensando completamente qualquer inclusão de α-tocoferol acima de 0,1 UI/kg PV",
+    "Ambos trabalham juntos (E na dieta + Se plasmático) protegendo leucócitos e reduzindo em 40–50% a duração das infecções."
+   ],
+   [
+    "Mostram que a suplementação de E acima do NRC dobra a toxicidade hepática e reduz o β-caroteno do colostro em 50%",
+    "Vitamina E não gera problema expressivo de toxidez e melhora a defesa intramamária."
+   ]
+  ],
+  "pista": "Liga dados experimentais de mastite (Seção 8.3) aos valores numéricos da Tabela 9 (pág. 9).",
+  "outro": "Se o nutriente ligado à redução de outra síndrome periparturiente (paresia da parturiente de 33% para 8%) fosse o foco, seria a vitamina D3 ativa.",
+  "ref": "Seções 7 e 8.3 e Tabela 9 (págs. 9 e 11)"
+ },
+ "L1": {
+  "t": "L",
+  "ang": "Identificação",
+  "q": "Agrupada em séries natural vegetal (com uma dupla ligação na cadeia lateral), bacteriana (com duplas ligações periódicas e mais relevante para ruminantes) e sintética (sem cadeia lateral, núcleo 2-metil-1,4-naftoquinona), qual vitamina atua como cofator carboxilando ácido glutâmico para formar protrombina?",
+  "ok": "Vitamina K (K1 filoquinona, K2 menaquinona, K3 menadiona)",
+  "er": [
+   [
+    "Vitamina E (α, β e γ-tocoferol de cloroplastos e óleos vegetais)",
+    "Tocoferóis não carboxilam glutamato para síntese de protrombina nem se dividem em filo/mena/menadiona."
+   ],
+   [
+    "Vitamina B9 (ácido fólico, pteridina, PABA e resíduo glutâmico)",
+    "Ácido fólico possui resíduo glutâmico na própria estrutura para doar grupos 1C, não para coagulação."
+   ],
+   [
+    "Vitamina D (ergocalciferol, colecalciferol e calcitriol sintético)",
+    "Formas da vitamina D atuam na homeostase de Ca e P, sem cadeia naftoquinona anti-hemorrágica."
+   ]
+  ],
+  "pista": "Filoquinona/menaquinona/menadiona + carboxilação de glutamato + protrombina.",
+  "outro": "Se a menaquinona (K2) for comparada à K1, é a K2 que mais pesa nos ruminantes pela ampla síntese ruminal.",
+  "ref": "Seção 8.4 (pág. 11)"
+ },
+ "L2": {
+  "t": "L",
+  "ang": "Princípio",
+  "q": "Por que a deficiência espontânea de vitamina K é rara nos ruminantes, e por que a intoxicação clássica por trevo doce mofado não representa um problema no Brasil segundo o artigo?",
+  "ok": "Bactérias produzem muita K2 (e há K1 no pasto); cumarol vem de fungos no trevo doce, ausente no Brasil",
+  "er": [
+   [
+    "Porque o gado zebuíno converte diretamente β-caroteno em menadiona no fígado e o cumarol só ataca monogástricos sem rúmen",
+    "Ruminantes obtêm K2 por bactérias ruminais (e K1 no pasto), mas cumarol reduz protrombina também em ruminantes — só não há cultivo da planta aqui."
+   ],
+   [
+    "Porque a menaquinona é absorvida no rúmen via proteína R e o trevo doce brasileiro tem excesso de selênio neutralizador de cumarol",
+    "Proteína R é da B12; Berchielli (2006) justifica simplesmente que não há cultivo de trevo doce no Brasil."
+   ],
+   [
+    "Porque o ácido fólico substitui totalmente a protrombina sanguínea nos bovinos tropicais mesmo sob fungos produtoras de cumarol",
+    "Vitamina K é insubstituível na síntese de protrombina e fatores de coagulação."
+   ]
+  ],
+  "pista": "Dupla proteção natural (K2 ruminal + K1 vegetal) + ausência de cultivo de trevo doce no Brasil.",
+  "outro": "Se a pergunta fosse qual é a consequência quando um bovino ingere excesso de vitamina K suplementar, surgiria hemólise e porfirinúria.",
+  "ref": "Seção 8.4 (pág. 11)"
+ },
+ "L3": {
+  "t": "L",
+  "ang": "Armadilha",
+  "q": "Um técnico conclui que, como a menaquinona (K2) é produzida pelas bactérias ruminais e a vitamina K é rara em carência, a suplementação exagerada de vitamina K sintética (menadiona) é completamente inócua. Por que essa certeza está errada?",
+  "ok": "O excesso de vitamina K pode provocar hemólise e porfirinúria (segundo Zeoula & Geron, 2006)",
+  "er": [
+   [
+    "Porque todo excesso de vitamina K converte-se em cumarol tóxico dentro do abomaso, causando cegueira noturna imediata",
+    "Cumarol é metabólito fúngico do trevo doce mofado, não produto de conversão endógena da vitamina K."
+   ],
+   [
+    "Porque o excesso de vitamina K bloqueia a síntese de calcitriol e leva à parada cardíaca por hipocalcemia aguda",
+    "Calcificação e parada cardíaca por hipercalcemia pertencem ao excesso de vitamina D; na K, o artigo cita hemólise e porfirinúria."
+   ],
+   [
+    "Porque a vitamina K3 em excesso sai apenas na urina como qualquer hidrossolúvel, mas destrói 100% da biotina ruminal",
+    "Vitamina K é lipossolúvel e o risco citado para seu excesso é hemólise e porfirinúria."
+   ]
+  ],
+  "pista": "Última frase da Seção 8.4 sobre toxicidade da vitamina K.",
+  "outro": "Se a vitamina lipossolúvel avaliada por ausência de problemas graves em excesso fosse outra, o texto aponta esse perfil quase atóxico para a vitamina E.",
+  "ref": "Seção 8.4 (pág. 11)"
+ },
+ "L4": {
+  "t": "L",
+  "ang": "Inversão",
+  "q": "Quando há deficiência funcional de vitamina K ou ingestão de metabólito antagonista (cumarol do trevo doce mofado), que cascata fisiológica se instala no sangue do animal?",
+  "ok": "Cai a protrombina sanguínea, retarda-se o tempo de coagulação e o animal fica sujeito a hemorragias internas",
+  "er": [
+   [
+    "Aumentam a pressão do fluido cérebro-espinhal e a degeneração nervosa central, com convulsões e opistótono",
+    "Pressão do líquido cefalorraquidiano remete à vitamina A; opistótono remete à PEM por deficiência de B1."
+   ],
+   [
+    "Ocorre rápida calcificação de artérias e túbulos renais acompanhada de sede intensa e excesso de micção",
+    "Calcificação de tecidos moles e poliúria definem hipervitaminose D, não deficiência de K."
+   ],
+   [
+    "Aumenta o acúmulo de gordura no fígado por falta de lecitina, levando o animal à fraqueza incapacitante em pé",
+    "Falha de mobilização de gordura hepática por queda de lecitina é quadro de deficiência de colina."
+   ]
+  ],
+  "pista": "Tema dado (deficiência/antagonismo de vitamina K); pede efeito direto sobre coagulação.",
+  "outro": "Se o metabólito antagonista fosse uma tiaminase em dieta rica em enxofre e concentrado, o alvo bloqueado seria a vitamina B1 (levando à PEM).",
+  "ref": "Seção 8.4 (pág. 11)"
+ },
+ "M1": {
+  "t": "M",
+  "ang": "Identificação",
+  "q": "Em bovinos confinados jovens (entre 4 meses e 2 anos) recebendo dietas ricas em concentrado ou elevadas em enxofre, surge um distúrbio nervoso com cegueira, tremores na cabeça e opistótono, incidência de 1–20% e mortalidade de até 100%. Que doença é essa e qual vitamina falta?",
+  "ok": "Poliencefalomalácia (PEM), associada à carência de tiamina (vitamina B1)",
+  "er": [
+   [
+    "Doença do músculo branco, associada à carência de riboflavina (vitamina B2)",
+    "Doença do músculo branco vem de falta de vitamina E/Se; carência de B2 dá anorexia, diarreia e atraso de crescimento."
+   ],
+   [
+    "Cetose clínica pós-parto, associada à carência de riboflavina (FMN e FAD)",
+    "Cetose ocorre no início da lactação e responde à niacina (B3); aqui o quadro jovem/opistótono é PEM por B1."
+   ],
+   [
+    "Paresia da parturiente, associada à deficiência de tiamina pirofosfato",
+    "Paresia da parturiente envolve cálcio/vitamina D em vacas no parto; vacas lactantes são menos afetadas por PEM."
+   ]
+  ],
+  "pista": "Confinado + concentrado + enxofre + 4 meses a 2 anos + opistótono/cegueira + até 100% mortalidade.",
+  "outro": "Se a deficiência envolvesse lesão de casco mole em vacas leiteiras tratável com 20 mg/dia, a vitamina seria a biotina.",
+  "ref": "Seção 9.1.1 (págs. 11–12)"
+ },
+ "M2": {
+  "t": "M",
+  "ang": "Princípio",
+  "q": "Como o metabolismo corporal ativa a vitamina B1 e a vitamina B2 após a absorção intestinal, e por que a riboflavina (B2) não apresenta risco de toxidez em excesso?",
+  "ok": "B1 vira TTP (co-carboxilase) no fígado; B2 vira FMN (mucosa/flavoquinase) e FAD (fígado), e sobras saem rápido na urina",
+  "er": [
+   [
+    "B1 transforma-se em Coenzima A no rúmen por tiaminases e B2 converte-se em NAD no tecido adiposo, saindo pela bile",
+    "Coenzima A é da B5 e NAD é da B3; B1 vira TTP e B2 vira FMN/FAD, com excreção urinária rápida."
+   ],
+   [
+    "Ambas exigem ligação obrigatória ao Fator Intrínseco no íleo e são armazenadas por meses no tecido adiposo sem sair na urina",
+    "Fator Intrínseco e estoque hepático longo pertencem à B12; B2 sai rapidamente na urina, evitando toxidez."
+   ],
+   [
+    "B1 ativa-se como piridoxal fosfato nas hemácias e B2 entra como 5-metiltetrahidrofólico na mucosa duodenal",
+    "Piridoxal fosfato é B6 e 5-metiltetrahidrofólico é ácido fólico (B9)."
+   ]
+  ],
+  "pista": "Ativação hepática/mucosa de B1 (TTP/co-carboxilase) vs. B2 (flavoquinase→FMN→FAD) e excreção renal.",
+  "outro": "Se a enzima intestinal hidrolisasse poliglutamatos antes do transporte ativo para formar 5-metiltetrahidrofólico, seria o ácido fólico (B9).",
+  "ref": "Seções 9.1.1 e 9.1.2 (págs. 11–12)"
+ },
+ "M3": {
+  "t": "M",
+  "ang": "Armadilha",
+  "q": "Um veterinário descarta poliencefalomalácia num garrote de 1 ano confinado alegando: 'Ruminante com rúmen funcional produz tiamina suficiente, e além disso o enxofre alto na ração protege a B1 melhor que em vacas em lactação'. Que duplo equívoco há aqui?",
+  "ok": "Queda de pH ruminal, tiaminases e enxofre alto geram PEM em jovens de 4m–2 anos (lactantes sofrem menos)",
+  "er": [
+   [
+    "Na verdade apenas vacas em alta lactação desenvolvem PEM por dietas ricas em enxofre, nunca garrotes entre 4 meses e 2 anos",
+    "O texto afirma exatamente o oposto: atinge principalmente jovens de 4 meses a 2 anos, e vacas em lactação parecem menos afetadas."
+   ],
+   [
+    "O enxofre protege sim a tiamina de tiaminases, mas só quando o animal não recebe riboflavina suplementar na água",
+    "Gould (1998) e McDowell (2000) associam diretamente dietas altas em enxofre e tiaminases à deficiência de B1 e PEM."
+   ],
+   [
+    "A tiamina é 100% degradada pela luz UV dentro do rúmen fechado, sendo impossível qualquer produção microbiana em bovinos",
+    "O animal saudável sintetiza quantidades adequadas de B1; o colapso vem de queda brusca de pH, tiaminases e enxofre alto."
+   ]
+  ],
+  "pista": "Condições que quebram a autossuficiência ruminal de B1 + perfil etário real da PEM.",
+  "outro": "Se a condição metabólica acometesse cerca de 50% das vacas de alta produção no início da lactação respondendo a 10–12 g/dia de vitamina B, seria cetose e niacina.",
+  "ref": "Seção 9.1.1 (pág. 12)"
+ },
+ "M4": {
+  "t": "M",
+  "ang": "Ponte",
+  "ponte": "Degradabilidade/síntese ruminal ↔ Falha clínica de B1 na PEM",
+  "q": "Relacionando a Tabela 5 (48% de degradabilidade ruminal de B1 e síntese de 8,3 mg/kg MOD) à Seção 9.1.1, como o manejo nutricional de confinamento com alto concentrado rompe o equilíbrio normal da tiamina?",
+  "ok": "Queda brusca do pH ruminal, tiaminases e alto enxofre reduzem a B1 ruminal abaixo da demanda, precipitando PEM",
+  "er": [
+   [
+    "Porque dietas de alto concentrado zeram a absorção passiva intestinal de B2 e forçam a conversão toda da B1 em FMN",
+    "B2 não rouba B1; o mecanismo da PEM liga queda de pH ruminal, tiaminases e excesso de enxofre à falta de B1/TTP."
+   ],
+   [
+    "Porque em pH ruminal baixo a vitamina B1 passa a ter 0% de degradabilidade como a biotina, gerando intoxicação hepática aguda",
+    "Pelo contrário, queda brusca de pH e presença de tiaminases reduzem a concentração de B1 disponível, causando deficiência (PEM)."
+   ],
+   [
+    "Porque o amido elevado do concentrado exige 100% de cobalto para B1, desviando toda tiamina para produção de metionina",
+    "Cobalto participa da síntese de B12 (metionina/propionato), não sendo cofator da estrutura da tiamina."
+   ]
+  ],
+  "pista": "Une a estabilidade intermediária normal em bezerros saudáveis (Tab. 5) aos gatilhos da PEM em confinamento.",
+  "outro": "Se o gatilho ruminal fosse deficiência de cobalto no solo afetando Prevotella ruminicola, o bloqueio recairia sobre vitamina B12 e acúmulo de succinato.",
+  "ref": "Seções 6.8 e 9.1.1 e Tabela 5 (págs. 7 e 12)"
+ },
+ "N1": {
+  "t": "N",
+  "ang": "Identificação",
+  "q": "É a vitamina hidrossolúvel mais adicionada em vacas leiteiras: atua como coenzima NAD na detoxificação hepática de amônia e cetonas, reduzindo β-hidroxibutirato de 1,24 para 0,74 mmol/L em 5 dias (com 10 g/dia) e revertendo depressão de proteína do leite induzida por gordura. Qual é ela?",
+  "ok": "Niacina (vitamina B3 / nicotinamida)",
+  "er": [
+   [
+    "Ácido pantotênico (vitamina B5), precursor direto de NAD para reverter cetose subclínica e clínica",
+    "B5 forma a Coenzima A (transporte de grupo acil), enquanto quem forma NAD/NADP e trata cetose é a B3."
+   ],
+   [
+    "Biotina (vitamina H), frequentemente suplementada em 10–12 g/dia para baixar β-hidroxibutirato no pós-parto",
+    "Biotina atua nos cascos/leite na dose de 20 mg/dia; doses de 10–12 g/dia contra cetose são de niacina/ácido nicotínico."
+   ],
+   [
+    "Colina (vitamina B7), usada em 10 g/dia por ser precursora endógena sintetizada a partir do excesso de triptofano",
+    "Quem pode ser sintetizada a partir do triptofano em excesso é a niacina (B3); colina forma lecitina e acetilcolina."
+   ]
+  ],
+  "pista": "Hidrossolúvel mais usada em leiteiras + NAD + cetose (1,24→0,74 mmol/L) + proteína do leite.",
+  "outro": "Se a coenzima formada fosse Coenzima A e a carência em bezerros causasse dermatite escamosa e incapacidade de ficar em pé, seria ácido pantotênico (B5).",
+  "ref": "Seção 9.1.3 (pág. 12)"
+ },
+ "N2": {
+  "t": "N",
+  "ang": "Princípio",
+  "q": "Como balanço específico de aminoácidos modula a exigência de niacina (B3) e qual é o papel bioquímico central da forma ativa do ácido pantotênico (B5)?",
+  "ok": "Excesso de triptofano reduz a demanda de B3 (leucina/arginina/glicina elevam); B5 forma CoA para transferir grupo acil",
+  "er": [
+   [
+    "Excesso de leucina e glicina converte-se diretamente em niacina, enquanto B5 forma FAD para transportar oxigênio nas hemácias",
+    "Leucina, arginina e glicina AUMENTAM a necessidade de niacina (só triptofano em excesso é precursor), e B5 forma Coenzima A."
+   ],
+   [
+    "Triptofano aumenta em dobro o gasto de B3 na urina, e B5 atua apenas como cofator da γ-glutamilcarboxipeptidase intestinal",
+    "É o inverso para triptofano (reduz requerimento como precursor); γ-glutamilcarboxipeptidase hidrolisa ácido fólico."
+   ],
+   [
+    "Arginina substitui completamente a Coenzima A no fígado, dispensando B5 em bezerros mesmo com diarreia e dermatite",
+    "Coenzima A tem no ácido pantotênico sua peça essencial para acetilações, síntese de AG/colesterol e oxidação de piruvato."
+   ]
+  ],
+  "pista": "Precursor triptofano vs. antagonistas/exigência (Leu, Arg, Gly) na B3; CoA transportando acil na B5.",
+  "outro": "Se a pergunta fosse sobre os aminoácidos envolvidos na remetilação pela vitamina B12, seria a transformação de homocisteína em metionina.",
+  "ref": "Seções 9.1.3 e 9.1.4 (pág. 12)"
+ },
+ "N3": {
+  "t": "N",
+  "ang": "Armadilha",
+  "q": "Em rebanho de alta produção, um técnico suplementa niacina em vacas cetóticas esperando apenas aumento direto de todos os ácidos graxos curtos e médios do leite e redução da proteína láctea por competição energética. Que efeitos reais citados no artigo contrariam isso?",
+  "ok": "Niacina diminuiu AG de cadeia curta/média no leite (elevando monoinsaturados) e corrigiu depressão da proteína do leite",
+  "er": [
+   [
+    "Na verdade a niacina agrava o β-hidroxibutirato acima de 1,24 mmol/L quando administrada em doses de 10 a 12 g por dia",
+    "Flachowsky et al. (1988) e Fronk & Schultz (1979) mostram queda de 1,24 para 0,74 mmol/L e reversão de cetose."
+   ],
+   [
+    "A suplementação de niacina não muda ácidos graxos do leite, atuando exclusivamente na melhora da dureza do casco",
+    "Dureza e conformação do casco correspondem à biotina; Klippel et al. (1993) mostraram mudança no perfil lipídico do leite com niacina."
+   ],
+   [
+    "A niacina funciona apenas por via injetável, porque sofre 100% de destruição se fornecida com gordura suplementar na dieta",
+    "A via dos ensaios com vacas cetóticas é oral (10–12 g/dia) e inclusive corrige depressão de proteína do leite induzida por gordura."
+   ]
+  ],
+  "pista": "Klippel et al. (1993) (↓curtos/médios, ↑monoinsaturados) + Driver/Cervantes (corrige depressão proteica por gordura).",
+  "outro": "Se o suplemento aumentasse tanto produção quanto proteína do leite junto com redução de lesões podais na dose de 20 mg/dia, seria a biotina.",
+  "ref": "Seção 9.1.3 (pág. 12)"
+ },
+ "N4": {
+  "t": "N",
+  "ang": "Inversão",
+  "q": "Quando faltam severamente niacina (B3) ou ácido pantotênico (B5) em ruminantes jovens/suscetíveis, que quadro clínico agudo diferencia especialmente a carência de B5 da morte súbita desidratante descrita na B3?",
+  "ok": "Na carência de B5 surgem dermatite escamosa, fraqueza com incapacidade de ficar em pé e convulsões (além de anorexia/diarreia)",
+  "er": [
+   [
+    "Na falta de B5 ocorre apenas cegueira noturna notável com queda do nível plasmático de vitamina D ativa",
+    "Cegueira noturna é da vitamina A e calcitriol vem da vitamina D; Zeoula & Geron (2006) descrevem dermatite escamosa e convulsões na B5."
+   ],
+   [
+    "A falta de B5 manifesta-se apenas por casco mole e quebradiço sem qualquer comprometimento nervoso ou cutâneo",
+    "Casco mole é marca de biotina; a B5 cursa com dermatite escamosa, anorexia, diarreia, prostração e convulsões em bezerros."
+   ],
+   [
+    "A falta de B3 provoca hipercalcemia renal com calcificação arterial, sem nunca causar diarreia ou anorexia repentina",
+    "Na deficiência de B3 ocorrem anorexia repentina, diarreias severas, desidratação e morte súbita."
+   ]
+  ],
+  "pista": "Tema dado (deficiências de B3 e B5); diferencia sinais clínicos característicos em Zeoula & Geron (2006).",
+  "outro": "Se a paralisia envolvesse especificamente o trem posterior de bezerros junto à redução da excreção urinária da própria vitamina, seria biotina.",
+  "ref": "Seções 9.1.3 e 9.1.4 (pág. 12)"
+ },
+ "O1": {
+  "t": "O",
+  "ang": "Identificação",
+  "q": "Possui oito isômeros possíveis, mas somente a forma D atua biologicamente; sua ausência causa omissão da camada granular da epiderme do bulbo do casco e redução dos filamentos estabilizantes do córium, produzindo casco mole e quebradiço em vacas leiteiras. Qual é essa vitamina?",
+  "ok": "Biotina (vitamina H)",
+  "er": [
+   [
+    "Piridoxina (vitamina B6), cujo único isômero ativo D previne a omissão da camada granular do casco",
+    "B6 tem três formas vitâmeras ativas (piridoxina, piridoxal, piridoxamina) ligadas a aminoácidos; os 8 isômeros e casco são da biotina."
+   ],
+   [
+    "Ácido pantotênico (vitamina B5), que atua no metabolismo de propionato prevenindo casco mole a 20 mg/dia",
+    "Embora B5 e biotina envolvam metabolismo energético/acil, os 8 isômeros e a arquitetura do casco (20 mg/dia) são da biotina."
+   ],
+   [
+    "Colina (vitamina B7), única hidrossolúvel absorvida intacta no terço inicial do delgado com efeito na queratinização",
+    "Colina é absorvida no jejuno e íleo pela bomba Na+/K+ e forma lecitina/acetilcolina, não queratina do casco."
+   ]
+  ],
+  "pista": "8 isômeros (só D-biotina ativa) + camada granular do bulbo + filamentos no córium + casco mole.",
+  "outro": "Se as três formas químicas citadas fossem álcool (piridoxol), aldeído (piridoxal) e amina (piridoxamina), seria a vitamina B6.",
+  "ref": "Seção 9.1.6 (pág. 13)"
+ },
+ "O2": {
+  "t": "O",
+  "ang": "Princípio",
+  "q": "Quais processos celulares caracterizam a forma ativa da vitamina B6 (piridoxal fosfato) e como se dá sua absorção intestinal em comparação ao que ocorre na mucosa?",
+  "ok": "Atua em transaminação, descarboxilação e metabolismo de AA/Fe na hemoglobina; entra passiva no jejuno/íleo sem transportador nem fosforilação prévia",
+  "er": [
+   [
+    "Forma NAD para glicólise anaeróbica e precisa ser ligada ao Fator Intrínseco e proteína R antes de entrar ativamente no duodeno",
+    "NAD pertence à B3 e Fator Intrínseco à B12; B6 entra livre por difusão passiva no jejuno e íleo sem proteína transportadora específica."
+   ],
+   [
+    "Atua exclusivamente como antioxidante da parede celular ruminal e só atravessa o enterócito enquanto permanecer fosforilada",
+    "Durante a digestão as formas fosforiladas são hidrolisadas para entrar livres na célula intestinal (fosforilação não é necessária à absorção)."
+   ],
+   [
+    "Participa apenas da carboxilação da protrombina hepática, circulando ligada às micelas mistas da linfa mesentérica",
+    "Micelas pertencem às lipossolúveis e protrombina à vitamina K; B6 circula livre ou ligada à albumina."
+   ]
+  ],
+  "pista": "Transaminação/AA/Fe + hidrólise luminal → difusão passiva jejuno/íleo (sem transportadora específica).",
+  "outro": "Se a entrada intestinal fosse por transporte ativo no terço inicial do delgado após ser absorvida intacta na forma D-isomérica, trataria da biotina.",
+  "ref": "Seção 9.1.5 (pág. 13)"
+ },
+ "O3": {
+  "t": "O",
+  "ang": "Armadilha",
+  "q": "Um nutricionista afirma: 'Como a biotina é sintetizada no rúmen (evitando deficiência clínica grave em adultos) e o seu papel se restringe ao metabolismo de aminoácidos no fígado, suplementar 20 mg/dia em vacas leiteiras não traz benefício extra nem muda o leite'. Quais fatos do artigo desmentem isso?",
+  "ok": "A biotina atua na gliconeogênese/propionato e 20 mg/dia endurecem/conformam o casco, reduzem lesões e elevam produção e proteína do leite",
+  "er": [
+   [
+    "Na verdade 20 mg/dia de biotina reduzem a produção de leite e causam paralisia do trem posterior em vacas adultas",
+    "Paralisia do trem posterior é sinal de carência em bezerros; Zimmerly (2000) mostrou aumento de leite e proteína do leite com 20 mg/dia."
+   ],
+   [
+    "A biotina é 100% degradada no rúmen segundo Zinn et al., exigindo obrigatoriamente doses de 12 g/dia como a niacina",
+    "Biotina tem 0% de degradabilidade ruminal (Tabela 5) e funciona em miligramas (20 mg/dia), não gramas."
+   ],
+   [
+    "O papel nos aminoácidos descrito realmente é exclusivo da biotina, enquanto a conversão do propionato pertence só à vitamina B6",
+    "Metabolismo amplo de AA (transaminação) é o foco da B6; a biotina liga-se à gliconeogênese, propionato e saúde de cascos/leite."
+   ]
+  ],
+  "pista": "Distl & Schmid (1994) + Higuchi & Nagahata (2000) + Zimmerly (2000) (20 mg/dia).",
+  "outro": "Se o composto em questão atuasse especialmente na conversão de ácido linoleico/araquidônico e síntese de epinefrina via piridoxal fosfato, seria B6.",
+  "ref": "Seções 9.1.5 e 9.1.6 (pág. 13)"
+ },
+ "O4": {
+  "t": "O",
+  "ang": "Inversão",
+  "q": "O que ocorre na arquitetura do casco e nos parâmetros podais quando vacas passam de deficiência subclínica em biotina para suplementação de 20 mg/dia por 11 meses (Distl & Schmid, 1994)?",
+  "ok": "Reverte casco mole/sem camada granular: aumenta dureza, inclinação dorsal, salto e área de sola",
+  "er": [
+   [
+    "Desaparecem os filamentos estabilizantes do córium e a borda dorsal achata-se, elevando a incidência de laminite",
+    "A perda dos filamentos e camada granular ocorre na DEFICIÊNCIA; a suplementação aumenta dureza, ângulo dorsal e sola."
+   ],
+   [
+    "Aumenta o acúmulo de gordura hepática e o animal passa a sofrer de paralisia do trem posterior e opistótono",
+    "Gordura hepática remete à colina e opistótono à tiamina (B1); biotina fortalece queratinização do casco."
+   ],
+   [
+    "Não há alteração física no casco porque a vitamina é toda degradada pelos micróbios antes de chegar ao sangue",
+    "Biotina tem 0% de degradação ruminal e sua ingestão eleva diretamente os níveis no soro, leite e tecido do casco."
+   ]
+  ],
+  "pista": "Tema dado (efeito da biotina no casco); contrasta carência vs. suplementação de 20 mg/dia.",
+  "outro": "Se a pergunta fosse apenas sobre o efeito da mesma dose de 20 mg/dia em bezerros ou na secreção láctea, os dados seriam paralisia posterior (falta) e ↑leite/proteína (suplemento).",
+  "ref": "Seção 9.1.6 (pág. 13)"
+ },
+ "O5": {
+  "t": "O",
+  "ang": "Ponte",
+  "ponte": "Estabilidade ruminal da biotina (Rodada 1) ↔ Resposta produtiva em vacas (9.1.6)",
+  "q": "Cruzando a Tabela 5 (Rodada 1) com a Seção 9.1.6 (pág. 13), por que aumentar a biotina dietética (como 20 mg/dia) consegue elevar rapidamente seus níveis no sangue e no leite a ponto de melhorar cascos e lactação?",
+  "ok": "Por ter 0% de degradabilidade ruminal e entrar intacta no delgado, eleva a biotina no soro, casco e glândula mamária",
+  "er": [
+   [
+    "Porque apesar de ser 99% destruída no rúmen, as celulolíticas devolvem exatamente 20 mg/dia de B6 transformada em biotina",
+    "Biotina não sofre 99% de degradação (essa é a B2); na Tabela 5 a biotina apresenta 0% de desaparecimento ruminal."
+   ],
+   [
+    "Porque é absorvida diretamente pela pele dos cascos durante o banho em pedilúvio, evitando passar pelo trato digestivo",
+    "O texto afirma explicitamente que o consumo dietético da biotina intacta eleva seu nível no soro e no leite."
+   ],
+   [
+    "Porque bactérias ruminais convertem biotina em vitamina C no abomaso, reduzindo indiretamente lesões podais",
+    "Biotina atua diretamente como D-biotina no propionato, gliconeogênese e síntese proteica tipo hormonal no casco."
+   ]
+  ],
+  "pista": "Liga 0% de degradação (Torre & Caja / Tab. 5) + exigência celulolítica (Tab. 4) aos ganhos de soro/casco/leite.",
+  "outro": "Se tentássemos o mesmo raciocínio para suplementação oral desprotegida de riboflavina ou ácido fólico buscando escape intacto, 97–99% seriam degradados no rúmen.",
+  "ref": "Seções 6.8 e 9.1.6, Tabela 5 (págs. 7 e 13)"
+ },
+ "P1": {
+  "t": "P",
+  "ang": "Identificação",
+  "q": "Um composto formado por pteridina, PABA e múltiplos resíduos de ácido glutâmico precisa ser hidrolisado por γ-glutamilcarboxipeptidase intestinal para entrar por transporte ativo e circular como 5-metiltetrahidrofólico, sendo apontado como promotor de crescimento ainda mais poderoso que a B12. Que vitamina é essa?",
+  "ok": "Ácido fólico (vitamina B9 / M ou Bc)",
+  "er": [
+   [
+    "Colina (vitamina B7), hidrolisada pela bomba de Na+/K+ no jejuno para formar lecitina e esfingomielina",
+    "Colina não contém PABA nem pteridina nem usa γ-glutamilcarboxipeptidase."
+   ],
+   [
+    "Cianocobalamina (vitamina B12), cujo anel corina depende da γ-glutamilcarboxipeptidase antes de ligar ao Fator Intrínseco",
+    "B12 tem anel corina com cobalto e usa proteínas R/Fator Intrínseco; o artigo compara B9 justamente como mais potente que ela no crescimento."
+   ],
+   [
+    "Ácido pantotênico (vitamina B5), que circula como derivado monoglutamato para sintetizar purinas e eritrócitos",
+    "B5 é óleo higroscópico precursor de CoA, sem relação com PABA ou derivado 5-metiltetrahidrofólico."
+   ]
+  ],
+  "pista": "Pteridina + PABA + poliglutamatos → γ-glutamilcarboxipeptidase → 5-metiltetrahidrofólico → crescimento > B12.",
+  "outro": "Se a descrição apontasse um composto questionado como vitamina por ser exigido em grandes quantidades e compor lecitina e acetilcolina, seria a colina.",
+  "ref": "Seção 9.1.7 (pág. 13)"
+ },
+ "P2": {
+  "t": "P",
+  "ang": "Princípio",
+  "q": "Por que alguns nutricionistas questionam a classificação da colina como vitamina típica e qual é a base bioquímica da alteração hepática vista em sua deficiência?",
+  "ok": "É exigida em doses maiores e compõe estruturas (lecitina) e acetilcolina; sem lecitina caem lipoproteínas e acumula gordura hepática",
+  "er": [
+   [
+    "Porque é um mineral inorgânico igual ao cobalto e sua carência destrói o anel corina, impedindo a conversão de propionato em glicose",
+    "Colina é composto orgânico aminado/fosfolipídico, não mineral inorgânico como o cobalto da B12."
+   ],
+   [
+    "Porque só existe em proteínas de origem animal e sua carência reduz a γ-glutamilcarboxipeptidase, causando diarreia escamosa",
+    "Ausência em vegetais refere-se à B12 e dermatite escamosa à B5; o defeito da colina é na mobilização lipídica do fígado via lecitina."
+   ],
+   [
+    "Porque é absorvida apenas no rúmen junto com as micelas de vitamina D, provocando hipercalcemia e necrose muscular aguda",
+    "Colina é absorvida no jejuno e íleo pela bomba de Na+/K+ e atua em membranas, esfingomielina e acetilcolina."
+   ]
+  ],
+  "pista": "Questionamento (dose alta + componente estrutural/neurotransmissor) + papel da lecitina nas lipoproteínas hepáticas.",
+  "outro": "Se a pergunta focasse o papel na condução nervosa específica, os mediadores citados para colina seriam a esfingomielina e a acetilcolina.",
+  "ref": "Seção 9.1.8 (pág. 14)"
+ },
+ "P3": {
+  "t": "P",
+  "ang": "Armadilha",
+  "q": "Um estudante assume que: (1) a vitamina B12 supera o ácido fólico na promoção de crescimento e síntese de bases nitrogenadas; e (2) bezerros com flora microbiana pouco desenvolvida nunca sofrem deficiência de ácido fólico. Por que está duplamente enganado?",
+  "ok": "O ácido fólico é citado como promotor de crescimento mais poderoso que a B12, e bezerros com flora incipiente são os mais vulneráveis à sua falta",
+  "er": [
+   [
+    "Na verdade o ácido fólico não participa da síntese de purinas e pirimidinas, atuando apenas na formação de colágeno subcutâneo",
+    "Colágeno é da vitamina C; o ácido fólico participa diretamente dos grupos de um carbono para purinas, pirimidinas e DNA."
+   ],
+   [
+    "A afirmação sobre bezerros está certa porque o leite tem Fator Intrínseco de sobra, porém a B12 e a B9 têm exatamente o mesmo efeito no crescimento",
+    "O texto destaca que bezerros com flora imatura podem necessitar suplementação de B9, além de B9 superar B12 em crescimento."
+   ],
+   [
+    "Bezerros jovens têm o dobro de síntese ruminal de ácido fólico que vacas adultas porque ingerem mais PABA nas primeiras semanas",
+    "Pelo contrário: com rúmen funcional a deficiência é incomum, sendo os bezerros com flora pouco desenvolvida os vulneráveis."
+   ]
+  ],
+  "pista": "Comparativo de crescimento B9 > B12 (Seção 9.1.7) + vulnerabilidade do bezerro com flora pouco desenvolvida.",
+  "outro": "Se a vitamina avaliada pelo papel na mobilização de gordura do fígado e fraqueza extrema incapacitante fosse a B7, trataria da colina.",
+  "ref": "Seção 9.1.7 (pág. 13)"
+ },
+ "P4": {
+  "t": "P",
+  "ang": "Ponte",
+  "ponte": "Ácido fólico (PABA/celulolíticas na Tab. 4) ↔ Síntese de DNA e imunidade",
+  "q": "Conectando a Tabela 4 (Rodada 1) à Seção 9.1.7, qual duplo impacto a deficiência de ácido fólico e de seu componente PABA provoca tanto na microbiota quanto no bezerro jovem?",
+  "ok": "PABA e fólico integram a mesma molécula e são exigidos por bactérias ruminais; no hospedeiro jovem prejudicam DNA, eritrócitos e imunidade",
+  "er": [
+   [
+    "PABA inibe a absorção de colesterol pela bomba de Na+/K+, bloqueando a síntese ruminal de acetilcolina e lecitina",
+    "PABA é um dos três blocos constituintes do ácido fólico (junto com pteridina e glutâmico), não inibidor de colina."
+   ],
+   [
+    "O ácido fólico serve apenas para acidificar o abomaso de vacas adultas para liberar tiamina ligada a proteínas dietéticas",
+    "Liberação gástrica em pH baixo refere-se à B12; fólico atua em grupos 1C (DNA, proteínas imunes, serina, N-formilmetionil-tRNA)."
+   ],
+   [
+    "A falta de ácido fólico eleva a conversão de riboflavina em xantofila no intestino, causando hemorragias internas tipo cumarol",
+    "Nenhuma relação com xantofila ou cumarol; os sinais da carência de B9 são baixo crescimento, infecções e alterações digestivas/nervosas."
+   ]
+  ],
+  "pista": "Liga PABA + Ác. Fólico da Tabela 4 (exigência bacteriana) à bioquímica celular de grupos de 1 carbono na Seção 9.1.7.",
+  "outro": "Se a conexão fosse com outra vitamina do período de transição para mobilizar gordura do fígado ou oxidá-la na mitocôndria, entrariam respectivamente colina (lecitina) e vitamina C (carnitina).",
+  "ref": "Seções 6.8 e 9.1.7 e Tabela 4 (págs. 7 e 13)"
+ },
+ "Q1": {
+  "t": "Q",
+  "ang": "Identificação",
+  "q": "Único composto orgânico com cobalto (~4,5% em um anel corina) e presente apenas em alimentos de origem animal ou via micróbios, catalisa a remetilação de homocisteína em metionina, a isomerização de metilmalonil-CoA e a redução de ribonucleotídeos a desoxirribonucleotídeos. Qual é?",
+  "ok": "Cobalamina (vitamina B12)",
+  "er": [
+   [
+    "Ácido ascórbico (vitamina C), composto por anel corina com 4,5% de ferro para sintetizar carnitina mitocondrial",
+    "Vitamina C não possui anel corina nem cobalto, sendo sintetizada da glicose em vegetais e na maioria dos mamíferos."
+   ],
+   [
+    "Ácido fólico (vitamina B9), único cofator de origem estritamente animal necessário para produzir glicose do propionato",
+    "Fólico vem amplamente de ingredientes vegetais/dieta; quem é exclusiva de fonte animal/microbiana e contém Co é a B12."
+   ],
+   [
+    "Biotina (vitamina H), que depende de 4,5% de selênio no anel central para transformar ribonucleotídeos em DNA",
+    "Selênio interage com vitamina E; os 4,5% de cobalto no anel corina identificam exatamente a B12."
+   ]
+  ],
+  "pista": "Origem animal exclusiva + anel corina + 4,5% cobalto + metionina/metilmalonil-CoA/desoxirribonucleotídeos.",
+  "outro": "Se o composto fosse sintetizado da glicose para formar colágeno e carnitina (β-oxidação no pós-parto), seria a vitamina C.",
+  "ref": "Seção 9.1.9 (pág. 14)"
+ },
+ "Q2": {
+  "t": "Q",
+  "ang": "Princípio",
+  "q": "Por que a vitamina C (ácido ascórbico) ganha importância estratégica para vacas leiteiras no período de transição pós-parto, apesar de ser sintetizada a partir da glicose pelos ruminantes?",
+  "ok": "A ingestão de MS cai até 30% no pós-parto exigindo mobilizar muita gordura, e a vitamina C participa da síntese de carnitina para β-oxidação",
+  "er": [
+   [
+    "Porque bovinos pertencem ao mesmo grupo de homem, primatas e porco-da-índia, sendo geneticamente incapazes de sintetizar vitamina C",
+    "O artigo diz exatamente que plantas e maioria dos mamíferos sintetizam de glicose — EXCETO homem, primatas e porco-da-índia (bovinos sintetizam)."
+   ],
+   [
+    "Porque no pós-parto o ácido ascórbico substitui o Fator Intrínseco no íleo para impedir a queda de protrombina sanguínea",
+    "Fator Intrínseco é da B12 e protrombina da K; o elo metabólico da vitamina C no pós-parto é carnitina → mitocôndria → β-oxidação de AG."
+   ],
+   [
+    "Porque vacas em transição deixam de produzir glicose hepática a partir de propionato, usando vitamina C como fonte calórica principal",
+    "Propionato entra em gliconeogênese via biotina/B12; vit C não é calórica, mas atua na biossíntese de carnitina, colágeno e células imunes."
+   ]
+  ],
+  "pista": "Transição pós-parto (-30% IMS) → mobilização adiposa → carnitina → entrada de AG na mitocôndria → β-oxidação a acetil-CoA.",
+  "outro": "Se a estratégia no pós-parto focasse a saída da gordura de DENTRO do fígado via lipoproteínas, o papel seria da lecitina dependente de colina.",
+  "ref": "Seção 9.2 (pág. 14)"
+ },
+ "Q3": {
+  "t": "Q",
+  "ang": "Armadilha",
+  "q": "Um nutricionista analisa uma silagem de milho e afirma: 'Vou contar com a B12 natural presente nas folhas de milho, porque o Fator Intrínseco serve apenas para solubilizar a vitamina C no estômago, e além disso o NRC já fixou exatamente quanta vitamina C maximiza o desempenho de vacas'. Quantos erros existem aí?",
+  "ok": "Três erros: vegetais não têm B12; Fator Intrínseco protege B12 contra solubilização no íleo; e a exigência de vit C em ruminantes não está definida",
+  "er": [
+   [
+    "Apenas um erro: plantas realmente não têm B12, mas o Fator Intrínseco é mesmo da vitamina C e o NRC já definiu sua exigência exata",
+    "O texto afirma explicitamente os três pontos contrários: B12 não está em vegetais; FI é da B12 (contra solubilização); exigência de vit C ainda não foi definida."
+   ],
+   [
+    "Nenhum erro nas plantas nem no NRC, sendo falso apenas dizer que o Fator Intrínseco atua no intestino em vez de no rúmen",
+    "Todas as três premissas são falsas diante da página 14 do artigo."
+   ],
+   [
+    "Dois erros apenas, porque a vitamina C nunca usa transporte ativo parecido com o da glicose nem tem relação com colágeno",
+    "A vit C tem transporte ativo semelhante ao da glicose e forma colágeno; porém as três premissas da afirmação do enunciado estão todas erradas."
+   ]
+  ],
+  "pista": "Checagem direta da pág. 14: fontes de B12 + função do Fator Intrínseco + estado atual da exigência de vitamina C.",
+  "outro": "Se a pergunta fosse quais vitaminas as Considerações Finais apontam como obrigatoriamente suplementadas em ruminantes adultos, seriam A e E.",
+  "ref": "Seções 9.1.9, 9.2 e Considerações Finais (pág. 14)"
+ },
+ "Q4": {
+  "t": "Q",
+  "ang": "Ponte",
+  "ponte": "B12 (cobalto ruminal → gliconeogênese) ↔ Vitamina C & Colina (metabolismo lipídico)",
+  "q": "Integrando as Considerações Finais e a Seção 9 sobre energia de vacas no pós-parto, como B12, colina e vitamina C cooperam sem serem vitaminas lipossolúveis?",
+  "ok": "B12 (via Co) converte propionato em glicose; colina (lecitina) exporta gordura hepática; vit C (carnitina) leva AG à β-oxidação mitocondrial",
+  "er": [
+   [
+    "Todas as três atuam exclusivamente dentro do lúmen ruminal fermentando fibra para formar colesterol e acetilcolina",
+    "A atuação metabólica descrita (propionato→glicose no fígado/metilmalonil-CoA, lecitina hepática e carnitina mitocondrial) ocorre no metabolismo animal."
+   ],
+   [
+    "B12 forma colágeno uterino, colina carboxila protrombina e vitamina C converte triptofano em nicotinamida na glândula mamária",
+    "Troca funções de várias vitaminas: colágeno é vit C, protrombina é vit K, triptofano→niacina é B3."
+   ],
+   [
+    "As três dispensam cobalto, Fator Intrínseco e glicose, sendo obtidas prontas exclusivamente da xantofila das pastagens verdes",
+    "B12 exige Co e FI; vit C parte da glicose; xantofila não gera vitamina A nem vitaminas hidrossolúveis."
+   ]
+  ],
+  "pista": "Conecta três eixos energéticos citados nas págs. 14–15: propionato (B12) + mobilização hepática (colina) + β-oxidação (vit C/carnitina).",
+  "outro": "Se o reforço no período seco/pós-parto visasse imunidade contra mastite e redução de cetose, entrariam em cena vitamina E (+Se) e niacina (B3).",
+  "ref": "Seções 9.1.8, 9.1.9, 9.2 e Considerações Finais (págs. 14–15)"
+ }
+};
+var ORDER = ["K1","I1","O1","L1","J1","Q1","M1","P1","N1","I2","M2","J2","Q2","N2","K2","P2","L2","O2","P3","K3","N3","I3","L3","O3","J3","M3","Q3","J4","N4","I4","O4","K4","L4","O5","I5","Q4","K5","M4","J5","P4"];
+var app=document.getElementById('app');
+var queue,pos,answers,t0,cur,locked,optList,famSeen,FAMQ;
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x}return a}
+function start(ids){queue=ids;pos=0;answers=[];t0=Date.now();famSeen={};FAMQ={};ids.forEach(function(id){FAMQ[Q[id].t]=(FAMQ[Q[id].t]||0)+1});render()}
+function render(){
+  if(pos>=queue.length){return finish()}
+  var id=queue[pos],q=Q[id];cur=id;locked=false;
+  var opts=[{x:q.ok,ok:true,why:''}].concat(q.er.map(function(e){return{x:e[0],ok:false,why:e[1]}}));
+  optList=shuffle(opts);
+  var L='ABCD';
+  var h='<h1>Vitaminas em Ruminantes - Rodada 2 de 2</h1><p class="sub">Vitaminas lipossolúveis e hidrossolúveis em detalhe: metabolismo, carências e toxicidade (págs. 9 a 15)</p>';
+  h+='<div class="meta"><span>Questão '+(pos+1)+' de '+queue.length+'</span><span>'+answers.filter(function(a){return a.ok}).length+' acertos</span></div>';
+  h+='<div class="bar"><i style="width:'+(pos/queue.length*100)+'%"></i></div>';
+  h+='<p class="stem">'+q.q+'</p><div id="opts">';
+  optList.forEach(function(o,i){h+='<button class="opt" data-i="'+i+'"><b>'+L[i]+'</b><span>'+o.x+'</span></button>'});
+  h+='</div><div id="fb"></div><p class="hint">Atalhos: 1–4 escolhem a alternativa; Enter avança.</p>';
+  app.innerHTML=h;
+  Array.prototype.forEach.call(app.querySelectorAll('.opt'),function(b){b.onclick=function(){pick(+b.getAttribute('data-i'))}});
+}
+function pick(i){
+  if(locked||!optList[i])return;locked=true;
+  var q=Q[cur],o=optList[i];
+  var btns=app.querySelectorAll('.opt');
+  Array.prototype.forEach.call(btns,function(b,k){b.disabled=true;if(optList[k].ok)b.classList.add('ok');else if(k===i)b.classList.add('ko')});
+  famSeen[q.t]=(famSeen[q.t]||0)+1;
+  var nth=famSeen[q.t];
+  answers.push({id:cur,t:q.t,ok:o.ok,ang:q.ang});
+  var th=T[q.t];
+  var f='<div class="fb"><p class="h '+(o.ok?'ok':'ko')+'">'+(o.ok?'Correto.':'Errado.')+'</p>';
+  f+='<p><em>Tema:</em> '+th.nome+' <em>('+q.ang+')</em></p>';
+  f+='<p><em>Pista que entregou:</em> '+q.pista+'</p>';
+  f+='<p><em>Núcleo:</em> '+th.nucleo+'</p>';
+  if(!o.ok)f+='<p><em>Por que a sua escolha está errada:</em> '+o.why+'</p>';
+  f+='<p><em>Se fosse o outro tema:</em> '+q.outro+'</p>';
+  f+='<p><em>Referência:</em> '+q.ref+'</p>';
+  f+='<p><em>Progresso da família:</em> '+th.nome.split(' - ')[0]+' - '+nth+' de '+FAMQ[q.t]+'</p>';
+  f+='<button class="main" id="nx">'+(pos+1>=queue.length?'Ver fechamento':'Próxima')+'</button></div>';
+  document.getElementById('fb').innerHTML=f;
+  document.getElementById('nx').onclick=next;
+  document.getElementById('nx').focus();
+}
+function next(){pos++;render();window.scrollTo(0,0)}
+document.addEventListener('keydown',function(e){
+  if(!queue||pos>=queue.length)return;
+  if(!locked&&e.key>='1'&&e.key<='4'){pick(+e.key-1)}
+  else if(locked&&e.key==='Enter'){e.preventDefault();next()}
+});
+function fmt(ms){var s=Math.round(ms/1000);return Math.floor(s/60)+'min '+('0'+(s%60)).slice(-2)+'s'}
+function finish(){
+  var tot=answers.length,ac=answers.filter(function(a){return a.ok}).length;
+  var by={};answers.forEach(function(a){by[a.t]=by[a.t]||{n:0,k:0};by[a.t].n++;if(a.ok)by[a.t].k++});
+  var h='<h1>Fechamento - Rodada 2 de 2</h1><p class="sub">Vitaminas lipossolúveis e hidrossolúveis (págs. 9 a 15)</p>';
+  h+='<div class="score">'+(ac/tot*10).toFixed(1)+' / 10</div><p>'+ac+' de '+tot+' acertos · tempo '+fmt(Date.now()-t0)+'</p>';
+  h+='<h2>Mapa</h2><table><tr><th>Tema</th><th>Núcleo</th><th>Pistas</th><th>Confusão</th><th>Acertos</th></tr>';
+  Object.keys(T).forEach(function(k){
+    if(!by[k])return;var p=by[k].k/by[k].n;
+    h+='<tr><td>'+T[k].nome+'</td><td>'+T[k].nucleo+'</td><td>'+T[k].pistas+'</td><td>'+T[k].conf+'</td><td class="p'+(p<0.7?' low':'')+'">'+by[k].k+'/'+by[k].n+'</td></tr>';
+  });
+  h+='</table>';
+  h+='<h2>Pontes</h2><ul>';
+  answers.filter(function(a){return a.ang==='Ponte'}).forEach(function(a){h+='<li>'+Q[a.id].ponte+' '+(a.ok?'(acertou)':'(errou)')+'</li>'});
+  h+='</ul>';
+  var soltos=Object.keys(by).filter(function(k){return by[k].k/by[k].n<0.7});
+  h+='<h2>Pontos soltos (abaixo de 70%)</h2>';
+  h+=soltos.length?'<ul>'+soltos.map(function(k){return'<li>'+T[k].nome+' - '+by[k].k+'/'+by[k].n+'</li>'}).join('')+'</ul>':'<p>Nenhum tema abaixo de 70%.</p>';
+  h+='<p class="note">Famílias menores que 5 para respeitar o peso do texto e o teto de 40 questões: L e N (4 questões, sem Ponte isolada), M, P e Q (4 questões, sem Inversão isolada).</p>';
+  var erros=answers.filter(function(a){return!a.ok}).map(function(a){return a.id});
+  h+='<button class="sec" id="rs">Recomeçar</button>';
+  if(erros.length)h+='<button class="main" id="re">Refazer só os erros ('+erros.length+')</button>';
+  if(soltos.length)h+='<p class="hint">Para uma rodada extra com ângulos novos dos temas abaixo de 70%, peça ao Ultron: este arquivo só repete as questões existentes.</p>';
+  app.innerHTML=h;
+  document.getElementById('rs').onclick=function(){start(ORDER)};
+  if(erros.length)document.getElementById('re').onclick=function(){start(erros)};
+}
+start(ORDER);
+</script>
+</body>
+</html>

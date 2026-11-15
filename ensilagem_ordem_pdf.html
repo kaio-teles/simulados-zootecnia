@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ensilagem - Curso Completo na Ordem do PDF</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:20px;font-family:system-ui,-apple-system,sans-serif;background:transparent;color:var(--foreground,#18181b);font-size:15px;line-height:1.5}
+  @media (prefers-color-scheme:dark){body{color:var(--foreground,#e4e4e7)}}
+  .app{
+    --c-card:var(--card,#ffffff);--c-bd:var(--border,#d4d4d8);--c-fg:var(--foreground,#18181b);
+    --c-mut:var(--muted-foreground,#52525b);--c-pri:var(--primary,#15803d);--c-prifg:var(--primary-foreground,#ffffff);
+    --ok:#16a34a;--ko:#dc2626;
+    max-width:780px;margin:0 auto;background:var(--c-card);color:var(--c-fg);border:1px solid var(--c-bd);border-radius:14px;padding:24px;box-shadow:0 4px 12px rgba(0,0,0,0.05)
+  }
+  @media (prefers-color-scheme:dark){.app{--c-card:var(--card,#1c1c1f);--c-bd:var(--border,#3f3f46);--c-fg:var(--foreground,#e4e4e7);--c-mut:var(--muted-foreground,#a1a1aa);--c-pri:var(--primary,#22c55e);--c-prifg:var(--primary-foreground,#0b1220);--ok:#4ade80;--ko:#f87171}}
+  h1{font-size:20px;margin:0 0 2px;color:var(--c-fg)}
+  .sub{color:var(--c-mut);font-size:13px;margin:0 0 14px}
+  .bar{height:6px;background:var(--c-bd);border-radius:99px;overflow:hidden;margin:6px 0 16px}
+  .bar>i{display:block;height:100%;background:var(--c-pri);width:0;transition:width .25s ease-out}
+  .meta{display:flex;justify-content:space-between;font-size:13px;color:var(--c-mut);font-weight:500}
+  .badge{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700;text-transform:uppercase;background:color-mix(in srgb,var(--c-pri) 15%,transparent);color:var(--c-pri);margin-bottom:8px}
+  .stem{font-size:16px;font-weight:600;margin:0 0 14px;line-height:1.45}
+  .opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--c-bd);border-radius:10px;padding:12px 14px;margin:0 0 9px;cursor:pointer;transition:border-color .15s, background .15s}
+  .opt:hover:not(:disabled){border-color:var(--c-pri);background:color-mix(in srgb,var(--c-pri) 5%,transparent)}
+  .opt b{min-width:22px;color:var(--c-pri);font-size:15px}
+  .opt:disabled{cursor:default;opacity:.6}
+  .opt.ok{opacity:1;border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent);font-weight:500}
+  .opt.ko{opacity:1;border-color:var(--ko);background:color-mix(in srgb,var(--ko) 16%,transparent)}
+  .fb{border-top:1px dashed var(--c-bd);margin-top:16px;padding-top:14px;font-size:14px}
+  .fb p{margin:0 0 7px}
+  .fb .h{font-weight:700;font-size:16px}
+  .fb .h.ok{color:var(--ok)} .fb .h.ko{color:var(--ko)}
+  .fb em{color:var(--c-mut);font-style:normal;font-weight:600}
+  button.main{font:inherit;font-weight:600;background:var(--c-pri);color:var(--c-prifg);border:0;border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  button.sec{font:inherit;font-weight:600;background:transparent;color:var(--c-fg);border:1px solid var(--c-bd);border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0 16px}
+  th,td{border:1px solid var(--c-bd);padding:7px 10px;text-align:left;vertical-align:top}
+  th{color:var(--c-mut);background:color-mix(in srgb,var(--c-bd) 20%,transparent)}
+  td.p{white-space:nowrap;font-weight:700}
+  .low{color:var(--ko);font-weight:700}
+  .score{font-size:38px;font-weight:800;margin:6px 0;color:var(--c-pri)}
+  h2{font-size:16px;margin:18px 0 6px}
+  ul{margin:4px 0 10px;padding-left:20px;font-size:14px}
+  .hint{font-size:12px;color:var(--c-mut);margin-top:14px}
+  .note{font-size:13px;color:var(--c-mut);border-left:3px solid var(--c-pri);padding-left:10px;margin:12px 0}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+var Q = [
+  {
+    "sec": "1. Conceitos e Histórico",
+    "ref": "Slides 2 a 6",
+    "tema": "Distinção entre Ensilagem, Silagem e Silo",
+    "q": "Uma propriedade rural está estruturando uma vala escavada no solo para armazenar forragem verde compactada sob ausência de ar, aguardando que o produto fermente para alimentar os animais no período seco. Do ponto de vista técnico, qual termo define estritamente o depósito físico construído?",
+    "ok": "Silo, que corresponde ao local, à instalação ou ao depósito onde se armazena a forragem",
+    "er": [
+      [
+        "Ensilagem, que corresponde ao processo de conservação da forragem sob pressão e sem ar",
+        "Ensilagem é o processo biológico e mecânico de conservação, não o depósito físico."
+      ],
+      [
+        "Silagem, que é o produto resultante da fermentação anaeróbica da planta armazenada",
+        "Silagem é o produto final fermentado obtido, não a instalação de armazenamento."
+      ],
+      [
+        "Fenação, que é o processo de desidratação da planta forrageira para consumo posterior",
+        "Fenação é desidratação (feno), processo totalmente distinto do armazenamento sob anaerobiose."
+      ]
+    ],
+    "pista": "A pergunta busca a instalação/depósito onde se armazena a forragem.",
+    "nucleo": "Ensilagem é o processo; silagem é o produto fermentado resultante; silo é o local ou depósito físico.",
+    "outro": "Se a pergunta pedisse o alimento fermentado final, a resposta seria Silagem; se pedisse o método de conservação sob pressão, seria Ensilagem."
+  },
+  {
+    "sec": "1. Conceitos e Histórico",
+    "ref": "Slide 6",
+    "tema": "Origem Histórica da Ensilagem",
+    "q": "De acordo com os registros históricos apresentados no material sobre a conservação de plantas forrageiras, em que civilização e época situam-se os primeiros relatos da prática da ensilagem?",
+    "ok": "No Egito antigo, entre 1000 e 1500 a.C.",
+    "er": [
+      [
+        "Na Mesopotâmia antiga, por volta de 3000 a.C.",
+        "O material cita expressamente o Egito entre 1000 e 1500 a.C. (Peixoto et al., 1994)."
+      ],
+      [
+        "No Império Romano, aproximadamente no ano 100 d.C.",
+        "A prática descrita no slide remonta a 1000–1500 a.C. no Egito, muito anterior a Roma."
+      ],
+      [
+        "Na Europa Central do século XVIII, durante a Revolução Agrícola",
+        "A origem documentada no histórico da aula é a civilização egípcia milênios antes."
+      ]
+    ],
+    "pista": "Egito e o período 1000 a 1500 a.C. documentados por Peixoto et al.",
+    "nucleo": "Os primeiros registros de conservação de forrageiras por ensilagem datam do Egito antigo (1000 a 1500 a.C.).",
+    "outro": "Se a questão abordasse o surgimento do silo cincho ou dos silos tubo, o contexto histórico seria contemporâneo."
+  },
+  {
+    "sec": "2. Produção de Forragem e Estacionalidade",
+    "ref": "Slides 8 a 10",
+    "tema": "Estacionalidade da Produção em Sequeiro",
+    "q": "Em regiões semiáridas como Sobral-CE, a curva de crescimento das pastagens sob regime de sequeiro apresenta acentuada oscilação anual. Qual característica quantitativa e estrutural define essa sazonalidade?",
+    "ok": "Cerca de 80% da produção forrageira ocorre nas chuvas, enquanto a demanda animal é constante o ano todo",
+    "er": [
+      [
+        "A produção de forragem é equilibrada mensalmente, mas o consumo voluntário do rebanho dobra no período seco",
+        "A produção não é equilibrada: 80% concentra-se na chuva, enquanto a demanda do lote permanece estável."
+      ],
+      [
+        "Aproximadamente 50% da forragem é produzida no período seco devido à maior intensidade de radiação solar",
+        "Em sequeiro, a forragem depende da chuva e quase não cresce na época seca, gerando déficit forrageiro."
+      ],
+      [
+        "A demanda do rebanho diminui naturalmente 80% na estiagem, acompanhando a queda na oferta de capim",
+        "A demanda biológica por mantenedor do rebanho mantém-se estável, gerando déficit crítico se não houver reserva."
+      ]
+    ],
+    "pista": "80% da produção anual no período chuvoso e demanda estável do rebanho.",
+    "nucleo": "Em sequeiro, a oferta de biomassa é concentrada nas chuvas (80%), gerando excesso temporário e escassez crítica na seca.",
+    "outro": "Se a produção acompanhasse a demanda sem oscilação, não haveria necessidade de conservação forrageira."
+  },
+  {
+    "sec": "2. Produção de Forragem e Estacionalidade",
+    "ref": "Slides 11 e 12",
+    "tema": "Manejo do Excedente Forrageiro",
+    "q": "Diante do descompasso entre a curva de crescimento da pastagem e a demanda do rebanho em sequeiro, qual intervenção de manejo é indicada no material para evitar o colapso produtivo na estiagem?",
+    "ok": "Conservar o excedente da forragem produzido nas chuvas na forma de feno ou silagem",
+    "er": [
+      [
+        "Aumentar a compra de concentrados na seca para suprir 100% da exigência de fibra do rebanho",
+        "O material foca no aproveitamento da forragem excedente da chuva via fenação/ensilagem."
+      ],
+      [
+        "Reduzir o rebanho vendendo 80% dos animais logo no início do período das chuvas",
+        "A meta do manejo forrageiro é maximizar o suporte animal e a produtividade por hectare o ano todo."
+      ],
+      [
+        "Deixar a pastagem passar do ponto no campo para servir como pasto diferido com mesmo valor nutritivo",
+        "O pasto diferido perde muita qualidade nutricional comparado à conservação do excedente no ponto ideal."
+      ]
+    ],
+    "pista": "Conservação do excedente na forma de feno ou silagem.",
+    "nucleo": "O excedente produzido no período favorável deve ser conservado para garantir alimento durante o período de escassez.",
+    "outro": "Se o produtor optasse por desidratação ao sol em vez de fermentação sob lona, estaria usando feno em vez de silagem."
+  },
+  {
+    "sec": "3. Vantagens e Limitações da Ensilagem",
+    "ref": "Slides 13 e 14",
+    "tema": "Vantagens Técnicas da Ensilagem",
+    "q": "Ao comparar o processo de ensilagem com a fenação para conservação do excesso de forragem na estação chuvosa, qual é uma vantagem exclusiva da ensilagem citada no material?",
+    "ok": "Menor interferência do clima no processo e facilidade de ensilar durante o período chuvoso",
+    "er": [
+      [
+        "Completa ausência de perda de matéria seca e de proteína durante todo o período de fermentação",
+        "Sempre há diminuição do valor nutricional em relação à forragem fresca ensilada."
+      ],
+      [
+        "Dispensa de qualquer estrutura de armazenamento ou cobertura plástica na propriedade",
+        "A ensilagem exige silos bem vedados com lona plástica e compactação rigorosa."
+      ],
+      [
+        "Possibilidade de comercialização ágil e rápida em fardos leves fora da propriedade rural",
+        "A silagem é densa, úmida e de difícil comercialização externa, sendo consumida no próprio local."
+      ]
+    ],
+    "pista": "Facilidade de ensilar na chuva e menor dependência de tempo seco frente à fenação.",
+    "nucleo": "A ensilagem permite colher e guardar alimento nutritivo mesmo sob tempo chuvoso, com alta densidade por área.",
+    "outro": "Se a vantagem fosse facilidade de transporte a longas distâncias em carretas abertas, a fenação seria superior."
+  },
+  {
+    "sec": "3. Vantagens e Limitações da Ensilagem",
+    "ref": "Slides 15 a 17",
+    "tema": "Fatores Limitantes e Mitos da Ensilagem",
+    "q": "A respeito das limitações da ensilagem, um produtor declarou que o processo serve para 'melhorar o valor nutritivo de capins passados e velhos'. Com base no material, por que essa premissa é falsa?",
+    "ok": "A ensilagem não melhora a forragem; sempre há perda no valor nutricional em relação à planta ensilada",
+    "er": [
+      [
+        "A premissa está correta, pois a fermentação das bactérias sintetiza carboidratos inexistentes no capim",
+        "A fermentação consome açúcares existentes na forragem; ela nunca cria carboidratos do nada."
+      ],
+      [
+        "O erro está apenas no tempo de estocagem, pois a forragem só melhora após 5 anos dentro do silo",
+        "A silagem conserva-se por 2 a 3 anos com diminuição nutricional em relação à forragem colhida."
+      ],
+      [
+        "A forragem melhora apenas quando não se compacta o silo, deixando entrar bastante oxigênio livre",
+        "A má compactação e a presença de oxigênio causam perdas severas e deterioração da silagem."
+      ]
+    ],
+    "pista": "A ensilagem melhora a qualidade da forragem? Não. Sempre há diminuição do valor nutricional.",
+    "nucleo": "A silagem nunca será melhor que a forragem de origem; o processo apenas minimiza as perdas de conservação.",
+    "outro": "Se o produtor afirmasse que a ensilagem pode eliminar certas substâncias tóxicas (ex: ácido cianídrico), estaria correto."
+  },
+  {
+    "sec": "4. Princípios da Conservação e Auto-Controle",
+    "ref": "Slides 18 a 20",
+    "tema": "Os Dois Pilares da Conservação da Silagem",
+    "q": "Por que uma forragem verde e úmida consegue se conservar por longos períodos dentro de um silo sem apodrecer? Segundo o material, quais são os dois motivos fundamentais?",
+    "ok": "Anaerobiose (ausência de O2 contra fungos/leveduras) e fermentação anaeróbica (ácidos baixando o pH contra clostrídios)",
+    "er": [
+      [
+        "Secagem total da massa ensilada e uso obrigatório de sal mineral em doses maciças, inviabilizando a conservação eficiente no silo",
+        "Silagem é forragem conservada verde/úmida, não seca; sal mineral não é o agente primário de conservação."
+      ],
+      [
+        "Alta aeração contínua e desenvolvimento de bactérias aeróbicas produtoras de calor, inviabilizando a conservação eficiente no silo",
+        "A aeração e as bactérias aeróbicas apodrecem a forragem; a conservação exige estrita anaerobiose."
+      ],
+      [
+        "Elevação controlada do pH para valores alcalinos (acima de 8,0) através de adubação nitrogenada, inviabilizando a conservação eficiente no silo",
+        "A conservação ocorre por acidificação da massa (pH ácido em torno de 3,8 a 4,5), não por alcalinização."
+      ]
+    ],
+    "pista": "Anaerobiose + fermentação anaeróbica produzindo ácido lático e acético.",
+    "nucleo": "A ausência de ar impede mofos e fungos; os ácidos orgânicos bacterianos reduzem o pH e bloqueiam coliformes e clostrídios.",
+    "outro": "Se faltar anaerobiose, os fungos crescem; se faltar produção de ácido para derrubar o pH, clostrídios agem."
+  },
+  {
+    "sec": "4. Princípios da Conservação e Auto-Controle",
+    "ref": "Slide 20",
+    "tema": "Sistema de Auto-Controle Fermentativo",
+    "q": "O material esquematiza um 'sistema de auto-controle' que regula o término da fermentação no silo. Como funciona esse mecanismo de retroalimentação negativa (-)?",
+    "ok": "Microrganismos consomem substratos e produzem ácidos; a queda do pH resultante inibe os próprios microrganismos",
+    "er": [
+      [
+        "O calor gerado pelas bactérias queima todo o oxigênio e mata instantaneamente a população microbiana",
+        "O esgotamento do oxigênio cessa a respiração inicial, mas o freio final da fermentação é a queda do pH."
+      ],
+      [
+        "O substrato aumenta continuamente até envenenar os microrganismos por excesso de açúcares livres",
+        "O substrato é consumido e reduzido durante a fermentação, nunca acumulado."
+      ],
+      [
+        "As bactérias produzem amônia para elevar o pH e dissolver a parede celular das plantas no silo",
+        "A produção de amônia decorre de degradação proteica indesejável (clostrídios) e não do mecanismo de conservação."
+      ]
+    ],
+    "pista": "Diagrama: Substratos → Ác. orgânicos → Queda de pH → (-) Microrganismos.",
+    "nucleo": "A produção de ácidos orgânicos derruba o pH a um nível em que a própria população bacteriana cessa sua atividade biológica.",
+    "outro": "Se o pH não conseguisse cair por falta de ácido ou excesso de poder tampão, o auto-controle falharia e a massa estragaria."
+  },
+  {
+    "sec": "5. Escolha da Espécie Forrageira",
+    "ref": "Slides 23 e 24",
+    "tema": "Teor Adequado de Matéria Seca (MS)",
+    "q": "Qual é a faixa de matéria seca (MS) recomendada para assegurar um processo fermentativo adequado e o que acontece se a forragem for colhida com menos de 30% de MS?",
+    "ok": "Faixa de 30 a 35% de MS; abaixo de 30% ocorre produção de efluente e fermentação por Clostridium",
+    "er": [
+      [
+        "Faixa de 15 a 20% de MS; abaixo de 30% ocorre elevação extrema de temperatura e reação de Maillard",
+        "15 a 20% é excessivamente úmido; a reação de Maillard e o aquecimento ocorrem no extremo oposto (> 35% MS)."
+      ],
+      [
+        "Faixa de 45 a 50% de MS; abaixo de 30% a forragem perde todos os carboidratos solúveis por evaporação",
+        "45 a 50% é seco demais para ensilar sem aditivos; carboidratos solúveis não evaporam."
+      ],
+      [
+        "Faixa de 30 a 35% de MS; abaixo de 30% há dificuldade grave de compactação e excesso de O2 retido",
+        "Dificuldade de compactação e aprisionamento de ar ocorrem quando o capim está seco demais (> 35% MS)."
+      ]
+    ],
+    "pista": "Processo fermentativo adequado: 30 a 35% de MS; <30% efluente e Clostridium.",
+    "nucleo": "A forragem úmida demais (<30% MS) drena chorume nutritivo e desenvolve bactérias butíricas deteriorantes (Clostridium).",
+    "outro": "Se a MS ultrapassar 35%, o problema inverte: a palha fica armada, retém ar, esquenta e queima proteína por Maillard."
+  },
+  {
+    "sec": "5. Escolha da Espécie Forrageira",
+    "ref": "Slide 24",
+    "tema": "Consequências de Matéria Seca Elevada (> 35%)",
+    "q": "Quando a planta forrageira é cortada tardiamente e ensilada com teor de matéria seca superior a 35%, qual é a sequência de eventos indesejáveis descrita no slide?",
+    "ok": "Dificuldade de compactação → Quantidade de O2 elevada → Elevação da temperatura → Reação de Maillard",
+    "er": [
+      [
+        "Excesso de umidade → Drenagem de efluente → Multiplicação de Clostridium → Formação de ácido butírico",
+        "Essa é a sequência do capim excessivamente verde e úmido (< 30% MS)."
+      ],
+      [
+        "Queda instantânea do pH para 3,0 → Destruição de leveduras → Ausência total de microrganismos",
+        "Com O2 elevado e calor, a queda do pH é prejudicada e as perdas aeróbicas aumentam."
+      ],
+      [
+        "Maior liberação de suco celular → Fermentação homofermentativa imediata → Silagem fria e sem perdas",
+        "A matéria seca alta dificulta o esmagamento e a compactação, deixando a massa porosa e aquecida."
+      ]
+    ],
+    "pista": "Dificuldade de compactação → O2 elevado → aumento de temperatura → reação de Maillard.",
+    "nucleo": "Forragem seca não adensa bem, retém ar nos interstícios, aquece por respiração e inutiliza as proteínas via Maillard.",
+    "outro": "Se a compactação fosse executada em capim com 32% de MS, o ar seria expulso e a reação de Maillard seria evitada."
+  },
+  {
+    "sec": "5. Escolha da Espécie Forrageira",
+    "ref": "Slides 25 e 26",
+    "tema": "Teor de Carboidratos Solúveis (CS)",
+    "q": "O material aponta que o teor de carboidratos solúveis (CS) ideal para um processo fermentativo adequado deve ser de pelo menos 15% na MS. Com base na tabela apresentada, quais culturas atingem naturalmente esse patamar?",
+    "ok": "Zea mays (16,0% CS) e Saccharum officinarum (50,1% CS)",
+    "er": [
+      [
+        "Andropogon gayanus (6,30% CS) e Brachiaria decumbens (6,80% CS)",
+        "Essas gramíneas tropicais apresentam baixíssimo teor de açúcar solúvel (~6%), muito aquém dos 15%."
+      ],
+      [
+        "Panicum maximum (6,25% CS) e Pennisetum purpureum (11,4% CS)",
+        "Nenhuma das duas atinge 15%; o capim-elefante chega a 11,4% e o Panicum a apenas 6,25%."
+      ],
+      [
+        "Sorghum bicolor (13,3% CS) e Brachiaria decumbens (6,80% CS)",
+        "O sorgo aproxima-se com 13,3%, mas não atinge 15%; a braquiária é amplamente deficiente."
+      ]
+    ],
+    "pista": "Tabela de CS: Zea mays (16%) e Saccharum officinarum (50,1%).",
+    "nucleo": "Milho e cana-de-açúcar são as forrageiras da tabela que superam a exigência mínima de 15% de CS na MS para fermentação plena.",
+    "outro": "Se o produtor utilizar capim-elefante ou braquiária, precisará manejar muito bem a ensilagem ou usar aditivos/emurchecimento."
+  },
+  {
+    "sec": "5. Escolha da Espécie Forrageira",
+    "ref": "Slide 27",
+    "tema": "Poder Tampão na Ensilagem",
+    "q": "O que é o 'poder tampão' de uma planta forrageira e quais fatores intrínsecos aumentam essa resistência no momento de acidificar a silagem?",
+    "ok": "É a resistência à variação do pH; umidade elevada e altos níveis de nitrogênio aumentam essa resistência",
+    "er": [
+      [
+        "É a velocidade de absorção de oxigênio pelas plantas; altos teores de açúcar e baixas fibras aceleram o processo",
+        "Poder tampão refere-se especificamente à capacidade de amortecer ou frear a mudança de pH."
+      ],
+      [
+        "É a capacidade da lona plástica de suportar pressão; o peso da terra sobre o silo determina sua força",
+        "Poder tampão é uma propriedade química e biológica da própria planta colhida, não da lona do silo."
+      ],
+      [
+        "É o índice de compactação da forrageira; quanto mais colmos grossos tiver a planta, menor o poder tampão",
+        "Poder tampão relaciona-se com a composição química tamponante (compostos nitrogenados, umidade e ácidos orgânicos)."
+      ]
+    ],
+    "pista": "Resistência à variação do pH. Setas para cima: Umidade e Níveis de N.",
+    "nucleo": "Forrageiras ricas em nitrogênio e com alta umidade resistem fortemente à queda do pH do inicial (5,5–6,0) até o ideal (3,8–4,2).",
+    "outro": "Se a planta possuir baixo teor de nitrogênio e umidade adequada, o poder tampão será menor e o pH cairá facilmente."
+  },
+  {
+    "sec": "6. Processo de Ensilagem - Operações de Campo",
+    "ref": "Slides 29 a 32",
+    "tema": "Corte e Transporte da Forragem",
+    "q": "Nas etapas operacionais de corte e transporte da forragem para ensilar, qual recomendação do material visa evitar contaminações com terra e início de degradação precoce?",
+    "ok": "Colher no estágio nutricional equilibrado e evitar o acúmulo de material cortado no campo ou junto ao solo",
+    "er": [
+      [
+        "Deixar o capim cortado amontoado no chão por 3 a 4 dias para fermentar espontaneamente ao ar livre",
+        "O acúmulo no solo exposto ao ar e à terra gera podridão aeróbica e contaminações por microrganismos indesejáveis."
+      ],
+      [
+        "Cortar a planta exclusivamente após a senescência completa das folhas e secagem total dos colmos",
+        "O corte deve ocorrer com razoável matéria verde, teor proteico desejável, fibra baixa e bom CS."
+      ],
+      [
+        "Molhar a forragem cortada no campo com mangueiras de alta pressão para lavar a terra, inviabilizando a conservação eficiente no silo",
+        "Molhar a forragem elevaria excessivamente a umidade para níveis < 30% MS, produzindo chorume e perdas."
+      ]
+    ],
+    "pista": "Evitar o acúmulo de material cortado no campo ou junto ao solo.",
+    "nucleo": "O fluxo de corte e transporte deve ser sincronizado e contínuo para evitar que a planta respire ou se suje na terra.",
+    "outro": "Se o objetivo for o emurchecimento intencional de gramíneas tropicais, o capim fica espalhado poucas horas ao sol, não amontoado."
+  },
+  {
+    "sec": "6. Processo de Ensilagem - Operações de Campo",
+    "ref": "Slides 33 a 35",
+    "tema": "Tamanho de Partícula e Picagem",
+    "q": "Qual é o tamanho recomendado para a picagem da forragem e qual é o efeito da interação entre teor de matéria seca e tamanho de partícula sobre a compactação?",
+    "ok": "Tamanho de 0,5 a 2,0 cm; quanto maior o teor de MS da planta, menor deve ser o tamanho da partícula",
+    "er": [
+      [
+        "Tamanho de 10 a 15 cm; forragens mais secas devem ser picadas maiores para não virarem pó",
+        "Partículas grandes e secas não compactam, aprisionam ar e arruínam a silagem."
+      ],
+      [
+        "Tamanho uniforme de 0,1 cm (trituração); a umidade da forragem não influencia na escolha do corte",
+        "Triturar excessivamente forragem úmida causa rompimento celular drástico com perdas brutais por efluente."
+      ],
+      [
+        "Tamanho de 5 a 8 cm; quanto mais úmido o capim, menor deve ser a partícula para escorrer o caldo",
+        "O tamanho correto é de 0,5 a 2,0 cm; capim muito úmido com corte minúsculo perde nutrientes por chorume."
+      ]
+    ],
+    "pista": "Tamanho: 0,5 a 2,0 cm; Teor de MS alto → Tamanho da partícula baixo.",
+    "nucleo": "Partículas entre 0,5 e 2,0 cm facilitam a expulsão do ar; se o capim estiver mais seco, precisa ser picado mais miúdo.",
+    "outro": "Se a forragem estiver excessivamente úmida, a picagem fina em excesso causa rompimento e perda severa de caldo celular."
+  },
+  {
+    "sec": "6. Processo de Ensilagem - Operações de Campo",
+    "ref": "Slides 36 a 40",
+    "tema": "Carregamento e Compactação no Silo",
+    "q": "Durante o enchimento do silo, quais regras técnicas de carregamento e compactação são enfatizadas no material para minimizar a presença de oxigênio?",
+    "ok": "Operação contínua no menor tempo possível, em camadas uniformes de ~35 cm, com última camada abaulada",
+    "er": [
+      [
+        "Enchimento lento ao longo de 4 semanas, depositando camadas de 1 metro sem compactar",
+        "A operação lenta e com camadas espessas mantém o material exposto ao ar e oxigênio por dias, causando perda maciça."
+      ],
+      [
+        "Compactação realizada apenas no último dia, mantendo a superfície final em formato côncavo (em bacia)",
+        "A compactação deve ser contínua a cada camada de 35 cm; a camada final deve ser abaulada para escorrer água de chuva."
+      ],
+      [
+        "Aplicação obrigatória de água com cal a cada camada de 10 cm para umedecer e esfriar o trator",
+        "Não se adiciona água; a compactação deve expulsar o ar por pressão mecânica (tratores ou pisoteio)."
+      ]
+    ],
+    "pista": "Camadas uniformes de 35 cm, menor tempo possível, operação contínua, forma abaulada.",
+    "nucleo": "Compactar camadas delgadas de 35 cm rapidamente expulsa o ar; o formato abaulado no topo impede o empoçamento de água sobre a lona.",
+    "outro": "Se o topo for plano ou côncavo, a chuva acumulará sobre a lona, rompendo a vedação e infiltrando água no silo."
+  },
+  {
+    "sec": "6. Processo de Ensilagem - Operações de Campo",
+    "ref": "Slides 41 e 42",
+    "tema": "Fechamento e Proteção do Silo",
+    "q": "Para o fechamento e vedação do silo após a última camada abaulada, quais materiais e procedimentos combinados garantem a proteção física e a manutenção da anaerobiose?",
+    "ok": "Lona plástica coberta com fina camada de terra ou pesos (pneus/sacos) para manter a compactação e proteção",
+    "er": [
+      [
+        "Apenas palha seca solta jogada por cima da forragem, permitindo a circulação de vento para secagem",
+        "A palha solta permite entrada irrestrita de ar e chuva, provocando mofo e apodrecimento total."
+      ],
+      [
+        "Camada de 1 metro de concreto armado fundido diretamente sobre o capim fresco sem uso de plásticos",
+        "O procedimento padrão descrito utiliza lona plástica protegida com terra ou pesos móveis."
+      ],
+      [
+        "Fechamento imediato com telas de sombreamento agrícola (sombrite) para diminuir a luz solar",
+        "Telas de sombreamento são permeáveis ao oxigênio e à água da chuva; é imprescindível o uso de lona plástica vedante."
+      ]
+    ],
+    "pista": "Lona plástica, fina camada de terra, pesos para compactação e proteção contra acúmulo de água.",
+    "nucleo": "A lona plástica isola o ambiente externo, e o peso distribuído (terra/pneus) impede que o vento levante a lona ou bolsas de ar se formem.",
+    "outro": "Se não houver pesos sobre a lona, ela inflará com o vento e a compactação da superfície superior será perdida."
+  },
+  {
+    "sec": "6. Processo de Ensilagem - Operações de Campo",
+    "ref": "Slides 43 a 50",
+    "tema": "Abertura do Silo e Manejo de Retirada",
+    "q": "Na fase de utilização da silagem, o painel frontal é exposto novamente ao oxigênio. Quais cuidados operacionais e qual taxa diária mínima de retirada da fatia são prescritos para conter perdas aeróbicas?",
+    "ok": "Abertura após ± 30 dias, retirada de cima para baixo em fatias diárias de pelo menos 15 cm e cobrir com a lona",
+    "er": [
+      [
+        "Abertura com 2 dias de fechado, retirando o capim de baixo para cima com fatias diárias de 2,5 cm",
+        "Com 2 dias a fermentação nem começou; fatias de 2,5 cm sofrem perda severa de MS de 18% (Pitt & Muck)."
+      ],
+      [
+        "Remover 100% da lona plástica de todo o silo no primeiro dia e escavar valas de drenagem interna",
+        "Nunca se retira a lona do silo inteiro; deve-se descobrir somente a porção de consumo diário."
+      ],
+      [
+        "Retirar o alimento a cada 7 dias em blocos gigantescos de 2 metros, deixando o painel aberto ao sol",
+        "A retirada deve ser diária e contínua, pois a entrada de ar no painel alimenta bactérias aeróbicas e leveduras."
+      ]
+    ],
+    "pista": "Abertura após ± 30 dias, de cima para baixo, fatia de 15 cm, lona cobrindo após uso.",
+    "nucleo": "Retirar pelo menos 15 cm da face diariamente de cima para baixo minimiza a penetração de oxigênio e reduz as perdas a 3% (Pitt & Muck).",
+    "outro": "Se o produtor retirar apenas 2,5 cm ou 5 cm por dia, as perdas de matéria seca no painel saltam para 9% a 18%."
+  },
+  {
+    "sec": "7. Fases do Processo Fermentativo",
+    "ref": "Slides 52 a 57",
+    "tema": "Fase 1 - Respiração Celular Aeróbica",
+    "q": "O que caracteriza a Fase 1 do processo fermentativo dentro do silo e por que ela é considerada prejudicial do ponto de vista fermentativo?",
+    "ok": "Presença de O2 residual e respiração, que queima açúcares solúveis gerando calor (25° a 45°C) e degrada proteínas",
+    "er": [
+      [
+        "Ausência total de oxigênio e produção acelerada de ácido propiônico pelas bactérias estritas",
+        "Na Fase 1 há presença de O2; a fermentação anaeróbica só começa na Fase 2 após o esgotamento do ar."
+      ],
+      [
+        "Estabilização completa do pH em 3,8 impedindo qualquer atividade de leveduras e mofos, inviabilizando a conservação eficiente no silo",
+        "A estabilização é a Fase 3; na Fase 1 microrganismos tolerantes ao oxigênio proliferam ativamente."
+      ],
+      [
+        "Produção intensiva de ácido lático homofermentativo que resfria a massa para 10°C, inviabilizando a conservação eficiente no silo",
+        "A Fase 1 aquece a massa (25° a 45°C) pela oxidação de carboidratos, sem produzir ácido lático."
+      ]
+    ],
+    "pista": "Respiração celular: Açúcares + O2 → CO2 + H2O + calor (25° para 45°C). Indesejável!",
+    "nucleo": "A Fase 1 dissipa energia valiosa (CS) na forma de calor e gás carbônico, podendo lesar as proteínas da forragem.",
+    "outro": "Se a picagem, carregamento e compactação forem ultrarrápidos, o oxigênio acaba depressa e a Fase 1 encurta."
+  },
+  {
+    "sec": "7. Fases do Processo Fermentativo",
+    "ref": "Slides 58 a 62",
+    "tema": "Fase 2 - Fermentação Hetero e Homofermentativa",
+    "q": "Quando o oxigênio residual é totalmente esgotado, inicia-se a Fase 2 (fermentativa). Como ocorre a sucessão microbiana entre as bactérias láticas ao longo dessa fase?",
+    "ok": "Bactérias heterofermentativas acumulam ácido acético e baixam o pH; a seguir dominam as homofermentativas (+ eficientes)",
+    "er": [
+      [
+        "Clostrídios e coliformes multiplicam-se até eliminar todas as bactérias láticas por canibalismo, inviabilizando a conservação eficiente no silo",
+        "Clostrídios são microrganismos indesejáveis inibidos pela queda do pH provocada pelas bactérias láticas."
+      ],
+      [
+        "Bactérias aeróbicas tomam o silo e convertem todo o etanol em ácido propiônico na presença de luz",
+        "A Fase 2 é estritamente anaeróbica e no escuro; bactérias aeróbicas já sucumbiram pela falta de ar."
+      ],
+      [
+        "As bactérias homofermentativas agem primeiro produzindo gás carbônico e etanol, cedendo lugar às heterofermentativas",
+        "A ordem é inversa: as heterofermentativas iniciam produzindo acético/etanol/gás; a mudança de pH abre caminho às homofermentativas."
+      ]
+    ],
+    "pista": "Heterofermentativas (produzem acético, baixam pH) → Homofermentativas (1 glicose → 2 lático, rápida queda de pH).",
+    "nucleo": "As bactérias heterofermentativas acidificam o meio com ácido acético; o pH mais baixo favorece as homofermentativas, que convertem açúcar puramente em ácido lático.",
+    "outro": "Se a forragem não tiver carboidrato solúvel suficiente, a sucessão é truncada e o pH não cai adequadamente."
+  },
+  {
+    "sec": "7. Fases do Processo Fermentativo",
+    "ref": "Slides 63 a 65",
+    "tema": "Fase 3 - Estabilização do Silo",
+    "q": "Em uma fermentação bem-sucedida, o que define a entrada na Fase 3 (estabilização) e qual a relevância de alcançar essa fase com velocidade?",
+    "ok": "O pH atinge 3,8 a 4,2, inibindo as bactérias e a fermentação; quanto mais rápido atinge, mais nutrientes são poupados",
+    "er": [
+      [
+        "O pH atinge 6,5 reativando os fungos; a velocidade prolonga a fermentação por mais 6 meses, inviabilizando a conservação eficiente no silo",
+        "pH 6,5 seria um desastre biológico de podridão; a estabilidade exige pH ácido (3,8 a 4,2)."
+      ],
+      [
+        "A temperatura sobe para 70°C esterilizando o silo; a rapidez elimina a necessidade de lona plástica",
+        "A temperatura estabiliza e cai; temperaturas de 70°C destruiriam completamente o valor nutritivo."
+      ],
+      [
+        "Todo o nitrogênio da forragem é transformado em amônia líquida para desinfetar o painel do silo",
+        "A formação excessiva de amônia indica degradação de proteína indesejável por clostrídios."
+      ]
+    ],
+    "pista": "Estabilização: pH 3,8 a 4,2; inibição de bactérias e fermentação. Preserva CS e aminoácidos.",
+    "nucleo": "Ao bater no patamar de 3,8 a 4,2 de pH, o ambiente torna-se hostil até para as bactérias láticas; o processo dorme e o alimento fica estocado.",
+    "outro": "Se o pH parar em 4,8 ou 5,0, a Fase 3 não se estabelece e a forragem continua se degradando em fermentações secundárias."
+  },
+  {
+    "sec": "8. Tipos de Silos",
+    "ref": "Slides 67 a 69",
+    "tema": "Silo Trincheira",
+    "q": "Sobre o silo tipo trincheira, o mais utilizado no Brasil, quais são suas características geométricas e construtivas apresentadas?",
+    "ok": "Silo horizontal escavado, de forma trapezoidal, com fundo mais estreito e paredes com 25% de inclinação",
+    "er": [
+      [
+        "Silo vertical construído em alvenaria com torre de descarga automática no teto, inviabilizando a conservação eficiente no silo",
+        "Silo trincheira é horizontal e escavado no chão, não vertical de torre."
+      ],
+      [
+        "Vala retangular rasa com paredes perfeitamente retas em ângulo de 90° e sem saída de fundo",
+        "A forma é trapezoidal e as paredes têm 25% de inclinação para facilitar a compactação mecânica."
+      ],
+      [
+        "Estrutura metálica móvel em formato circular montada sobre rodas para locomoção diária",
+        "Essa descrição confunde-se vagamente com o aro cincho móvel; a trincheira é escavação fixa no solo."
+      ]
+    ],
+    "pista": "Forma trapezoidal, horizontal, escavado, + utilizado no Brasil, 25% inclinação.",
+    "nucleo": "A inclinação trapezoidal de 25% permite que o trator compacte a forragem encostando nas laterais sem desmoronar o barranco.",
+    "outro": "Se a estrutura fosse feita totalmente sobre o nível do solo sem escavação, seria um silo de superfície."
+  },
+  {
+    "sec": "8. Tipos de Silos",
+    "ref": "Slides 70 e 71",
+    "tema": "Silo de Superfície",
+    "q": "Apesar do baixo custo inicial e da dispensa de obras ou escavações, qual é a principal desvantagem operacional do silo de superfície alertada no texto?",
+    "ok": "Não permite boa compactação e aumenta as perdas, podendo haver perda total com alta MS ou corte grande",
+    "er": [
+      [
+        "Dificuldade extrema de descarga, exigindo guindastes e esteiras elétricas suspensas",
+        "O silo de superfície é horizontal no chão, sendo a descarga muito acessível."
+      ],
+      [
+        "Impossibilidade absoluta de utilização de tratores agrícolas para distribuição da massa",
+        "Tratores sobem na rampa de superfície, mas a ausência de paredes laterais limita a pressão nas bordas."
+      ],
+      [
+        "Custo de instalação de alvenaria mais elevado do que o de qualquer silo vertical, inviabilizando a conservação eficiente no silo",
+        "O silo de superfície tem custo zero de alvenaria, pois é feito diretamente sobre o terreno limpo."
+      ]
+    ],
+    "pista": "Não permite boa compactação → aumenta perdas; risco de perda total se MS for alta.",
+    "nucleo": "Por não ter paredes rígidas de contenção, a compactação nas laterais fica vulnerável, retendo ar e estragando a periferia.",
+    "outro": "Se o produtor usar forragem com umidade ideal e corte bem picado, reduz o risco de perda total no silo de superfície."
+  },
+  {
+    "sec": "8. Tipos de Silos",
+    "ref": "Slides 72 a 74",
+    "tema": "Silos Verticais: Aéreo e Cisterna",
+    "q": "Comparando os dois modelos de silos verticais de alvenaria citados (Aéreo versus Cisterna), qual é o contraste marcante entre eles em relação ao carregamento e descarregamento?",
+    "ok": "O aéreo é difícil de carregar e fácil de descarregar; a cisterna é fácil de carregar e difícil de descarregar",
+    "er": [
+      [
+        "Ambos são horizontais, logo o carregamento e descarregamento ocorrem por gravidade natural sem esforço",
+        "Ambos são verticais cilíndricos; a força da gravidade atua de modo oposto em cada um."
+      ],
+      [
+        "O aéreo enche por baixo com bombas hidráulicas e a cisterna esvazia por comportas de teto",
+        "O aéreo exige elevar a forragem até o topo alto; a cisterna está enterrada no solo, enchendo por gravidade e esvaziando para cima."
+      ],
+      [
+        "O aéreo é o mais barato do Brasil para ensilar capim e a cisterna é exclusiva de grãos concentrados",
+        "O aéreo é de altíssimo custo e raramente usado para forragem no Brasil (mais comum para grãos); a cisterna é poço escavado."
+      ]
+    ],
+    "pista": "Aéreo: fácil descarga, difícil carregamento. Cisterna: fácil carregamento, difícil descarga.",
+    "nucleo": "No aéreo a forragem entra por cima (trabalhoso) e sai por portinholas laterais/fundo; na cisterna cava-se o chão, enchendo fácil e exigindo içar a silagem na saída.",
+    "outro": "Se o silo aéreo for adotado, o investimento inicial em alvenaria e maquinário elevador será muito elevado."
+  },
+  {
+    "sec": "8. Tipos de Silos",
+    "ref": "Slides 75 e 76",
+    "tema": "Silo Cincho",
+    "q": "O silo cincho é uma tecnologia rústica para pequenas propriedades. Qual elemento estrutural o define e como ele é operado?",
+    "ok": "Utiliza um aro metálico desmontável (2,5 a 3,0 m de diâmetro e 0,5 m de altura) que vai sendo erguido em camadas",
+    "er": [
+      [
+        "Consiste em valas subterrâneas de 50 metros revestidas de lona plástica preta, inviabilizando a conservação eficiente no silo",
+        "Essa é a descrição do silo trincheira ou silo bolsa."
+      ],
+      [
+        "Utiliza tubos infláveis flexíveis que se expandem com injeção de gás nitrogênio pressurizado",
+        "Cincho é simplesmente uma cinta ou aro de chapa metálica de 50 cm de altura."
+      ],
+      [
+        "Exige obrigatoriamente piso de concreto polido e paredes de tijolo refratário com teto de telha",
+        "O piso do cincho pode ser simplesmente terra batida ou revestido com pedra e palha."
+      ]
+    ],
+    "pista": "Aro metálico, 2,5 m a 3,0 m de diâmetro, 0,5 m de altura, boa compactação.",
+    "nucleo": "O aro cincho confina a forragem enquanto se compacta; ao atingir a borda, o aro é elevado sucessivamente formando um cilindro autossustentado.",
+    "outro": "Se a propriedade for de grande porte com centenas de toneladas, o cincho torna-se inviável devido à pequena capacidade unitária."
+  },
+  {
+    "sec": "8. Tipos de Silos",
+    "ref": "Slides 77 a 84",
+    "tema": "Silo Tubo ou Bags",
+    "q": "Muito difundido em países como EUA, Argentina e Europa, o Silo Tubo (bags) destaca-se pela alta tecnologia. Quais são suas características técnicas e qual é o seu principal fator limitante?",
+    "ok": "Embutimento em tubo plástico (1,5 a 3m diâm.), poucas perdas e sem O2; seu maior limitante é o custo (plástico descartável)",
+    "er": [
+      [
+        "Utiliza plástico reaproveitável por 15 anos consecutivos; seu maior limitante é a alta perda de matéria seca",
+        "O plástico não é reaproveitado (descarte após o uso) e as perdas de matéria seca são mínimas."
+      ],
+      [
+        "Exige escavação de galerias subterrâneas e alvenaria pesada; o limitante é o tempo de construção de 6 meses",
+        "Silo tubo não requer escavação nem construção de alvenaria; a máquina embutidora opera direto no solo plano."
+      ],
+      [
+        "Apresenta área frontal imensa e desprotegida; o limitante é a incapacidade de reter umidade da forragem",
+        "Pelo contrário: possui área frontal reduzida, excelente vedação contra ar/água e capacidade de 1,3 a 2,5 t/m linear."
+      ]
+    ],
+    "pista": "Tubo plástico, alta qualidade, plástico não reaproveitado, custo é o maior fator limitante.",
+    "nucleo": "O silo tubo oferece fermentação impecável e perdas mínimas por anaerobiose estrita, mas depende de máquina embutidora e filmes plásticos descartáveis de alto custo.",
+    "outro": "Se o produtor não puder bancar o custo contínuo das bags, silos trincheira ou superfície são alternativas econômicas."
+  },
+  {
+    "sec": "8. Tipos de Silos",
+    "ref": "Slides 85 e 86",
+    "tema": "Silos de Pequeno Porte: Bombonas e Sacos",
+    "q": "Para agricultores familiares sem tratores ou maquinários pesados, o material apresenta silos em bombonas plásticas e sacos de polietileno. Qual a grande vantagem prática desses sistemas?",
+    "ok": "Baixo custo, facilidade de manuseio/transporte, poucas perdas e dispensa de maquinário especial",
+    "er": [
+      [
+        "Possibilidade de armazenar 500 toneladas em um único recipiente sem necessitar de mão de obra",
+        "São embalagens de pequena escala (dezenas de quilos), voltadas para manejo manual."
+      ],
+      [
+        "Capacidade de auto-gerar carboidratos solúveis no interior do plástico durante o verão",
+        "Recipientes plásticos são inertes e apenas mantêm a anaerobiose; não criam nutrientes."
+      ],
+      [
+        "Permitem aeração constante para secar o capim dentro do saco sem produzir ácidos",
+        "Se entrar ar no saco ou bombona, a forragem mofa; o objetivo dos sacos é fechar hermeticamente."
+      ]
+    ],
+    "pista": "Bombonas e sacos de polietileno: baixo custo, fácil manuseio e transporte, dispensa maquinário especial.",
+    "nucleo": "Permitem ao pequeno produtor ensilar pequenas sobras com excelente compactação manual ou pisoteio e perdas reduzidas.",
+    "outro": "Se houver perfuração acidental do plástico por roedores ou espinhos, o ar penetrará e a forragem do saco será perdida."
+  },
+  {
+    "sec": "9. Culturas Forrageiras e Manejo de Corte",
+    "ref": "Slides 88 a 92",
+    "tema": "Silagem de Milho (Zea mays)",
+    "q": "O milho é a cultura padrão para ensilagem no mundo. Qual é o ponto ideal de corte da planta para garantir entre 30 e 35% de matéria seca e o melhor balanço energético?",
+    "ok": "Grão farináceo ou farináceo-duro (com cerca de 50% da linha do leite no grão)",
+    "er": [
+      [
+        "Estágio de florescimento inicial (grão inexistente, com cerca de 15% de MS)",
+        "No florescimento a planta tem apenas 15% de MS, gerando perdas brutais por chorume e baixíssimo amido."
+      ],
+      [
+        "Estágio leitoso precoce (quando a espiga solta caldo claro, com 25% de MS)",
+        "No estágio leitoso a planta tem só 25% de MS e o grão tem apenas 50% do seu potencial de matéria seca acumulado."
+      ],
+      [
+        "Estágio de grão duro e planta totalmente seca (com mais de 45% de MS)",
+        "No grão duro (>45% MS) o colmo seca, a compactação torna-se extremamente difícil e o grão não é digerido."
+      ]
+    ],
+    "pista": "Grão farináceo ou pós-farináceo, 30 a 35% de MS, 50% linha do leite.",
+    "nucleo": "A meia linha do leite no grão (estágio farináceo-duro) equilibra o enchimento máximo de amido com a umidade correta para compactação.",
+    "outro": "Se o milho for colhido verde demais (leitoso), escorrerá efluente; se for colhido seco demais (grão duro), esquentará no silo."
+  },
+  {
+    "sec": "9. Culturas Forrageiras e Manejo de Corte",
+    "ref": "Slides 93 e 94",
+    "tema": "Silagem de Sorgo (Sorghum bicolor)",
+    "q": "Em que condições de cultivo o sorgo é preferido em relação ao milho para ensilagem e quais são seus parâmetros de corte?",
+    "ok": "Em regiões marginais com restrição hídrica, pela maior rusticidade e capacidade de rebrota (30 a 70% do 1° corte)",
+    "er": [
+      [
+        "Exclusivamente em solos alagados de baixada, pois o sorgo não tolera qualquer período de sol forte",
+        "O sorgo é notório pela alta resistência à seca e ao calor, perfeito para clima semiárido."
+      ],
+      [
+        "Apenas quando se deseja eliminar os grãos da forragem, já que o sorgo não produz espigas nem sementes",
+        "O sorgo forrageiro produz panículas ricas em grãos que aportam energia à silagem."
+      ],
+      [
+        "Quando se busca um teor de proteína bruta superior a 25% na silagem sem necessidade de corte",
+        "A silagem de sorgo apresenta cerca de 7% de proteína bruta (PB), similar à do milho."
+      ]
+    ],
+    "pista": "Gramínea rústica, restrição hídrica, regiões marginais, rebrota 30 a 70% do 1° corte.",
+    "nucleo": "O sorgo substitui o milho com vantagem em áreas sujeitas a veranicos devido à sua tolerância à seca e capacidade de produzir um segundo corte.",
+    "outro": "Em condições ideais de chuva regular e solo fértil, o milho costuma ter ligeira vantagem em valor energético."
+  },
+  {
+    "sec": "9. Culturas Forrageiras e Manejo de Corte",
+    "ref": "Slides 95 a 97",
+    "tema": "Capim-Elefante e o Desafio da Umidade",
+    "q": "O capim-elefante (Pennisetum purpureum) produz elevada massa por hectare, mas enfrenta um dilema clássico ao ser ensilado verde aos 60–80 dias (1,60 a 1,80 m). Qual é esse problema?",
+    "ok": "Apresenta disparidade qualidade x quantidade, com excesso de umidade (~85%) que favorece bactérias Clostridium",
+    "er": [
+      [
+        "Contém mais de 60% de matéria seca, o que impede totalmente qualquer tipo de picagem mecânica",
+        "Capim-elefante jovem é excessivamente úmido (85% de água; apenas 15% de MS), o oposto de seco."
+      ],
+      [
+        "Produz toxinas alcaloides mortais que tornam a silagem venenosa para bovinos e ovinos, inviabilizando a conservação eficiente no silo",
+        "O capim-elefante é perfeitamente palatável e seguro; o obstáculo é estritamente a fermentação indesejada por alta umidade."
+      ],
+      [
+        "Possui excesso de carboidratos solúveis (mais de 50%), provocando fermentação alcoólica imediata",
+        "A cana-de-açúcar é que tem 50% de CS; o capim-elefante tem teor moderado de 9 a 16% de CS na MS."
+      ]
+    ],
+    "pista": "Disparidade qualidade x quantidade; teor de umidade 85%; bactérias do gênero Clostridium.",
+    "nucleo": "Se cortado jovem e nutritivo, o capim-elefante carrega água em excesso (85%), lavando nutrientes em chorume e permitindo bactérias butíricas.",
+    "outro": "Se o produtor esperar o capim envelhecer para ganhar MS, a planta perde muita proteína e acumula fibra indigestível."
+  },
+  {
+    "sec": "9. Culturas Forrageiras e Manejo de Corte",
+    "ref": "Slides 98 e 99",
+    "tema": "Técnica do Emurchecimento",
+    "q": "Para resolver a alta umidade das gramíneas tropicais colhidas no estágio vegetativo sem perder valor nutricional, qual técnica é recomendada e quais os efeitos comprovados no Quadro de Pupo?",
+    "ok": "Desidratação ao sol por 3 a 5 horas; eleva a MS de 23% para 34% e reduz as perdas de MS por escorrimento de 6% para 0,2%",
+    "er": [
+      [
+        "Injeção de vapor d'água a 100°C; reduz a MS para 10% e aumenta a perda de proteína para 40%, inviabilizando a conservação eficiente no silo",
+        "Emurchecer significa perder umidade ao ar livre, nunca injetar vapor de água."
+      ],
+      [
+        "Adição de 30% de solo argiloso misturado ao capim picado para puxar a água para o fundo, inviabilizando a conservação eficiente no silo",
+        "Adicionar terra contamina a silagem com clostrídios e sujeira mineral, arruinando a fermentação."
+      ],
+      [
+        "Congelamento prévio da forragem por 48 horas para quebrar o cristal de gelo antes da picagem, inviabilizando a conservação eficiente no silo",
+        "A técnica é a simples dessecação solar no campo por 3 a 5 horas após o corte da forragem."
+      ]
+    ],
+    "pista": "Desidratação 3 a 5 horas, reduz efluentes, eleva MS para 34% e diminui perda de PB por escorrimento de 10,4% para 0,6%.",
+    "nucleo": "O emurchecimento retira o excesso de água da planta fresca sem queimar nutrientes, eliminando a lixiviação de chorume no silo.",
+    "outro": "Além de gramíneas, o emurchecimento reduz compostos tóxicos como o ácido cianídrico (HCN) em euforbiáceas como a mandioca."
+  },
+  {
+    "sec": "10. Uso e Classificação de Aditivos",
+    "ref": "Slides 100 a 105",
+    "tema": "Classificação dos Aditivos na Ensilagem",
+    "q": "Segundo a classificação de Vilela (1985) apresentada no material, como são agrupados os aditivos utilizados na ensilagem quanto à sua função e natureza?",
+    "ok": "Em Estimulantes e Inibidores da fermentação, subdivididos em Nutritivos e Não nutritivos",
+    "er": [
+      [
+        "Em Aditivos Tóxicos e Aditivos Naturais, subdivididos em Minerais e Vegetais",
+        "A classificação formal adotada divide pelas funções (estimulantes vs inibidores) e aporte nutricional."
+      ],
+      [
+        "Em Aditivos Sólidos e Aditivos Gasosos, subdivididos de acordo com o preço de mercado",
+        "A classificação oficial do texto é funcional e nutricional, não pelo estado físico da matéria."
+      ],
+      [
+        "Em Aditivos de Verão e Aditivos de Inverno, conforme a temperatura ambiente do município",
+        "A tipologia do material segue estritamente a ação biológica sobre a rota fermentativa."
+      ]
+    ],
+    "pista": "Classificação dos aditivos (Vilela, 1985): Estimulantes e Inibidores; Nutritivos e Não nutritivos.",
+    "nucleo": "Aditivos estimulantes aceleram a rota láctica; inibidores travam fermentações indesejadas; ambos podem agregar nutrientes ou agir por via microbiológica/enzimática.",
+    "outro": "Ureia, melaço e polpa cítrica são estimulantes nutritivos; culturas bacterianas são estimulantes não nutritivos."
+  },
+  {
+    "sec": "10. Uso e Classificação de Aditivos",
+    "ref": "Slides 104 e 105",
+    "tema": "Exemplos de Aditivos por Categoria",
+    "q": "Com base no rol de aditivos citado por Vilela (1985), qual das opções relaciona corretamente a substância à sua exata categoria?",
+    "ok": "Polpa cítrica e melaço são estimulantes nutritivos; sal comum é inibidor nutritivo",
+    "er": [
+      [
+        "Ureia e carbonato de cálcio são inibidores não nutritivos da fermentação",
+        "Ureia e carbonato de cálcio estão classificados na categoria de estimulantes nutritivos."
+      ],
+      [
+        "Culturas de bactérias e enzimas são inibidores nutritivos derivados do leite",
+        "Culturas bacterianas e enzimas são estimulantes NÃO nutritivos da fermentação."
+      ],
+      [
+        "Ácidos orgânicos e pirossulfito de sódio são estimulantes nutritivos de alto valor energético",
+        "Ácidos orgânicos e pirossulfito de sódio são inibidores NÃO nutritivos da fermentação."
+      ]
+    ],
+    "pista": "Estimulantes nutritivos: uréia, melaço, polpa cítrica; Inibidor nutritivo: sal comum.",
+    "nucleo": "O melaço fornece açúcares às bactérias (estimulante nutritivo), enquanto o sal comum cria pressão osmótica que inibe fermentação geral (inibidor nutritivo).",
+    "outro": "Se a substância for o pirossulfito de sódio ou ácidos orgânicos puros, atuam como inibidores químicos sem aportar calorias."
+  },
+  {
+    "sec": "11. Silagem de Cana-de-Açúcar e Fermentação Alcoólica",
+    "ref": "Slides 107 a 111",
+    "tema": "O Desafio da Fermentação Alcoólica na Cana",
+    "q": "A cana-de-açúcar possui matéria seca adequada e abundância de carboidratos solúveis (~50%). Por que a sua ensilagem sem aditivos resulta em drástica perda de valor nutritivo?",
+    "ok": "Populações de leveduras epífitas realizam fermentação alcoólica, convertendo açúcar em etanol e CO2 que volatilizam",
+    "er": [
+      [
+        "As bactérias láticas proliferam tanto que transformam toda a fibra em ácido clorídrico cáustico",
+        "Bactérias láticas produzem ácido lático, benéfico; o vilão da cana são as leveduras alcoólicas."
+      ],
+      [
+        "A cana apodrece por falta absoluta de açúcares, permitindo o ataque de vermes subterrâneos, inviabilizando a conservação eficiente no silo",
+        "A cana é riquíssima em sacarose/glicose (50% de CS); a perda decorre justamente do consumo desse açúcar pelas leveduras."
+      ],
+      [
+        "O teor de água da cana evapora instantaneamente em 24 horas, quebrando o plástico do silo, inviabilizando a conservação eficiente no silo",
+        "A cana tem teor de umidade normal; a perda ocorre via rota metabólica de leveduras (Pedroso, 2003)."
+      ]
+    ],
+    "pista": "Leveduras → fermentação alcoólica; Glicose → 2 etanol + 2 CO2. Volatilização de energia no rúmen/cocho.",
+    "nucleo": "Leveduras convertem o açúcar nobre da cana em álcool e gás carbônico; ao abrir o silo, o etanol evapora e o animal ingere apenas fibra esgotada.",
+    "outro": "Se o produtor inibir as leveduras com aditivos corretos, a sacarose e o ácido lático serão preservados para o gado."
+  },
+  {
+    "sec": "11. Silagem de Cana-de-Açúcar e Fermentação Alcoólica",
+    "ref": "Slides 112 a 116",
+    "tema": "Aditivos para Cana: Químicos e Biológicos",
+    "q": "Quais são os dois aditivos apontados como mais promissores (Pedroso, 2003) para conter a produção de etanol e elevar o ganho de peso na silagem de cana-de-açúcar?",
+    "ok": "Benzoato de sódio (químico, 0,5 a 2 g/kg) e Lactobacillus buchneri (biológico heterofermentativo)",
+    "er": [
+      [
+        "Ureia pura a 15% da matéria verde e cloreto de potássio concentrado, inviabilizando a conservação eficiente no silo",
+        "Doses altas de ureia intoxicam o gado; a ureia não é o aditivo de eleição contra leveduras na cana."
+      ],
+      [
+        "Ácido sulfúrico diluído e antibióticos veterinários de largo espectro, inviabilizando a conservação eficiente no silo",
+        "O material não recomenda ácidos minerais fortes nem antibióticos em forrageiras."
+      ],
+      [
+        "Inoculantes à base de fungos leveduriformes selvagens e açúcar cristal, inviabilizando a conservação eficiente no silo",
+        "Adicionar leveduras agravaria o problema da fermentação alcoólica e das perdas de matéria seca."
+      ]
+    ],
+    "pista": "Mais promissores: Benzoato de sódio e Lactobacillus buchneri (Pedroso, 2003).",
+    "nucleo": "O benzoato age como fungicida direto e o L. buchneri produz ácidos acético e propiônico, compostos que suprimem as leveduras.",
+    "outro": "O NaOH (hidróxido de sódio) também reduz o etanol, mas traz limitações graves de poluição ambiental e excesso de sódio na dieta."
+  },
+  {
+    "sec": "11. Silagem de Cana-de-Açúcar e Fermentação Alcoólica",
+    "ref": "Slide 117",
+    "tema": "A Armadilha das Homofermentativas na Cana",
+    "q": "Bactérias láticas homofermentativas são altamente desejáveis na maioria das silagens. Por que, no caso específico da cana-de-açúcar, elas são prejudiciais (Pedroso, 2003)?",
+    "ok": "Produzem ácido lático que serve de substrato para as leveduras, não têm ação fungicida e estimulam mais etanol",
+    "er": [
+      [
+        "Elas queimam a cana por gerarem calor acima de 90°C dentro do plástico, inviabilizando a conservação eficiente no silo",
+        "Bactérias láticas operam em temperatura anaeróbica normal, sem causar combustão."
+      ],
+      [
+        "Elas convertem o caldo da cana em veneno cianídrico instantâneo para ruminantes, inviabilizando a conservação eficiente no silo",
+        "Ácido cianídrico provém de glicosídeos de plantas como a mandioca, não da ação de bactérias láticas."
+      ],
+      [
+        "Elas elevam o pH para 9,0, impedindo qualquer ação de preservação ácida, inviabilizando a conservação eficiente no silo",
+        "Homofermentativas são eficientes em baixar o pH, mas o ácido lático gerado alimenta as leveduras na cana."
+      ]
+    ],
+    "pista": "Homofermentativas prejudicam a cana: produzem lático, substrato para leveduras, estimulam etanol, sem ação fungicida.",
+    "nucleo": "Na cana, leveduras utilizam o próprio ácido lático para proliferar; como as homofermentativas não produzem acético nem propiônico (fungicidas), o etanol dispara.",
+    "outro": "Por essa razão, na cana utiliza-se o heterofermentativo Lactobacillus buchneri, que produz ácido acético protetor contra leveduras."
+  },
+  {
+    "sec": "12. Avaliação da Silagem e Conclusão de Manejo",
+    "ref": "Slides 119 a 122",
+    "tema": "Avaliação Organoléptica da Silagem",
+    "q": "Ao avaliar sensorialmente uma amostra de silagem recém-retirada do silo, quais atributos visuais, olfativos e táteis atestam que o produto é de excelente qualidade?",
+    "ok": "Cheiro agradável, cor verde-amarelada clara, textura firme com tecidos macios e pouca quantidade de efluentes",
+    "er": [
+      [
+        "Coloração marrom-escura brilhante, cheiro picante e rançoso, desmanchando-se em pasta líquida",
+        "Cor escura, cheiro rançoso e textura desfeita são sinais clássicos de silagem putrefata de má qualidade."
+      ],
+      [
+        "Cheiro forte de vinagre puro, cor preta carbonizada e fibras secas que se desfazem em cinzas",
+        "Indicativo de queima térmica intensa por oxigênio e reação de Maillard com degradação severa."
+      ],
+      [
+        "Cor verde-esmeralda artificial fluorescente, cheiro adocicado de melaço virgem e textura crocante",
+        "A silagem estabilizada assume cor verde-amarelada clara devido às transformações da clorofila pelos ácidos."
+      ]
+    ],
+    "pista": "Boa silagem: cheiro agradável, cor verde-amarelada, tecidos macios, fibras firmes, pouco efluente.",
+    "nucleo": "Silagem de alta qualidade apresenta aroma ácido agradável e coloração clara; odor rançoso ou marrom denuncia ação de clostrídios e calor excessivo.",
+    "outro": "Se a massa apresentar efluente turvo empoçado e odor pútrido de manteiga rançosa, houve predomínio de ácido butírico."
+  },
+  {
+    "sec": "12. Avaliação da Silagem e Conclusão de Manejo",
+    "ref": "Slides 123 e 124",
+    "tema": "Perfil de Ácidos e Nitrogênio Amoniacal (N-NH3)",
+    "q": "Na análise laboratorial da silagem bem conservada, qual deve ser o ácido orgânico predominante e qual o limite máximo aceitável para o nitrogênio amoniacal (N-NH3)?",
+    "ok": "Ácido lático dominante (6 a 8% da MS) e N-NH3 abaixo de 11% do Nitrogênio Total (NT)",
+    "er": [
+      [
+        "Ácido butírico dominante (15 a 20%) e N-NH3 acima de 50% do nitrogênio total",
+        "Ácido butírico deve ser quase zero (<0,1%); níveis altos de amônia (>11%) denunciam proteólise por clostrídios."
+      ],
+      [
+        "Ácido acético puro (mais de 20%) e ausência de qualquer forma de nitrogênio na matéria seca",
+        "Ácido acético deve ser menor que 2,0%; a forragem preserva nitrogênio proteico para nutrição animal."
+      ],
+      [
+        "Ácido propiônico dominante (10%) e N-NH3 exatamente igual ao valor do pH da água",
+        "O propiônico situa-se em 0 a 1%; o ácido que garante a estabilidade e a qualidade superior é o lático (6 a 8%)."
+      ]
+    ],
+    "pista": "Ácido lático (6 a 8%), acético (<2%), butírico (<0,1%) e N-NH3 < 11% do NT.",
+    "nucleo": "O ácido lático confere a maior força de acidez; níveis de nitrogênio amoniacal inferiores a 11% provam que as proteínas não foram destruídas por bactérias indesejáveis.",
+    "outro": "Se o N-NH3 superar 11% do NT, significa que clostrídios desaminaram os aminoácidos nobres, gerando cheiro rançoso e perda biológica."
+  },
+  {
+    "sec": "12. Avaliação da Silagem e Conclusão de Manejo",
+    "ref": "Slide 125",
+    "tema": "A Mensagem Central do Manejo",
+    "q": "O encerramento da aula (slide 125) sintetiza a regra de ouro da forragicultura para a obtenção de uma silagem nutritiva e de alta qualidade. Qual é essa conclusão definitiva?",
+    "ok": "O manejo aplicado (ponto de corte, tamanho de picagem e compactação) é mais importante que a escolha de aditivos",
+    "er": [
+      [
+        "O uso de aditivos químicos caros consegue compensar completamente qualquer erro grosseiro de colheita e compactação",
+        "O slide enfatiza textualmente que nenhum aditivo milagroso supera as falhas de manejo básico no campo."
+      ],
+      [
+        "A escolha da espécie vegetal é o único fator relevante, dispensando compactação e vedação do silo",
+        "A espécie é apenas a matéria-prima; sem ponto de corte, picagem e compactação adequados, qualquer espécie estraga."
+      ],
+      [
+        "A silagem perfeita depende exclusivamente da altitude da fazenda e da marca do trator utilizado",
+        "A qualidade resulta da observância estrita dos princípios biológicos e mecânicos de conservação anaeróbica."
+      ]
+    ],
+    "pista": "Slide 125: 'É mais importante o manejo que se aplica à planta (corte, tamanho, compactação) do que propriamente aditivos.'",
+    "nucleo": "Manejo correto no momento do corte, picagem fina e compactação impecável garantem silagem superior; aditivos são apenas ferramentas complementares.",
+    "outro": "Mesmo com o melhor aditivo do mercado, se o produtor picar partículas gigantescas e deixar o silo fofo com oxigênio, a silagem apodrecerá."
+  }
+];
+
+var app = document.getElementById('app');
+var queue, pos, answers, t0, cur, locked, optList;
+
+function shuffle(a){
+  a = a.slice();
+  for(var i=a.length-1; i>0; i--){
+    var j = Math.floor(Math.random()*(i+1));
+    var x = a[i]; a[i] = a[j]; a[j] = x;
+  }
+  return a;
+}
+
+function start(list){
+  queue = list.slice();
+  pos = 0;
+  answers = [];
+  t0 = Date.now();
+  render();
+}
+
+function render(){
+  if(pos >= queue.length){ return finish(); }
+  var q = queue[pos];
+  cur = q;
+  locked = false;
+  
+  var opts = [{x: q.ok, ok: true, why: ''}].concat(q.er.map(function(e){ return {x: e[0], ok: false, why: e[1]}; }));
+  optList = shuffle(opts);
+  var L = 'ABCD';
+  
+  var h = '<h1>Ensilagem - Curso Completo</h1>';
+  h += '<p class="sub">Progressão linear e cronológica do material (Slides 1 a 127)</p>';
+  h += '<div class="meta"><span>Questão ' + (pos+1) + ' de ' + queue.length + '</span><span>' + answers.filter(function(a){return a.ok}).length + ' acertos</span></div>';
+  h += '<div class="bar"><i style="width:' + (pos/queue.length*100) + '%"></i></div>';
+  h += '<div class="badge">' + q.sec + '</div>';
+  h += '<p class="stem">' + q.q + '</p><div id="opts">';
+  
+  optList.forEach(function(o, i){
+    h += '<button class="opt" data-i="' + i + '"><b>' + L[i] + '</b><span>' + o.x + '</span></button>';
+  });
+  
+  h += '</div><div id="fb"></div><p class="hint">Teclas: [1-4] escolhem a alternativa; [Enter] avança para a próxima.</p>';
+  app.innerHTML = h;
+  
+  Array.prototype.forEach.call(app.querySelectorAll('.opt'), function(b){
+    b.onclick = function(){ pick(+b.getAttribute('data-i')); };
+  });
+}
+
+function pick(i){
+  if(locked || !optList[i]) return;
+  locked = true;
+  var q = cur;
+  var o = optList[i];
+  
+  var btns = app.querySelectorAll('.opt');
+  Array.prototype.forEach.call(btns, function(b, k){
+    b.disabled = true;
+    if(optList[k].ok) b.classList.add('ok');
+    else if(k === i) b.classList.add('ko');
+  });
+  
+  answers.push({q: q, ok: o.ok, chosen: o.x});
+  
+  var f = '<div class="fb"><p class="h ' + (o.ok ? 'ok' : 'ko') + '">' + (o.ok ? 'Correto.' : 'Errado.') + '</p>';
+  f += '<p><em>Tema:</em> ' + q.tema + '</p>';
+  f += '<p><em>Pista no Enunciado:</em> ' + q.pista + '</p>';
+  f += '<p><em>Núcleo Conceitual:</em> ' + q.nucleo + '</p>';
+  if(!o.ok) {
+    f += '<p><em>Por que sua escolha está incorreta:</em> ' + o.why + '</p>';
+  }
+  f += '<p><em>Contraste com outro conceito:</em> ' + q.outro + '</p>';
+  f += '<p><em>Referência no PDF:</em> ' + q.ref + '</p>';
+  f += '<button class="main" id="nx">' + (pos+1 >= queue.length ? 'Concluir e Ver Relatório' : 'Próxima Questão') + '</button></div>';
+  
+  document.getElementById('fb').innerHTML = f;
+  document.getElementById('nx').onclick = next;
+  document.getElementById('nx').focus();
+}
+
+function next(){
+  pos++;
+  render();
+  window.scrollTo(0, 0);
+}
+
+document.addEventListener('keydown', function(e){
+  if(!queue || pos >= queue.length) return;
+  if(!locked && e.key >= '1' && e.key <= '4'){
+    pick(+e.key - 1);
+  } else if(locked && e.key === 'Enter'){
+    e.preventDefault();
+    next();
+  }
+});
+
+function fmt(ms){
+  var s = Math.round(ms/1000);
+  return Math.floor(s/60) + ' min ' + ('0' + (s%60)).slice(-2) + ' s';
+}
+
+function finish(){
+  var tot = answers.length;
+  var ac = answers.filter(function(a){ return a.ok; }).length;
+  var bySec = {};
+  
+  answers.forEach(function(a){
+    var s = a.q.sec;
+    bySec[s] = bySec[s] || { tot: 0, ok: 0 };
+    bySec[s].tot++;
+    if(a.ok) bySec[s].ok++;
+  });
+  
+  var h = '<h1>Fechamento do Curso - Ensilagem</h1>';
+  h += '<p class="sub">Auditoria completa do desempenho (Ordem sequencial do PDF)</p>';
+  h += '<div class="score">' + (ac/tot*10).toFixed(1) + ' <span style="font-size:18px;color:var(--c-mut)">/ 10</span></div>';
+  h += '<p><strong>' + ac + ' de ' + tot + '</strong> questões corretas (' + Math.round(ac/tot*100) + '%) · Tempo total: ' + fmt(Date.now() - t0) + '</p>';
+  
+  h += '<h2>Aproveitamento por Seção do Material</h2>';
+  h += '<table><tr><th>Seção do PDF</th><th>Acertos</th><th>Aproveitamento</th></tr>';
+  Object.keys(bySec).forEach(function(s){
+    var st = bySec[s];
+    var pct = Math.round(st.ok/st.tot*100);
+    h += '<tr><td>' + s + '</td><td>' + st.ok + ' / ' + st.tot + '</td><td class="p' + (pct < 70 ? ' low' : '') + '">' + pct + '%</td></tr>';
+  });
+  h += '</table>';
+  
+  var erros = answers.filter(function(a){ return !a.ok; }).map(function(a){ return a.q; });
+  if(erros.length > 0){
+    h += '<h2>Tópicos a Revisar (' + erros.length + ' falhas)</h2><ul>';
+    erros.forEach(function(err){
+      h += '<li><strong>' + err.sec + ' (' + err.ref + '):</strong> ' + err.tema + '</li>';
+    });
+    h += '</ul>';
+  } else {
+    h += '<div class="note"><strong>Desempenho Impecável:</strong> Domínio integral de todos os tópicos e parâmetros de ensilagem do PDF.</div>';
+  }
+  
+  h += '<div style="margin-top:20px">';
+  h += '<button class="sec" id="rs">Reiniciar Simulado Completo</button>';
+  if(erros.length > 0){
+    h += '<button class="main" id="re">Refazer Somente os Erros (' + erros.length + ')</button>';
+  }
+  h += '</div>';
+  
+  app.innerHTML = h;
+  document.getElementById('rs').onclick = function(){ start(Q); };
+  if(erros.length > 0){
+    document.getElementById('re').onclick = function(){ start(erros); };
+  }
+}
+
+// Inicia na ordem linear exata do PDF
+start(Q);
+</script>
+</body>
+</html>

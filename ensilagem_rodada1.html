@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ensilagem - Rodada 1</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:20px;font-family:inherit;background:transparent;color:var(--foreground,#18181b);font-size:15px;line-height:1.5}
+  @media (prefers-color-scheme:dark){body{color:var(--foreground,#e4e4e7)}}
+  .app{
+    --c-card:var(--card,#ffffff);--c-bd:var(--border,#d4d4d8);--c-fg:var(--foreground,#18181b);
+    --c-mut:var(--muted-foreground,#52525b);--c-pri:var(--primary,#2563eb);--c-prifg:var(--primary-foreground,#ffffff);
+    --ok:#16a34a;--ko:#dc2626;
+    max-width:760px;margin:0 auto;background:var(--c-card);color:var(--c-fg);border:1px solid var(--c-bd);border-radius:14px;padding:22px
+  }
+  @media (prefers-color-scheme:dark){.app{--c-card:var(--card,#1c1c1f);--c-bd:var(--border,#3f3f46);--c-fg:var(--foreground,#e4e4e7);--c-mut:var(--muted-foreground,#a1a1aa);--c-pri:var(--primary,#60a5fa);--c-prifg:var(--primary-foreground,#0b1220);--ok:#4ade80;--ko:#f87171}}
+  h1{font-size:18px;margin:0 0 2px}
+  .sub{color:var(--c-mut);font-size:13px;margin:0 0 14px}
+  .bar{height:6px;background:var(--c-bd);border-radius:99px;overflow:hidden;margin:6px 0 18px}
+  .bar>i{display:block;height:100%;background:var(--c-pri);width:0;transition:width .25s}
+  .meta{display:flex;justify-content:space-between;font-size:13px;color:var(--c-mut)}
+  .stem{font-size:16px;font-weight:600;margin:0 0 14px}
+  .opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--c-bd);border-radius:10px;padding:11px 13px;margin:0 0 9px;cursor:pointer}
+  .opt:hover:not(:disabled){border-color:var(--c-pri)}
+  .opt b{min-width:22px;color:var(--c-pri)}
+  .opt:disabled{cursor:default;opacity:.55}
+  .opt.ok{opacity:1;border-color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,transparent)}
+  .opt.ko{opacity:1;border-color:var(--ko);background:color-mix(in srgb,var(--ko) 16%,transparent)}
+  .fb{border-top:1px dashed var(--c-bd);margin-top:14px;padding-top:12px;font-size:14px}
+  .fb p{margin:0 0 7px}
+  .fb .h{font-weight:700;font-size:15px}
+  .fb .h.ok{color:var(--ok)} .fb .h.ko{color:var(--ko)}
+  .fb em{color:var(--c-mut);font-style:normal;font-weight:600}
+  button.main{font:inherit;font-weight:600;background:var(--c-pri);color:var(--c-prifg);border:0;border-radius:9px;padding:9px 18px;cursor:pointer;margin:6px 8px 0 0}
+  button.sec{font:inherit;font-weight:600;background:transparent;color:var(--c-fg);border:1px solid var(--c-bd);border-radius:9px;padding:9px 18px;cursor:pointer;margin:6px 8px 0 0}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:8px 0 14px}
+  th,td{border:1px solid var(--c-bd);padding:6px 8px;text-align:left;vertical-align:top}
+  th{color:var(--c-mut)}
+  td.p{white-space:nowrap;font-weight:700}
+  .low{color:var(--ko);font-weight:700}
+  .score{font-size:34px;font-weight:800;margin:4px 0}
+  h2{font-size:15px;margin:16px 0 4px}
+  ul{margin:4px 0 8px;padding-left:20px;font-size:14px}
+  .hint{font-size:12px;color:var(--c-mut);margin-top:12px}
+  .note{font-size:13px;color:var(--c-mut);border-left:3px solid var(--c-bd);padding-left:10px;margin:10px 0}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+/* ===== Temas (revelados somente depois da resposta) ===== */
+var T = {
+ A:{nome:'Estacionalidade da forragem e conservação do excedente',nucleo:'Em sequeiro, ~80% da forragem nasce na chuva e a demanda do rebanho é constante: sobra na chuva, falta na seca; conserva-se o excedente (feno/silagem).',pistas:'produção dependente da chuva; demanda constante; excedente × falta',conf:'Vantagens da ensilagem'},
+ B:{nome:'Vantagens e limitações da ensilagem',nucleo:'Concentra alimento em pouco espaço e sofre menos com o clima que a fenação, mas exige boa compactação, máquinas caras e retirada diária, e sempre perde valor nutricional.',pistas:'mais cabeças/ha; água via silagem; perdas; custo; “sempre há diminuição”',conf:'Conservação / Fase aeróbica'},
+ C:{nome:'Por que a silagem se conserva',nucleo:'Dois motivos: anaerobiose (sem fungos, leveduras e mofos) e fermentação anaeróbica (ácidos lático e acético, pH ≈ 4,5, contêm coliformes e clostrídios), num sistema de auto-controle.',pistas:'fungos/leveduras ausentes; coliformes e clostrídios; auto-controle; ácidos × pH',conf:'Fermentação (fases) / CS'},
+ D:{nome:'Teor de matéria seca (MS)',nucleo:'30–35% de MS é adequado; abaixo → efluente e Clostridium; acima → compactação difícil, O2, calor e reação de Maillard.',pistas:'efluente + Clostridium; compactação difícil; Maillard',conf:'Fase aeróbica (O2)'},
+ E:{nome:'Teor de carboidratos solúveis (CS)',nucleo:'O processo exige ≥ 15% de CS na MS: é o substrato das bactérias para ácidos lático e acético, que baixam o pH. Só milho (16%) e cana (50,1%) da tabela atingem.',pistas:'substrato das bactérias; 15% na MS; tabela de espécies',conf:'Matéria seca / Poder tampão'},
+ F:{nome:'Poder tampão',nucleo:'É a resistência da forragem à variação do pH: a planta (5,5–6,0) precisa chegar a 3,8–4,2 na silagem.',pistas:'resistência à variação de pH; 5,5–6,0 → 3,8–4,2',conf:'CS / MS'},
+ G:{nome:'Fase 1 - aeróbica',nucleo:'Com O2 ainda na massa, a respiração consome CS e libera CO2, H2O e calor (25 → 45 °C). É indesejável: deve ser encurtada.',pistas:'O2 residual; respiração; aquecimento; leveduras e mofos',conf:'Fase 2'},
+ H:{nome:'Fase 2 - anaeróbica (hetero → homofermentativas)',nucleo:'Esgotado o O2, as heterofermentativas acumulam acético e baixam o pH; depois dominam as homofermentativas (1 glicose → 2 lático), mais eficientes. Dura ≈ 10–14 dias.',pistas:'O2 esgotado; glicose → lático + etanol + CO2; 2 lático; acético',conf:'Fase 1 / Fase 3'},
+ I:{nome:'Fase 3 - estabilização e sequência das fases',nucleo:'Com pH 3,8–4,2 a fermentação é inibida (estabilidade). Quanto mais cedo chega, mais CS e aminoácidos se preservam.',pistas:'pH 3,8–4,2; bactérias inibidas; fermentação cessa',conf:'Fase 2'}
+};
+
+/* ===== Questões: ok = correta; er = [texto, por que está errada] ===== */
+var Q = {
+ "A1": {
+  "t": "A",
+  "ang": "Identificação",
+  "q": "Uma propriedade de sequeiro vê o pasto crescer muito no período chuvoso e quase parar na seca, enquanto o rebanho come praticamente a mesma quantidade o ano todo. Qual situação isso descreve?",
+  "ok": "Excesso de forragem na chuva e falta na seca, por demanda constante",
+  "er": [
+   [
+    "Falta de forragem no período chuvoso, porque a demanda do rebanho aumenta nessa época",
+    "Inverte o quadro: é na chuva que a produção sobra."
+   ],
+   [
+    "Perda de valor nutricional da forragem por má compactação do material dentro do silo",
+    "Isso é limitação da ensilagem; o caso trata de oferta × demanda ao longo do ano."
+   ],
+   [
+    "Fermentação inadequada da forragem por teor de MS abaixo de 30% no momento do corte",
+    "O caso não fala de MS nem de fermentação, e sim de oferta sazonal de forragem."
+   ]
+  ],
+  "pista": "Produção dependente da chuva + demanda do rebanho “relativamente constante”.",
+  "outro": "Se o caso falasse de efluente e Clostridium seria teor de MS; se falasse de perdas por silo mal compactado, seriam as limitações da ensilagem.",
+  "ref": "Slides 7 a 11"
+ },
+ "A2": {
+  "t": "A",
+  "ang": "Princípio",
+  "q": "Por que, em sequeiro, a forragem sobra numa época e falta em outra mesmo com o mesmo rebanho?",
+  "ok": "Cerca de 80% da produção anual ocorre na chuva, e a demanda do rebanho é relativamente constante",
+  "er": [
+   [
+    "Cerca de 80% da produção anual ocorre no período seco, justamente quando a demanda do rebanho é maior",
+    "Troca a condição: os ~80% estão no período chuvoso e a demanda não sobe na seca."
+   ],
+   [
+    "A demanda do rebanho cai no período seco, enquanto a produção de forragem permanece constante o ano todo",
+    "Inverte os dois fatores: a produção é que varia com a chuva; a demanda é que é constante."
+   ],
+   [
+    "A produção de forragem em sequeiro não depende da precipitação, e sim da demanda do rebanho",
+    "O material diz o oposto: em sequeiro a produção depende da precipitação."
+   ]
+  ],
+  "pista": "A pergunta cobra o critério (a causa), não o nome do problema.",
+  "outro": "Se o critério pedido fosse o pH final da silagem, o tema seria poder tampão ou estabilização, não oferta sazonal.",
+  "ref": "Slides 8 e 9"
+ },
+ "A3": {
+  "t": "A",
+  "ang": "Inversão",
+  "q": "Há excedente de forragem no período chuvoso. Qual é a consequência prática prevista no material para esse excedente?",
+  "ok": "Ser conservado como feno ou silagem para cobrir o período de falta",
+  "er": [
+   [
+    "Ser consumido apenas pelo aumento temporário do tamanho do rebanho na chuva",
+    "O material não resolve o excedente aumentando o rebanho, e sim conservando-o para a seca."
+   ],
+   [
+    "Ser descartado, pois a demanda do rebanho é constante ao longo do ano",
+    "A demanda constante é justamente o motivo de guardar o excedente."
+   ],
+   [
+    "Aguardar a rebrota natural do pasto durante o período seco do ano",
+    "Na seca a produção é que cai; a rebrota natural não cobre o déficit."
+   ]
+  ],
+  "pista": "O tema vem dado (excedente) e se pergunta o efeito previsto.",
+  "outro": "Se o enunciado dissesse que o rebanho é maior no período chuvoso, a lógica de oferta × demanda deixaria de valer.",
+  "ref": "Slides 11 e 12"
+ },
+ "A4": {
+  "t": "A",
+  "ang": "Ponte",
+  "ponte": "Oferta sazonal ↔ Vantagens da ensilagem",
+  "q": "Um produtor quer conservar o excedente da chuva e compara fenação com ensilagem. Qual característica da ensilagem pesa a favor dele justamente na época em que o excedente aparece?",
+  "ok": "Menor interferência do clima no processo, o que facilita ensilar na época chuvosa",
+  "er": [
+   [
+    "A silagem dispensa compactação, então a chuva não prejudica o processo de conservação",
+    "Falso: má compactação gera perdas; ela continua necessária."
+   ],
+   [
+    "A silagem mantém exatamente o valor nutricional da forragem que foi ensilada no campo",
+    "Falso: sempre há diminuição do valor nutricional em relação à forragem ensilada."
+   ],
+   [
+    "A silagem é fácil de comercializar fora da propriedade e não depende de usos internos",
+    "Falso: a comercialização é difícil e a silagem costuma ser usada na própria propriedade."
+   ]
+  ],
+  "pista": "Liga o excedente da chuva (oferta sazonal) à vantagem “menor interferência do clima (fenação vs ensilagem)”.",
+  "outro": "Sem o ponto da chuva, o argumento deixaria de ligar excedente a ensilagem.",
+  "ref": "Slides 11 a 14"
+ },
+ "B1": {
+  "t": "B",
+  "ang": "Identificação",
+  "q": "Um produtor ensila no período chuvoso, mantém mais animais por hectare, oferece parte da água via silagem e formula rações com menos concentrado. A que esse conjunto de características corresponde?",
+  "ok": "Vantagens da ensilagem",
+  "er": [
+   [
+    "Fatores limitantes da ensilagem",
+    "Os itens do caso são ganhos (mais cabeças/ha, menos concentrado), não restrições."
+   ],
+   [
+    "Critérios para obtenção de boa silagem",
+    "Esses critérios são escolher a forrageira, colher na hora certa, técnica adequada e armazenar bem, não benefícios ao sistema."
+   ],
+   [
+    "Características da silagem de má qualidade",
+    "Nada no caso descreve cor, cheiro ou efluente da silagem."
+   ]
+  ],
+  "pista": "Mais cabeças/ha, água via silagem, menos concentrado.",
+  "outro": "Se aparecessem máquinas de custo elevado e má compactação gerando perdas, seriam as limitações.",
+  "ref": "Slides 13 e 14"
+ },
+ "B2": {
+  "t": "B",
+  "ang": "Armadilha",
+  "q": "Um técnico diz: “a ensilagem melhora a qualidade da forragem, então podemos ensilar qualquer planta”. Qual é o erro?",
+  "ok": "A ensilagem não melhora a forragem: o valor nutricional sempre diminui e a qualidade final pode ser ruim",
+  "er": [
+   [
+    "O erro é ensilar no período chuvoso, época em que a forragem é abundante e fácil de ensilar",
+    "Ensilar na chuva é listado como vantagem (facilidade de ensilar), não como erro."
+   ],
+   [
+    "A ensilagem só melhora a forragem quando há boa compactação e o silo é vedado com lona",
+    "Compactação evita perdas; não faz a silagem superar a forragem ensilada."
+   ],
+   [
+    "Não há erro: a silagem preserva a qualidade por 2 a 3 anos, logo qualquer planta pode ser usada",
+    "“Preservar por longos períodos” não significa manter integral: o valor nutricional sempre diminui e a qualidade final pode ser ruim."
+   ]
+  ],
+  "pista": "Frase que soa como vantagem, mas contradiz “sempre há diminuição no valor nutricional”.",
+  "outro": "Se a afirmação fosse apenas que a silagem se mantém por 2 a 3 anos, aí sim seria uma vantagem.",
+  "ref": "Slides 14, 15 e 17"
+ },
+ "B3": {
+  "t": "B",
+  "ang": "Inversão",
+  "q": "Entre os fatores limitantes da ensilagem, qual é a consequência de uma má compactação do silo?",
+  "ok": "Perdas de silagem por conservação deficiente da massa",
+  "er": [
+   [
+    "Maior aceitabilidade da silagem pelos animais que a consomem",
+    "Aceitabilidade é vantagem e não decorre de má compactação."
+   ],
+   [
+    "Dificuldade de comercialização, pois a silagem é usada na propriedade",
+    "É outro fator limitante, sem ligação causal com compactação."
+   ],
+   [
+    "Menor necessidade de máquinas de custo elevado durante o processo",
+    "Máquinas caras são limitação independente; má compactação não as dispensa."
+   ]
+  ],
+  "pista": "Seta do slide: má compactação → perdas.",
+  "outro": "Se a pergunta fosse sobre quem consome a silagem, a resposta passaria à aceitabilidade (vantagem).",
+  "ref": "Slide 15"
+ },
+ "B4": {
+  "t": "B",
+  "ang": "Ponte",
+  "ponte": "Limitações ↔ Fase aeróbica",
+  "q": "Mesmo num silo bem vedado, ocorre perda de MS na forma de carboidratos solúveis logo no início. Que mecanismo do material explica essa perda?",
+  "ok": "O O2 que permanece na massa sustenta a respiração, que consome CS e libera calor",
+  "er": [
+   [
+    "A fermentação lática homofermentativa, que consome todo o CS disponível na massa ensilada",
+    "As homofermentativas são da fase 2 e convertem CS em ácido lático, que preserva a silagem; a perda inicial é por respiração."
+   ],
+   [
+    "A estabilização da massa a pH 3,8 a 4,2, etapa que degrada os açúcares restantes",
+    "Na fase 3 a fermentação é inibida e se busca preservar nutrientes."
+   ],
+   [
+    "A retirada diária da silagem do silo, que expõe a massa ao ar durante o consumo",
+    "A retirada vem depois da conservação; a perda descrita é do início do processo."
+   ]
+  ],
+  "pista": "Perda de MS como CS no início, com o silo já vedado.",
+  "outro": "Se a perda ocorresse na abertura, o mecanismo seria exposição ao O2 na retirada.",
+  "ref": "Slides 15, 54 e 57"
+ },
+ "C1": {
+  "t": "C",
+  "ang": "Identificação",
+  "q": "Numa silagem bem feita não se encontram fungos, leveduras nem mofos. Qual condição do silo responde por isso?",
+  "ok": "Anaerobiose, isto é, a ausência de oxigênio no interior do silo",
+  "er": [
+   [
+    "Fermentação anaeróbica, com produção de ácidos lático e acético pelas bactérias",
+    "Os ácidos e o pH baixo contêm coliformes e clostrídios; fungos, leveduras e mofos são barrados pela ausência de O2."
+   ],
+   [
+    "Poder tampão elevado da forrageira, que resiste à queda do pH na massa",
+    "Poder tampão é resistência à queda do pH; não explica ausência de fungos."
+   ],
+   [
+    "Teor de MS acima de 35%, que reduz a umidade disponível aos microrganismos",
+    "MS alta dificulta a compactação e aumenta o O2, o contrário do que se quer."
+   ]
+  ],
+  "pista": "Fungos, leveduras e mofos ausentes.",
+  "outro": "Se o caso falasse de coliformes e clostrídios contidos por pH ≈ 4,5, seria a fermentação anaeróbica.",
+  "ref": "Slide 19"
+ },
+ "C2": {
+  "t": "C",
+  "ang": "Princípio",
+  "q": "No sistema de auto-controle do silo, o que faz a atividade dos microrganismos cessar?",
+  "ok": "Consumo de substratos gera ácidos orgânicos; o pH cai e inibe os próprios microrganismos",
+  "er": [
+   [
+    "Os microrganismos geram ácidos orgânicos que elevam o pH até inibir a própria atividade microbiana",
+    "Inverte o efeito: ácidos reduzem o pH."
+   ],
+   [
+    "A ausência de ácidos orgânicos mantém o pH baixo e, por isso, inibe os microrganismos do silo",
+    "Sem ácidos o pH não cai; eles são o elo do ciclo."
+   ],
+   [
+    "A presença de O2 residual na massa inibe os microrganismos que dependem de substratos",
+    "O O2 sustenta os aeróbios da fase 1; não é o freio do ciclo."
+   ]
+  ],
+  "pista": "Diagrama: substratos → ácidos orgânicos → ↓pH → (–) microrganismos.",
+  "outro": "Se o enunciado tratasse de por que o pH resiste a cair, seria poder tampão.",
+  "ref": "Slide 20"
+ },
+ "C3": {
+  "t": "C",
+  "ang": "Armadilha",
+  "q": "Um técnico afirma: “o silo está vedado e sem O2, portanto está garantido que clostrídios e coliformes não vão apodrecer a silagem”. Onde está o erro?",
+  "ok": "A ausência de O2 barra fungos e leveduras; coliformes e clostrídios são contidos pelos ácidos, com pH ≈ 4,5",
+  "er": [
+   [
+    "Coliformes e clostrídios só crescem na presença de O2, então a vedação do silo basta e o técnico acertou",
+    "O material atribui o controle deles aos ácidos e ao pH, não à ausência de O2."
+   ],
+   [
+    "A ausência de O2 barra todos os microrganismos, inclusive as bactérias láticas que fermentam o açúcar",
+    "Se barrasse as láticas não haveria fermentação nem ácidos."
+   ],
+   [
+    "Fungos e leveduras são contidos pelo pH baixo, e coliformes e clostrídios pela ausência de O2 no silo",
+    "Inverte os dois mecanismos."
+   ]
+  ],
+  "pista": "Confunde “sem O2” com “sem clostrídios”: dois mecanismos, dois grupos de microrganismos.",
+  "outro": "Se aparecessem fungos e mofos, aí sim a causa seria entrada de O2.",
+  "ref": "Slide 19"
+ },
+ "C4": {
+  "t": "C",
+  "ang": "Inversão",
+  "q": "O que o material prevê se a forragem não passa por fermentação anaeróbica que produza ácidos lático e acético?",
+  "ok": "Bactérias indesejáveis, como coliformes e clostrídios, se desenvolvem e apodrecem a silagem",
+  "er": [
+   [
+    "Fungos, leveduras e mofos dominam a massa porque entra O2 pelas falhas de vedação do silo",
+    "Fungos são barrados pela anaerobiose; sem fermentação, o problema são coliformes e clostrídios."
+   ],
+   [
+    "O pH cai abaixo de 3,8 por falta de competição entre os microrganismos presentes na massa",
+    "Sem ácidos o pH não cai; 3,8–4,2 é resultado de fermentação bem feita."
+   ],
+   [
+    "A MS ultrapassa 35% e a massa fica difícil de compactar, aumentando a entrada de ar",
+    "MS é característica da forragem na entrada, não consequência de faltar fermentação."
+   ]
+  ],
+  "pista": "Tema dado (fermentação anaeróbica); a pergunta é o efeito da sua ausência.",
+  "outro": "Se a pergunta fosse a ausência de O2, o efeito seriam fungos, leveduras e mofos.",
+  "ref": "Slide 19"
+ },
+ "C5": {
+  "t": "C",
+  "ang": "Ponte",
+  "ponte": "Conservação ↔ Carboidratos solúveis",
+  "q": "Uma forrageira pobre em açúcares é ensilada num silo perfeitamente vedado, sem O2. Por que a conservação ainda pode falhar?",
+  "ok": "Faltam açúcares como substrato para os ácidos: o pH não cai e coliformes e clostrídios se desenvolvem",
+  "er": [
+   [
+    "A baixa concentração de açúcar faz o O2 voltar a entrar no silo, mesmo bem vedado, e reativa os aeróbios",
+    "Pouco CS não altera a vedação; o que falta é substrato para os ácidos."
+   ],
+   [
+    "A baixa concentração de açúcar eleva a MS acima de 35%, o que impede a compactação da massa",
+    "CS e MS são critérios independentes."
+   ],
+   [
+    "A baixa concentração de açúcar impede que o silo atinja a anaerobiose após o fechamento",
+    "A anaerobiose vem da vedação e do consumo inicial do O2; com pouco CS faltam os ácidos, o segundo motivo."
+   ]
+  ],
+  "pista": "Vedação perfeita + pouco açúcar: sobra apenas o segundo mecanismo (fermentação), que depende de CS.",
+  "outro": "Se o silo estivesse mal vedado, a falha seria do primeiro mecanismo (O2 e fungos).",
+  "ref": "Slides 19 e 25"
+ },
+ "D1": {
+  "t": "D",
+  "ang": "Identificação",
+  "q": "A silagem sai do silo com muito efluente e sinais de fermentação por bactérias do gênero Clostridium. Em que faixa estava a MS da forragem ensilada?",
+  "ok": "Abaixo de 30%",
+  "er": [
+   [
+    "Entre 30 e 35%",
+    "É a faixa adequada ao processo fermentativo; não gera esses sinais."
+   ],
+   [
+    "Acima de 35%",
+    "MS alta leva a compactação difícil e Maillard, não a efluente e Clostridium."
+   ],
+   [
+    "Cerca de 15%",
+    "Esse número é o CS mínimo na MS, não faixa de MS."
+   ]
+  ],
+  "pista": "Efluente + Clostridium.",
+  "outro": "Se o caso falasse de aquecimento e reação de Maillard, seria MS acima de 35%.",
+  "ref": "Slides 23 e 24"
+ },
+ "D2": {
+  "t": "D",
+  "ang": "Princípio",
+  "q": "Qual critério justifica que 30 a 35% de MS seja a faixa adequada?",
+  "ok": "Evita umidade excessiva (efluente e Clostridium) e secura excessiva (compactação difícil, O2 e calor)",
+  "er": [
+   [
+    "Garante o mínimo de 15% de CS na MS, que é o substrato usado pelas bactérias para produzir ácidos",
+    "CS é critério à parte; a MS não garante CS."
+   ],
+   [
+    "Zera o poder tampão da forragem, o que facilita a queda do pH logo nos primeiros dias do silo",
+    "Poder tampão é outra propriedade e a faixa de MS não o zera."
+   ],
+   [
+    "Elimina a fase aeróbica, já que a massa seca expulsa o O2 durante a compactação no silo",
+    "A fase 1 ocorre por causa do O2 residual, independentemente da faixa de MS."
+   ]
+  ],
+  "pista": "A pergunta cobra o porquê da faixa.",
+  "outro": "Se o critério fosse o substrato das bactérias, seria CS.",
+  "ref": "Slides 23 e 24"
+ },
+ "D3": {
+  "t": "D",
+  "ang": "Armadilha",
+  "q": "Um técnico vê efluente e Clostridium numa silagem e conclui que a forragem estava seca demais. Por que está errado?",
+  "ok": "Efluente e Clostridium indicam MS abaixo de 30% (úmida); MS acima de 35% gera compactação difícil, calor e Maillard",
+  "er": [
+   [
+    "Está certo: a forragem seca comprime mal, solta líquido e favorece a fermentação por Clostridium",
+    "Forragem seca não produz efluente; o efluente vem do excesso de umidade."
+   ],
+   [
+    "Efluente e Clostridium aparecem tanto com MS abaixo de 30% quanto com MS acima de 35%, sem distinção",
+    "O material liga esses dois sinais apenas à MS abaixo de 30%."
+   ],
+   [
+    "Efluente é sinal de CS acima de 15% na MS, e Clostridium é sinal de poder tampão elevado",
+    "Nem CS nem poder tampão causam efluente; ele vem do excesso de umidade."
+   ]
+  ],
+  "pista": "Sinais corretos, direção trocada (seca × úmida).",
+  "outro": "Se o técnico visse aquecimento e escurecimento por Maillard, aí o diagnóstico de “seca demais” estaria certo.",
+  "ref": "Slide 24"
+ },
+ "D4": {
+  "t": "D",
+  "ang": "Inversão",
+  "q": "Qual é a sequência de efeitos prevista quando a forragem é ensilada com MS acima de 35%?",
+  "ok": "Compactação difícil → O2 elevado → elevação da temperatura → alterações químicas (Maillard)",
+  "er": [
+   [
+    "Produção de efluente → fermentação por Clostridium → queda lenta do pH na massa ensilada",
+    "É a sequência da MS abaixo de 30%."
+   ],
+   [
+    "Elevação da temperatura → compactação difícil → O2 elevado → alterações químicas (Maillard)",
+    "Embaralha a causa: a compactação difícil vem primeiro e deixa mais O2, que então eleva a temperatura."
+   ],
+   [
+    "Fermentação adequada → pH de 3,8 a 4,2 → estabilização da massa ensilada com pouco O2",
+    "Descreve a faixa adequada (30–35%)."
+   ]
+  ],
+  "pista": "Tema dado (MS acima de 35%); pede a cadeia de consequências.",
+  "outro": "Se a MS fosse abaixo de 30%, a cadeia seria efluente e Clostridium.",
+  "ref": "Slide 24"
+ },
+ "D5": {
+  "t": "D",
+  "ang": "Ponte",
+  "ponte": "Matéria seca ↔ Fase aeróbica",
+  "q": "Que ligação existe entre a forragem muito seca (MS acima de 35%) e as condições da fase aeróbica da fermentação?",
+  "ok": "A compactação difícil deixa mais O2 na massa, e o O2 sustenta a respiração e o calor da fase 1",
+  "er": [
+   [
+    "A forragem seca elimina o O2 durante a compactação e encerra a fase aeróbica mais cedo que o normal",
+    "É o contrário: compactação ruim deixa mais O2, não menos."
+   ],
+   [
+    "A forragem seca produz efluente em excesso, e o efluente sustenta a respiração da fase aeróbica",
+    "Efluente é sinal de MS baixa."
+   ],
+   [
+    "Não há ligação: a fase aeróbica só depende da temperatura ambiente no momento da vedação do silo",
+    "A fase 1 depende do O2 junto à planta, e a MS influencia isso pela compactação."
+   ]
+  ],
+  "pista": "Liga a cadeia “compactação difícil → O2 elevado → calor” à definição de fase 1 (O2, respiração, calor).",
+  "outro": "Se a MS fosse baixa, a ligação passaria a ser com efluente e Clostridium.",
+  "ref": "Slides 24 e 52 a 54"
+ },
+ "E1": {
+  "t": "E",
+  "ang": "Identificação",
+  "q": "Uma forrageira traz apenas cerca de 6% de açúcares solúveis na MS, deixando pouco substrato para as bactérias produzirem ácidos. Que critério de escolha da espécie está em jogo?",
+  "ok": "Teor de carboidratos solúveis",
+  "er": [
+   [
+    "Teor de matéria seca",
+    "MS trata de umidade (efluente e compactação), não de açúcar."
+   ],
+   [
+    "Poder tampão",
+    "Poder tampão é resistência à variação do pH, não quantidade de substrato."
+   ],
+   [
+    "Tamanho de partícula na picagem",
+    "Picagem é etapa do processo, não critério de escolha da espécie."
+   ]
+  ],
+  "pista": "Pouco “substrato” para as bactérias.",
+  "outro": "Se o caso falasse de resistência à queda do pH, seria poder tampão.",
+  "ref": "Slides 22, 25 e 26"
+ },
+ "E2": {
+  "t": "E",
+  "ang": "Princípio",
+  "q": "Por que o material exige cerca de 15% de CS na MS para um processo fermentativo adequado?",
+  "ok": "Os CS são o substrato das bactérias para ácidos lático e acético, que baixam o pH",
+  "er": [
+   [
+    "Os CS elevam a MS da forragem até a faixa de 30 a 35%, considerada adequada à fermentação",
+    "CS e MS são critérios separados."
+   ],
+   [
+    "Os CS aumentam o poder tampão e protegem a forragem contra a queda brusca do pH",
+    "Poder tampão é resistência à variação do pH, o oposto do que o CS faz na fermentação (baixar o pH)."
+   ],
+   [
+    "Os CS reduzem o tempo de respiração da fase 1, porque a planta passa a consumir menos O2",
+    "A respiração consome CS; não é poupada por ele."
+   ]
+  ],
+  "pista": "A pergunta cobra o porquê do mínimo.",
+  "outro": "Se o critério fosse evitar efluente, o parâmetro seria MS abaixo de 30%.",
+  "ref": "Slide 25"
+ },
+ "E3": {
+  "t": "E",
+  "ang": "Armadilha",
+  "q": "Qual espécie tem MS próxima da faixa ideal (cerca de 28 a 30%), mas CS muito abaixo de 15% na MS?",
+  "ok": "Panicum maximum (6,25% de CS; 28,8% de MS)",
+  "er": [
+   [
+    "Saccharum officinarum (50,1% de CS; 28,1% de MS)",
+    "MS parecida, mas CS muito acima de 15%."
+   ],
+   [
+    "Zea mays (16,0% de CS; 30,3% de MS)",
+    "Cumpre CS (≥ 15%) e MS (30–35%)."
+   ],
+   [
+    "Sorghum bicolor L. (13,3% de CS; 25,5% de MS)",
+    "MS mais baixa e CS próximo de 15%, não “muito abaixo”."
+   ]
+  ],
+  "pista": "MS “boa” escondendo CS ruim: dois critérios podem discordar.",
+  "outro": "Se a pergunta pedisse CS alto com MS baixa, a resposta seria a cana.",
+  "ref": "Slides 23 a 26"
+ },
+ "E4": {
+  "t": "E",
+  "ang": "Inversão",
+  "q": "O que o material prevê para a produção de ácidos e para o pH quando a forragem fica abaixo do CS necessário?",
+  "ok": "Pouco substrato: a produção de ácidos lático e acético é insuficiente e o pH não cai como deveria",
+  "er": [
+   [
+    "A produção de ácidos aumenta, pois as bactérias láticas passam a disputar menos açúcar entre si",
+    "Sem substrato as bactérias não produzem mais ácido."
+   ],
+   [
+    "O pH cai mais rápido do que o esperado, porque a forragem com pouco CS tem menos poder tampão",
+    "Poder tampão independe do CS."
+   ],
+   [
+    "A respiração da fase 1 deixa de ocorrer, pois a planta não tem mais açúcar para consumir",
+    "A respiração depende de O2 e de CS presentes; pouco CS não a impede."
+   ]
+  ],
+  "pista": "Tema dado (CS baixo); pede o efeito.",
+  "outro": "Se o CS fosse ≥ 15%, o efeito esperado seria queda adequada do pH.",
+  "ref": "Slide 25"
+ },
+ "E5": {
+  "t": "E",
+  "ang": "Ponte",
+  "ponte": "Carboidratos solúveis ↔ Fase aeróbica",
+  "q": "Por que um tempo longo de exposição ao O2 após o corte compromete a fermentação, mesmo numa forrageira rica em açúcares?",
+  "ok": "A respiração consome CS, que seria substrato da fermentação e fonte de energia aos animais",
+  "er": [
+   [
+    "O O2 transforma o CS em ácido lático sem passar pela fermentação, o que acelera a queda do pH",
+    "A respiração libera CO2, H2O e calor, não ácido lático."
+   ],
+   [
+    "O O2 eleva o teor de CS ao concentrar a matéria seca da massa durante a exposição ao ar",
+    "O O2 não eleva o CS; ao respirar ele é gasto."
+   ],
+   [
+    "O O2 apenas aquece a massa ensilada e não altera a quantidade de CS disponível na forragem",
+    "Além do calor, a respiração consome CS."
+   ]
+  ],
+  "pista": "Liga o consumo de CS (substrato) à respiração (fase 1).",
+  "outro": "Se o tempo de exposição fosse curto, o CS sobraria para a fermentação.",
+  "ref": "Slides 52 e 53"
+ },
+ "F1": {
+  "t": "F",
+  "ang": "Identificação",
+  "q": "Duas forrageiras têm o mesmo CS, mas uma resiste bem mais que a outra à queda do pH de 5,5–6,0 até 3,8–4,2. Que propriedade as distingue?",
+  "ok": "Poder tampão",
+  "er": [
+   [
+    "Teor de carboidratos solúveis",
+    "O enunciado diz que o CS é igual."
+   ],
+   [
+    "Teor de matéria seca",
+    "O caso não fala de umidade nem de efluente."
+   ],
+   [
+    "Tamanho de partícula",
+    "Não é propriedade da espécie, e sim da picagem."
+   ]
+  ],
+  "pista": "Resistência à variação do pH.",
+  "outro": "Se as forrageiras diferissem no açúcar disponível, seria CS.",
+  "ref": "Slide 27"
+ },
+ "F2": {
+  "t": "F",
+  "ang": "Princípio",
+  "q": "Na trajetória do pH da planta (5,5–6,0) até a silagem (3,8–4,2), o que o poder tampão representa?",
+  "ok": "A resistência da forragem à variação do pH, que dificulta chegar ao pH da silagem",
+  "er": [
+   [
+    "A velocidade com que o O2 sai da massa ensilada durante a fase aeróbica do processo",
+    "Isso é consumo de O2 na fase 1."
+   ],
+   [
+    "A quantidade de açúcar disponível para as bactérias produzirem ácidos lático e acético",
+    "Isso é o CS."
+   ],
+   [
+    "A proporção de água presente na massa ensilada, que define a produção de efluente",
+    "Isso é MS/umidade."
+   ]
+  ],
+  "pista": "Pergunta pelo significado na trajetória do pH.",
+  "outro": "Se a pergunta fosse sobre substrato, a resposta seria CS.",
+  "ref": "Slide 27"
+ },
+ "F3": {
+  "t": "F",
+  "ang": "Ponte",
+  "ponte": "Poder tampão ↔ Estabilização",
+  "q": "Qual par de valores descreve o caminho de pH que o poder tampão dificulta e que a fase de estabilização conclui?",
+  "ok": "Planta de 5,5–6,0 até silagem de 3,8–4,2",
+  "er": [
+   [
+    "Planta de 3,8–4,2 até silagem de 5,5–6,0",
+    "Inverte o sentido: o pH cai ao longo do processo."
+   ],
+   [
+    "Planta de 6,0–7,0 até silagem de 4,5–5,0",
+    "Números trocados: o material cita 5,5–6,0 e 3,8–4,2."
+   ],
+   [
+    "Planta de 5,5–6,0 até silagem de 6,0–6,5",
+    "O pH da silagem é baixo; subir não estabiliza nada."
+   ]
+  ],
+  "pista": "Liga o pH inicial (poder tampão) ao pH final (fase 3).",
+  "outro": "Se a pergunta fosse o pH que inibe coliformes e clostrídios, o número citado seria ≈ 4,5.",
+  "ref": "Slides 27 e 63"
+ },
+ "G1": {
+  "t": "G",
+  "ang": "Identificação",
+  "q": "Com o silo já vedado, a massa ensilada ainda contém O2, a temperatura sobe de 25 °C para 45 °C e aparecem leveduras e mofos. Que etapa do processo fermentativo é essa?",
+  "ok": "Fase 1 (aeróbica)",
+  "er": [
+   [
+    "Fase 2 (anaeróbica)",
+    "A fase 2 só começa quando o O2 se esgota."
+   ],
+   [
+    "Fase 3 (estabilização)",
+    "A fase 3 tem pH 3,8–4,2 e fermentação inibida."
+   ],
+   [
+    "Abertura do silo",
+    "Aqui o silo ainda está vedado."
+   ]
+  ],
+  "pista": "O2 residual, 25 → 45 °C e microrganismos tolerantes ao O2.",
+  "outro": "Se o O2 já tivesse acabado e surgissem enterobactérias, seria a fase 2.",
+  "ref": "Slide 54"
+ },
+ "G2": {
+  "t": "G",
+  "ang": "Princípio",
+  "q": "Qual fator determina o quanto a fase aeróbica prejudica a silagem?",
+  "ok": "O tempo de permanência do O2 na massa (rapidez de colheita, picagem, compactação e vedação)",
+  "er": [
+   [
+    "O teor final de ácido lático alcançado ao longo da fermentação da massa ensilada",
+    "É resultado da fase 2, não causa da fase 1."
+   ],
+   [
+    "O pH de estabilização atingido pela massa ensilada, entre 3,8 e 4,2, na fase final",
+    "É característica da fase 3."
+   ],
+   [
+    "A proporção de bactérias heterofermentativas presentes na massa logo após o corte da planta",
+    "Aparece na fase 2, depois do esgotamento do O2."
+   ]
+  ],
+  "pista": "“Otimização da fase 1: rapidez e eficiência” aponta o tempo de exposição ao O2.",
+  "outro": "Se a pergunta fosse sobre quando a fermentação cessa, o critério seria o pH.",
+  "ref": "Slides 53 e 56"
+ },
+ "G3": {
+  "t": "G",
+  "ang": "Armadilha",
+  "q": "Após fechar o silo, um técnico afirma que a fase aeróbica terminou. Por que isso está errado?",
+  "ok": "Mesmo vedado, o O2 permanece na massa; a fase 1 segue até ele se esgotar, com calor e aeróbios",
+  "er": [
+   [
+    "A fase aeróbica só termina quando o silo é aberto, momento em que o O2 deixa de ser consumido",
+    "Ela termina quando o O2 da massa acaba, dando lugar à fase 2."
+   ],
+   [
+    "A fase aeróbica termina assim que o pH chega a 4,5, porque os ácidos inibem os aeróbios",
+    "A queda do pH depende da fase 2."
+   ],
+   [
+    "A fase aeróbica é desejável do ponto de vista fermentativo e deve ser prolongada o máximo possível",
+    "Ela é indesejável; a meta é encurtá-la para reduzir perdas."
+   ]
+  ],
+  "pista": "“Fechamento do silo não finaliza a Fase 1.”",
+  "outro": "Se o O2 tivesse sido esgotado, a afirmação do técnico estaria correta.",
+  "ref": "Slides 54 e 56"
+ },
+ "G4": {
+  "t": "G",
+  "ang": "Inversão",
+  "q": "Quais são as consequências previstas de uma fase aeróbica longa?",
+  "ok": "Perda de MS na forma de CS e excesso de calor, que compromete as proteínas da forragem",
+  "er": [
+   [
+    "Queda mais rápida do pH, porque o O2 prolonga a produção de ácido lático pelas bactérias",
+    "O O2 prolonga a respiração, não a produção de ácido lático."
+   ],
+   [
+    "Melhor compactação e menor produção de efluente, já que o ar mantém a massa mais firme",
+    "Não há ligação entre fase aeróbica longa e compactação."
+   ],
+   [
+    "Preservação de CS e de aminoácidos para os animais, com melhora do valor nutritivo da silagem",
+    "É o efeito de completar rápido a fermentação, não de alongar a fase 1."
+   ]
+  ],
+  "pista": "Tema dado (fase aeróbica longa); pede as consequências.",
+  "outro": "Se a fermentação se completasse rápido, a consequência seria preservar CS e aminoácidos.",
+  "ref": "Slides 57 e 64"
+ },
+ "G5": {
+  "t": "G",
+  "ang": "Ponte",
+  "ponte": "Fase aeróbica ↔ Conservação",
+  "q": "Considerando os dois motivos que conservam a silagem (anaerobiose e fermentação anaeróbica), o que a fase aeróbica compromete?",
+  "ok": "Com O2 presente a anaerobiose ainda não existe, e a respiração consome CS, substrato da fermentação",
+  "er": [
+   [
+    "Só a fermentação, porque a vedação do silo já garante a anaerobiose desde o primeiro momento",
+    "Mesmo vedado, o O2 permanece na massa."
+   ],
+   [
+    "Só a anaerobiose, pois o consumo de CS pela respiração não afeta a fermentação posterior",
+    "O CS é o substrato; consumi-lo afeta a fermentação."
+   ],
+   [
+    "Nada, pois a fase aeróbica é desejável do ponto de vista fermentativo e favorece os ácidos",
+    "Do ponto de vista fermentativo ela é indesejável."
+   ]
+  ],
+  "pista": "Liga os dois pilares de conservação aos dois efeitos da fase 1 (O2 e consumo de CS).",
+  "outro": "Se o O2 já tivesse sido esgotado, a anaerobiose estaria instalada e só restaria depender da fermentação.",
+  "ref": "Slides 19 e 53 a 56"
+ },
+ "H1": {
+  "t": "H",
+  "ang": "Identificação",
+  "q": "Com o O2 esgotado, surgem enterobactérias e bactérias láticas tolerantes ao calor e ao ácido acético, que a partir de glicose produzem ácido lático, etanol e CO2. Que fase é essa?",
+  "ok": "Fase 2 (anaeróbica, heterofermentativas)",
+  "er": [
+   [
+    "Fase 1 (aeróbica, com respiração celular)",
+    "A fase 1 tem O2 e respiração."
+   ],
+   [
+    "Fase 3 (estabilização, pH de 3,8 a 4,2)",
+    "Na fase 3 a fermentação já está inibida."
+   ],
+   [
+    "Abertura do silo (entrada de O2 na massa)",
+    "O ambiente descrito é fechado e anaeróbico."
+   ]
+  ],
+  "pista": "O2 esgotado + glicose → lático + etanol + CO2.",
+  "outro": "Se ainda houvesse O2 e a temperatura subisse, seria a fase 1.",
+  "ref": "Slides 58 e 59"
+ },
+ "H2": {
+  "t": "H",
+  "ang": "Princípio",
+  "q": "Por que as bactérias láticas homofermentativas passam a predominar na fase 2?",
+  "ok": "O acúmulo de ácido acético reduz o pH e muda a população bacteriana, favorecendo as homofermentativas",
+  "er": [
+   [
+    "O O2 volta a ficar disponível no silo por falhas da vedação e passa a favorecer essas bactérias",
+    "O O2 foi esgotado; a fase 2 é anaeróbica."
+   ],
+   [
+    "O pH sobe com o etanol produzido pelas heterofermentativas, o que seleciona as homofermentativas",
+    "O pH diminui, não sobe."
+   ],
+   [
+    "A temperatura da massa cai e elimina as heterofermentativas, abrindo espaço para as demais",
+    "O material liga a mudança de população à queda do pH."
+   ]
+  ],
+  "pista": "Seta do slide: acúmulo de ácido acético → ↓pH → mudança na população.",
+  "outro": "Se a pergunta fosse sobre o fim da fermentação, o critério seria o pH de 3,8–4,2 (fase 3).",
+  "ref": "Slide 59"
+ },
+ "H3": {
+  "t": "H",
+  "ang": "Armadilha",
+  "q": "Duas bactérias láticas fermentam 1 glicose: uma produz 2 ácido lático; a outra, 1 ácido lático + 1 etanol + CO2. Qual afirmação é correta?",
+  "ok": "A que produz 2 ácido lático é homofermentativa e reduz o pH com mais rapidez",
+  "er": [
+   [
+    "A que produz etanol e CO2 é a mais eficiente em produzir ácido lático",
+    "Produz só 1 lático; a mais eficiente é a homofermentativa."
+   ],
+   [
+    "Ambas são homofermentativas e diferem só no CO2",
+    "Etanol e CO2 caracterizam as heterofermentativas."
+   ],
+   [
+    "A que produz etanol predomina no fim da fase 2",
+    "Ao fim da fase 2 predominam as homofermentativas."
+   ]
+  ],
+  "pista": "As duas “fermentam glicose a lático”, mas o balanço dos produtos separa os grupos.",
+  "outro": "Se os produtos fossem 1 lático + 1 acético + 2 manitol + CO2 (a partir de frutose), seria igualmente heterofermentativa.",
+  "ref": "Slides 59 e 60"
+ },
+ "H4": {
+  "t": "H",
+  "ang": "Inversão",
+  "q": "O que a maior concentração de ácido lático traz para a silagem?",
+  "ok": "Maior acidez, redução eficiente do pH e estabilidade da silagem, anaeróbica e aeróbica",
+  "er": [
+   [
+    "Maior consumo de CS pela respiração da fase 1, o que reduz o substrato da fermentação",
+    "A respiração é da fase 1, não efeito do ácido lático."
+   ],
+   [
+    "Maior risco de reaparecimento de leveduras e mofos assim que o silo é aberto ao ar",
+    "Mais ácido lático traz estabilidade, inclusive aeróbica."
+   ],
+   [
+    "Aumento do pH final da silagem, o que favorece a estabilidade da massa na abertura",
+    "Ácido lático reduz o pH."
+   ]
+  ],
+  "pista": "Tema dado (ácido lático); pede o efeito.",
+  "outro": "Se predominassem outros ácidos (propiônico, butírico), a leitura de estabilidade e eficiência de redução do pH não se manteria.",
+  "ref": "Slide 61"
+ },
+ "H5": {
+  "t": "H",
+  "ang": "Ponte",
+  "ponte": "Fase 2 ↔ CS, tampão e umidade",
+  "q": "Que conjunto de fatores determina a duração (≈ 10 a 14 dias) da fermentação da fase 2?",
+  "ok": "CS, capacidade de resistir à mudança de pH, umidade da forragem e qualidade e quantidade de láticas",
+  "er": [
+   [
+    "Tipo de silo, tamanho de partícula, espessura das camadas e material usado na cobertura do silo",
+    "São fatores de processo e estrutura, não os que o material liga à duração da fermentação."
+   ],
+   [
+    "Teor de CS, temperatura ambiente, tipo de lona usada na vedação e número de camadas compactadas",
+    "Mistura um fator válido (CS) com itens que o material não cita."
+   ],
+   [
+    "O2 residual, pH final de estabilização, tamanho de partícula e tipo de silo usado na propriedade",
+    "Idem: não é o conjunto citado."
+   ]
+  ],
+  "pista": "Liga a duração da fase 2 a CS, poder tampão, umidade e bactérias.",
+  "outro": "Se o tema fosse a perda na fase 1, o fator central seria o tempo de exposição ao O2.",
+  "ref": "Slide 62"
+ },
+ "I1": {
+  "t": "I",
+  "ang": "Identificação",
+  "q": "O pH da massa chegou a 3,8–4,2, a população bacteriana foi inibida e a fermentação cessou. Que fase é essa?",
+  "ok": "Fase 3 (estabilização)",
+  "er": [
+   [
+    "Fase 1 (aeróbica)",
+    "Na fase 1 há O2 e respiração, não fermentação inibida."
+   ],
+   [
+    "Fase 2 (fermentativa)",
+    "Na fase 2 a fermentação ainda está ativa."
+   ],
+   [
+    "Abertura do silo",
+    "Nada no caso fala de abrir o silo."
+   ]
+  ],
+  "pista": "pH 3,8–4,2 + inibição de bactérias e fermentação.",
+  "outro": "Se as bactérias ainda estivessem crescendo e o pH caindo, seria a fase 2.",
+  "ref": "Slide 63"
+ },
+ "I2": {
+  "t": "I",
+  "ang": "Princípio",
+  "q": "Por que completar rapidamente o processo fermentativo melhora o valor nutritivo da silagem?",
+  "ok": "Quanto mais cedo ele termina, mais nutrientes (CS e aminoácidos) são preservados",
+  "er": [
+   [
+    "Porque aumenta o poder tampão da forragem durante a fase de estabilização final",
+    "Poder tampão é propriedade da forragem, não resultado da rapidez."
+   ],
+   [
+    "Porque eleva a MS da massa acima de 35% e reduz a necessidade de compactação",
+    "MS é característica da forragem na entrada."
+   ],
+   [
+    "Porque prolonga a respiração da massa e gera calor que preserva as proteínas",
+    "A respiração é perda, não ganho."
+   ]
+  ],
+  "pista": "Pergunta pelo critério (por que mais rápido é melhor).",
+  "outro": "Se a fase aeróbica fosse longa, os nutrientes é que seriam perdidos.",
+  "ref": "Slide 64"
+ },
+ "I3": {
+  "t": "I",
+  "ang": "Ponte",
+  "ponte": "Fases 1, 2 e 3 (linha do tempo)",
+  "q": "Qual sequência descreve o silo ao longo dos cerca de 14 dias do gráfico das fases?",
+  "ok": "Fase aeróbica (respiração) → fase intermediária → fase fermentativa (anaeróbica) → fase de estabilização",
+  "er": [
+   [
+    "Fase intermediária → fase aeróbica (respiração) → fase fermentativa (anaeróbica) → fase de estabilização",
+    "A fase aeróbica é a primeira, logo após o corte e a vedação."
+   ],
+   [
+    "Fase fermentativa (anaeróbica) → fase aeróbica (respiração) → fase intermediária → fase de estabilização",
+    "A fermentação anaeróbica só vem depois de o O2 se esgotar."
+   ],
+   [
+    "Fase aeróbica (respiração) → fase fermentativa (anaeróbica) → fase intermediária → fase de estabilização",
+    "A intermediária fica entre a aeróbica e a fermentativa, nos primeiros dias."
+   ]
+  ],
+  "pista": "Gráfico: O2 cai, a população bacteriana sobe e o pH cai até ≈ 14 dias.",
+  "outro": "Se a pergunta fosse apenas a fase em que o pH é 3,8–4,2, a resposta seria só a estabilização.",
+  "ref": "Slides 52, 58, 63 e 65"
+ }
+};
+
+/* ===== Ordem: temas intercalados, famílias espalhadas ===== */
+var ROUNDS=[['G1','A1','D1','C1','F1','E1','H1','B1','I1'],['C2','H2','A2','E2','I2','G2','B2','D2','F2'],['E3','B3','G3','D3','I3','C3','F3','A3','H3'],['D4','H4','A4','G4','C4','B4','E4'],['G5','C5','E5','H5','D5']];
+var ORDER=[].concat.apply([],ROUNDS);
+var FAM={};ORDER.forEach(function(id){FAM[Q[id].t]=(FAM[Q[id].t]||0)+1});
+
+/* ===== Estado ===== */
+var app=document.getElementById('app');
+var queue,pos,answers,t0,cur,locked,optList,famSeen;
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x}return a}
+var FAMQ={};
+function start(ids){queue=ids;pos=0;answers=[];t0=Date.now();FAMQ={};ids.forEach(function(id){FAMQ[Q[id].t]=(FAMQ[Q[id].t]||0)+1});render()}
+function render(){
+  if(pos>=queue.length){return finish()}
+  var id=queue[pos],q=Q[id];cur=id;locked=false;
+  var opts=[{x:q.ok,ok:true,why:''}].concat(q.er.map(function(e){return{x:e[0],ok:false,why:e[1]}}));
+  optList=shuffle(opts);
+  var L='ABCD';
+  var h='<h1>Ensilagem - Rodada 1 de 3</h1><p class="sub">Fundamentos e processo fermentativo (slides 2 a 65)</p>';
+  h+='<div class="meta"><span>Questão '+(pos+1)+' de '+queue.length+'</span><span>'+answers.filter(function(a){return a.ok}).length+' acertos</span></div>';
+  h+='<div class="bar"><i style="width:'+(pos/queue.length*100)+'%"></i></div>';
+  h+='<p class="stem">'+q.q+'</p><div id="opts">';
+  optList.forEach(function(o,i){h+='<button class="opt" data-i="'+i+'"><b>'+L[i]+'</b><span>'+o.x+'</span></button>'});
+  h+='</div><div id="fb"></div><p class="hint">Atalhos: 1–4 escolhem a alternativa; Enter avança.</p>';
+  app.innerHTML=h;
+  Array.prototype.forEach.call(app.querySelectorAll('.opt'),function(b){b.onclick=function(){pick(+b.getAttribute('data-i'))}});
+}
+function pick(i){
+  if(locked||!optList[i])return;locked=true;
+  var q=Q[cur],o=optList[i];
+  var btns=app.querySelectorAll('.opt');
+  Array.prototype.forEach.call(btns,function(b,k){b.disabled=true;if(optList[k].ok)b.classList.add('ok');else if(k===i)b.classList.add('ko')});
+  famSeen=(famSeen||{});famSeen[q.t]=(famSeen[q.t]||0)+1;
+  var nth=famSeen[q.t];
+  answers.push({id:cur,t:q.t,ok:o.ok,ang:q.ang});
+  var th=T[q.t];
+  var f='<div class="fb"><p class="h '+(o.ok?'ok':'ko')+'">'+(o.ok?'Correto.':'Errado.')+'</p>';
+  f+='<p><em>Tema:</em> '+th.nome+' <em>('+q.ang+')</em></p>';
+  f+='<p><em>Pista que entregou:</em> '+q.pista+'</p>';
+  f+='<p><em>Núcleo:</em> '+th.nucleo+'</p>';
+  if(!o.ok)f+='<p><em>Por que a sua escolha está errada:</em> '+o.why+'</p>';
+  f+='<p><em>Se fosse o outro tema:</em> '+q.outro+'</p>';
+  f+='<p><em>Referência:</em> '+q.ref+'</p>';
+  f+='<p><em>Progresso da família:</em> '+th.nome.split(' - ')[0]+' - '+nth+' de '+FAMQ[q.t]+'</p>';
+  f+='<button class="main" id="nx">'+(pos+1>=queue.length?'Ver fechamento':'Próxima')+'</button></div>';
+  document.getElementById('fb').innerHTML=f;
+  document.getElementById('nx').onclick=next;
+  document.getElementById('nx').focus();
+}
+function next(){pos++;render();window.scrollTo(0,0)}
+document.addEventListener('keydown',function(e){
+  if(!queue||pos>=queue.length)return;
+  if(!locked&&e.key>='1'&&e.key<='4'){pick(+e.key-1)}
+  else if(locked&&e.key==='Enter'){e.preventDefault();next()}
+});
+function fmt(ms){var s=Math.round(ms/1000);return Math.floor(s/60)+'min '+('0'+(s%60)).slice(-2)+'s'}
+function finish(){
+  var tot=answers.length,ac=answers.filter(function(a){return a.ok}).length;
+  var by={};answers.forEach(function(a){by[a.t]=by[a.t]||{n:0,k:0};by[a.t].n++;if(a.ok)by[a.t].k++});
+  var h='<h1>Fechamento - Rodada 1 de 3</h1><p class="sub">Fundamentos e processo fermentativo</p>';
+  h+='<div class="score">'+(ac/tot*10).toFixed(1)+' / 10</div><p>'+ac+' de '+tot+' acertos · tempo '+fmt(Date.now()-t0)+'</p>';
+  h+='<h2>Mapa</h2><table><tr><th>Tema</th><th>Núcleo</th><th>Pistas</th><th>Confusão</th><th>Acertos</th></tr>';
+  Object.keys(T).forEach(function(k){
+    if(!by[k])return;var p=by[k].k/by[k].n;
+    h+='<tr><td>'+T[k].nome+'</td><td>'+T[k].nucleo+'</td><td>'+T[k].pistas+'</td><td>'+T[k].conf+'</td><td class="p'+(p<0.7?' low':'')+'">'+by[k].k+'/'+by[k].n+'</td></tr>';
+  });
+  h+='</table>';
+  h+='<h2>Pontes</h2><ul>';
+  answers.filter(function(a){return a.ang==='Ponte'}).forEach(function(a){h+='<li>'+Q[a.id].ponte+' '+(a.ok?'(acertou)':'(errou)')+'</li>'});
+  h+='</ul>';
+  var soltos=Object.keys(by).filter(function(k){return by[k].k/by[k].n<0.7});
+  h+='<h2>Pontos soltos (abaixo de 70%)</h2>';
+  h+=soltos.length?'<ul>'+soltos.map(function(k){return'<li>'+T[k].nome+' - '+by[k].k+'/'+by[k].n+'</li>'}).join('')+'</ul>':'<p>Nenhum tema abaixo de 70%.</p>';
+  h+='<p class="note">Famílias menores que 5, por falta de material para ângulos distintos: Estacionalidade (4, sem Armadilha), Vantagens e limitações (4, sem Princípio), Poder tampão (3) e Fase 3 e sequência (3).</p>';
+  var erros=answers.filter(function(a){return!a.ok}).map(function(a){return a.id});
+  h+='<button class="sec" id="rs">Recomeçar</button>';
+  if(erros.length)h+='<button class="main" id="re">Refazer só os erros ('+erros.length+')</button>';
+  if(soltos.length)h+='<p class="hint">Para uma rodada extra com ângulos novos dos temas abaixo de 70%, peça ao Ultron: este arquivo só repete as questões existentes.</p>';
+  app.innerHTML=h;
+  document.getElementById('rs').onclick=function(){famSeen={};start(ORDER)};
+  if(erros.length)document.getElementById('re').onclick=function(){famSeen={};start(erros)};
+}
+famSeen={};
+start(ORDER);
+</script>
+</body>
+</html>

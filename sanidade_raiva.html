@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Raiva - Ciclos, Patogenia, Diagnóstico e Controle</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:20px;font-family:system-ui,-apple-system,sans-serif;background:transparent;color:var(--foreground,#18181b);font-size:15px;line-height:1.5}
+  @media (prefers-color-scheme:dark){body{color:var(--foreground,#e4e4e7)}}
+  .app{
+    --c-card:var(--card,#ffffff);--c-bd:var(--border,#d4d4d8);--c-fg:var(--foreground,#18181b);
+    --c-mut:var(--muted-foreground,#52525b);--c-pri:var(--primary,#15803d);--c-prifg:var(--primary-foreground,#ffffff);
+    --ok:#16a34a;--ko:#dc2626;
+    max-width:780px;margin:0 auto;background:var(--c-card);color:var(--c-fg);border:1px solid var(--c-bd);border-radius:14px;padding:24px;box-shadow:0 4px 12px rgba(0,0,0,0.05)
+  }
+  @media (prefers-color-scheme:dark){.app{--c-card:var(--card,#1c1c1f);--c-bd:var(--border,#3f3f46);--c-fg:var(--foreground,#e4e4e7);--c-mut:var(--muted-foreground,#a1a1aa);--c-pri:var(--primary,#22c55e);--c-prifg:var(--primary-foreground,#0b1220);--ok:#4ade80;--ko:#f87171}}
+  h1{font-size:20px;margin:0 0 2px;color:var(--c-fg)}
+  .sub{color:var(--c-mut);font-size:13px;margin:0 0 14px}
+  .bar{height:6px;background:var(--c-bd);border-radius:99px;overflow:hidden;margin:6px 0 16px}
+  .bar>i{display:block;height:100%;background:var(--c-pri);width:0;transition:width .25s ease-out}
+  .meta{display:flex;justify-content:space-between;font-size:13px;color:var(--c-mut);font-weight:500}
+  .stem{font-size:16px;font-weight:600;margin:0 0 14px;line-height:1.45}
+  .opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--c-bd);border-radius:10px;padding:12px 14px;margin:0 0 9px;cursor:pointer;transition:border-color .15s, background .15s}
+  .opt:hover:not(:disabled){border-color:var(--c-pri);background:rgba(21,128,61,0.07)}
+  .opt b{min-width:22px;color:var(--c-pri);font-size:15px}
+  .opt:disabled{cursor:default;opacity:.6}
+  .opt.ok{opacity:1;border-color:var(--ok);background:rgba(22,163,74,0.16);font-weight:500}
+  .opt.ko{opacity:1;border-color:var(--ko);background:rgba(220,38,38,0.16)}
+  @media (prefers-color-scheme:dark){
+    .opt:hover:not(:disabled){background:rgba(34,197,94,0.10)}
+    .opt.ok{background:rgba(74,222,128,0.16)}
+    .opt.ko{background:rgba(248,113,113,0.16)}
+  }
+  .fb{border-top:1px dashed var(--c-bd);margin-top:16px;padding-top:14px;font-size:14px}
+  .fb p{margin:0 0 7px}
+  .fb .h{font-weight:700;font-size:16px}
+  .fb .h.ok{color:var(--ok)} .fb .h.ko{color:var(--ko)}
+  .fb em{color:var(--c-mut);font-style:normal;font-weight:600}
+  button.main{font:inherit;font-weight:600;background:var(--c-pri);color:var(--c-prifg);border:0;border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  button.sec{font:inherit;font-weight:600;background:transparent;color:var(--c-fg);border:1px solid var(--c-bd);border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0 16px}
+  th,td{border:1px solid var(--c-bd);padding:7px 10px;text-align:left;vertical-align:top}
+  th{color:var(--c-mut);background:rgba(113,113,122,0.12)}
+  td.p{white-space:nowrap;font-weight:700}
+  .low{color:var(--ko);font-weight:700}
+  .score{font-size:38px;font-weight:800;margin:6px 0;color:var(--c-pri)}
+  h2{font-size:16px;margin:18px 0 6px}
+  ul{margin:4px 0 10px;padding-left:20px;font-size:14px}
+  .hint{font-size:12px;color:var(--c-mut);margin-top:14px}
+  .note{font-size:13px;color:var(--c-mut);border-left:3px solid var(--c-pri);padding-left:10px;margin:12px 0}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+var T = {
+ "A": {
+  "nome": "A - Raiva: agente, estabilidade físico-química e geografia",
+  "nucleo": "Zoonose viral letal do SNC que afeta todos os mamíferos; RNA-vírus envelopado (Mononegavirales, Rhabdoviridae, gênero Lyssavirus). Sensível a sabão/detergentes, álcool, hipoclorito, soda 2%, formalina, sol/UV e 50 °C (15 min); estável a 4 °C, -20 °C em glicerina tamponada (anos), -70 °C (indefinido) e até 45h no cadáver. Livre no Japão, Reino Unido, Austrália, Havaí.",
+  "pistas": "Rhabdoviridae/Lyssavirus, envelope lipídico vs. sabão/detergente/sol/50 °C, -20 °C glicerina tamponada, 45h cadáver, Pasteur/Negri.",
+  "conf": "Achar que sabão comum é ineficaz (envelope lipídico é dissolvido!) ou confundir Rhabdoviridae com bactéria."
+ },
+ "B": {
+  "nome": "B - Ciclos epidemiológicos e hospedeiros naturais",
+  "nucleo": "Hospedeiro natural mantém o vírus continuamente sem adoecer de forma grave/fatal nem precisar de reintrodução (ex.: Mephitis mephitis, Procyon, Vulpes vulpes, Dusicyon vetulus, Conepatus, Callithrix sp.). 4 ciclos ligados: Urbano (cão = principal agressor em países em desenvolvimento), Aéreo (Brasil: 140 espécies, VR em 31, destaque Desmodus rotundus), Rural (herbívoros) e Silvestre. Controle foca a espécie reservatório principal.",
+  "pistas": "Reservatório sem morte fatal, Callithrix (sagui doméstico!), 140 morcegos / 31 VR, Desmodus rotundus, cão no ciclo urbano.",
+  "conf": "Confundir hospedeiro acidental letal (bovino) com reservatório natural, ou achar que morcegos insetívoros (Tadarida/N. macrotis) não entram no ciclo aéreo."
+ },
+ "C": {
+  "nome": "C - Transmissão, incubação, transmissibilidade e patogenia",
+  "nucleo": "Transmissão por mordedura, arranhadura, lambedura e saliva/tecidos (inter-humana rara: córnea 8 casos, transplacentária 1, órgãos, saliva). Incubação varia com carga viral, proximidade da mordida ao SNC, variante e idade/imunidade: Homem 14d–2m; Cães/gatos 10d–2m; Bovinos 25d–5m. Transmissibilidade na saliva começa 2–4 dias ANTES dos sintomas (morte em 3–5d). Patogenia: músculo → receptores acetilcolina → axônios → medula/límbico (furiosa) ou córtex (paralítica) → glândulas salivares e órgãos → óbito.",
+  "pistas": "14d–2m / 10d–2m / 25d–5m; saliva 2–4d ANTES dos sintomas; receptores acetilcolina → axônios → sistema límbico/córtex.",
+  "conf": "Achar que o cão só elimina vírus na saliva após iniciar sintomas ou ignorar a proximidade ao SNC no prazo de incubação."
+ },
+ "D": {
+  "nome": "D - Quadro clínico animal (furiosa vs. paralítica por espécie)",
+  "nucleo": "Gerais: mudança de comportamento, inapetência, apatia, febre, midríase, fotofobia. Furiosa: agressividade/lugares escuros, engasgo, paralisia ascendente ('descadeirados'). Bovinos (paralítica, 3–7 dias ou morte súbita sem sinais): isola/muge → 'engasgo'/baba (NUNCA pôr mão na boca!) → andar cambaleante/paralisia maxilar/decúbito. Equinos: pode haver agressividade. Pequenos ruminantes (3–6d): ranger de dentes, coceira/automutilação. Suínos (≤3d): guinchos roucos ou posição 'sentado de cão'.",
+  "pistas": "NUNCA mão na boca (engasgo/baba), morte súbita (bovino), automutilação/ranger dentes (caprino/ovino), 'sentado' ≤3d (suíno).",
+  "conf": "Achar que bovino raivoso nunca tem morte súbita sem sinais ou pôr a mão na garganta achando que é engasgo mecânico."
+ },
+ "E": {
+  "nome": "E - Raiva humana, ausência de cura e Protocolo de Recife",
+  "nucleo": "Humanos: angústia, cefaleia, febre ligeira, alterações sensoriais próximas à mordida → excitação/hiperestesia (luz/som), midríase, salivação → espasmos ('hidrofobia'), convulsões → paralisia generalizada. Não existe tratamento após manifestação clínica (só 8 sobreviventes 1970–2009). Protocolo de Recife/PE (Milwaukee adaptado): menino 15 anos (Floresta-PE), morcego hematófago, 29 dias incubação, confirmado por RT-PCR de folículo piloso.",
+  "pistas": "Alteração sensorial na mordida + hidrofobia, sem tratamento após clínica (8 sobreviventes 1970–2009), Recife/Milwaukee + RT-PCR folículo piloso.",
+  "conf": "Achar que a vacina aplicada após os sintomas já instalados cura rotineiramente ou errar o tecido do RT-PCR de Recife (folículo piloso)."
+ },
+ "F": {
+  "nome": "F - Diagnóstico laboratorial: coleta, IFD, Negri, biológica e sorologia",
+  "nucleo": "Encéfalo coletado vai em salina + glicerina 50% (Virologia) e formol (Histopatologia). Histopatológico busca Corpúsculo de Negri (agregados de nucleocapsídeos em neurônios piramidais). IFD (1958): esfregaço + anticorpos conjugados a isotiocianato de fluoresceína. Prova biológica: camundongos. Sorologia: títulos no LCR, imunogenicidade vacinal e status/contato.",
+  "pistas": "Glicerina 50% (virologia) vs. formol (histopatologia), Corpúsculo de Negri (neurônios piramidais), IFD/fluoresceína (1958), LCR.",
+  "conf": "Enviar amostra para virologia/IFD mergulhada em formol (inativa vírus para prova biológica) ou chamar Negri de bactéria."
+ },
+ "G": {
+  "nome": "G - Profilaxia humana: pós-exposição vs. pré-exposição",
+  "nucleo": "Mordedura (pós-exposição): lavar IMEDIATAMENTE com água e sabão + médico (2–5 doses c/ ou s/ soro). Pré-exposição: dias 0–7–28; sorologia no 10º dia após última dose exige título ≥ 0,5 UI/mL (repetir semestral em risco contínuo ou anual em menor risco; proibido expor consciente sem ≥0,5 UI/mL). 4 vantagens: protege exposição inaparente, dispensa soro/passiva, reduz doses e acelera booster.",
+  "pistas": "Água e sabão, dias 0–7–28, 10º dia ≥ 0,5 UI/mL, semestral vs. anual, 4 vantagens (sem soro/booster).",
+  "conf": "Trocar dias 0–7–28 ou exigir soro heterólogo em quem já tem pré-exposição completa com título válido."
+ },
+ "H": {
+  "nome": "H - Programas oficiais, legislação e vigilância canina",
+  "nucleo": "SINAN (1992); Portaria 1998 (caso humano suspeito/confirmado é notificação compulsória imediata); PNCRH (1966, herbívoros/rural) e PNPR (1973, cães/gatos/urbana). Vigilância (MS 2005): todo mamífero com sintoma neurológico/suspeita vai ao laboratório; envio anual sistemático de 0,2% da população canina estimada (municípios <20.000 hab.: mínimo 12 amostras/ano). Governo vacina cães/gatos anualmente e controla errantes/silvestres/morcegos.",
+  "pistas": "1992 SINAN / 1998 compulsória, 1966 PNCRH vs. 1973 PNPR, 0,2% cães/ano ou ≥12 amostras (<20 mil hab.).",
+  "conf": "Inverter 1966 (rural) com 1973 (urbana) ou dispensar envio laboratorial em municípios pequenos sem surto."
+ },
+ "I": {
+  "nome": "I - Controle rural: Adagri (Sidagro), pasta vampiricida e produtor",
+  "nucleo": "Adagri mapeia abrigos (cavernas, bueiros, fendas, casas abandonadas) georreferenciados no sistema Sidagro, aplica pasta vampiricida (anticoagulante) nos morcegos capturados/ao redor de mordidas e coleta encéfalo em focos. Produtor rural deve: vacinar bovinos, equinos, ovinos e caprinos (1ª aos 3m + reforço 30d + anual em alto risco), identificar mordeduras no pescoço/cupim, notificar e NUNCA tentar capturar/matar morcegos por conta própria.",
+  "pistas": "Sidagro, pasta vampiricida (anticoagulante), pescoço/cupim, proibido produtor capturar morcego, 3 meses + 30d + anual.",
+  "conf": "Orientar o produtor a queimar cavernas ou capturar morcegos sozinho sem a Adagri/defesa sanitária."
+ }
+};
+var Q = {
+ "A1": {
+  "t": "A",
+  "ang": "Identificação",
+  "q": "Agente etiológico da raiva: RNA-vírus envelopado da ordem Mononegavirales, sensível a sabão, detergentes, etanol, radiação UV e aquecimento a 50 °C por 15 minutos, mantendo-se viável indefinidamente a -70 °C (ou vários anos a -20 °C em glicerina tamponada). Qual é sua família e gênero?",
+  "ok": "Família Rhabdoviridae, gênero Lyssavirus",
+  "er": [
+   [
+    "Família Brucellaceae, gênero Brucella (bactéria anaeróbica esporulada)",
+    "Brucella é bactéria reprodutiva (abortos 5º–7º mês), não RNA-vírus envelopado neurotrópico."
+   ],
+   [
+    "Família Clostridiaceae, gênero Mycobacterium (bacilo ácido-álcool resistente)",
+    "Mistura clostrídios com micobactérias; o agente rábico é um RNA-vírus da família Rhabdoviridae, gênero Lyssavirus."
+   ],
+   [
+    "Família Flaviviridae, gênero Tetanospasmina (vírus sem envelope lipídico)",
+    "Tetanospasmina é exotoxina proteica de C. tetani, não família viral; Rhabdoviridae possui envelope lipídico."
+   ]
+  ],
+  "pista": "RNA-vírus envelopado + Mononegavirales + 50 °C/15min + glicerina tamponada -20 °C.",
+  "outro": "A presença desse envelope lipídico explica exatamente o primeiro passo prático frente à mordedura (slide 49): lavar com água e sabão.",
+  "ref": "Slides 5, 6 e 7"
+ },
+ "A2": {
+  "t": "A",
+  "ang": "Princípio",
+  "q": "Por que substâncias comuns como sabão e detergentes, além de luz solar direta e secagem, inativam o vírus rábico tão facilmente fora do hospedeiro, ao contrário da longa resistência ambiental vista na tuberculose?",
+  "ok": "Possui envelope lipídico dissolvido por sabões/detergentes/álcool e sensível a secagem, sol e calor",
+  "er": [
+   [
+    "Porque o vírus rábico forma endósporos resistentes que só se ativam dentro de carcaças em decomposição sem oxigênio",
+    "Formação de esporos anaeróbicos pertence a Clostridium (tétano/botulismo), não ao Lyssavirus envelopado."
+   ],
+   [
+    "Porque a proteína G do vírus é destruída exclusivamente por amônia quaternária em feiras não autorizadas por 2 anos",
+    "Amônia quaternária apareceu em TB (com baixa eficácia); na raiva o envelope lipídico se rompe com sabão, álcool, UV e calor."
+   ],
+   [
+    "Porque o vírus rábico não possui material genético próprio, morrendo após 15 minutos mesmo se congelado a -70 °C",
+    "É um RNA-vírus completo que a -70 °C (ou inferiores) permanece viável indefinidamente e a -20 °C em glicerina dura vários anos."
+   ]
+  ],
+  "pista": "Estrutura do envelope lipídico (slides 5–6) explicando desinfecção simples vs. sobrevivência térmica (slide 7).",
+  "outro": "Em comparação com a viabilidade no cadáver citada no slide 7, o limite após o óbito registrado é de 45 horas.",
+  "ref": "Slides 5, 6 e 7"
+ },
+ "A3": {
+  "t": "A",
+  "ang": "Armadilha",
+  "q": "Um aluno afirma: 'Como a raiva é extremamente letal, o vírus resiste por dois anos no chão ensolarado do quintal e só pode ser neutralizado por radiação nuclear, além de já ter sido erradicado em toda a Ásia e África'. Quais dois erros o material corrige?",
+  "ok": "Sensível a sol, secagem e sabão fora do corpo; África e Ásia/Índia são endêmicas de alto risco",
+  "er": [
+   [
+    "Na verdade África e Índia são livres de raiva terrestre graças à vacinação, errando apenas ao dizer que sol mata o vírus",
+    "No mapa do slide 9, África, Ásia e Índia estão em VERMELHO ('Regiões de alto risco / endêmicas'); livres são Japão, Reino Unido, Austrália e Nova Zelândia."
+   ],
+   [
+    "O vírus sobrevive mesmo 2 anos em pasto ensolarado como o M. bovis, errando só ao citar o Reino Unido como endêmico",
+    "Dois anos em pasto/solo é o tempo de resistência do Mycobacterium bovis (TB); o envelope viral da raiva é sensível ao sol/secagem."
+   ],
+   [
+    "Erra apenas porque sabão e álcool não têm efeito nenhum sobre o envelope lipídico, exigindo sempre formol a 10% na pele mordida",
+    "Slide 6 explicita sabão e detergentes como dissolventes do envelope lipídico (e slide 49 manda lavar ferida com água e sabão)."
+   ]
+  ],
+  "pista": "Susceptibilidade ambiental (slide 6) + Mapa global / Japão-Reino Unido-Austrália vs. África-Ásia-Índia (slides 8–9).",
+  "outro": "As Américas/Brasil/EUA figuram no mapa em amarelo: 'Risco controlado / ciclo silvestre' (transmissão principalmente por morcegos e raposas).",
+  "ref": "Slides 6, 8 e 9"
+ },
+ "A4": {
+  "t": "A",
+  "ang": "Inversão",
+  "q": "Se uma amostra suspeita precisa conservar viabilidade viral para laboratório ou ficar exposta em temperatura ambiente versus baixas temperaturas, o que acontece conforme os marcos do slide 7?",
+  "ok": "50 °C (15 min) inativa; cadáver dura 45h; 4 °C estável; -20 °C (glicerina) anos; -70 °C indefinida",
+  "er": [
+   [
+    "A 50 °C o vírus multiplica-se por 45 horas, enquanto a -20 °C em glicerina tamponada morre instantaneamente em 15 minutos",
+    "Inverte os efeitos térmicos extremos do slide 7."
+   ],
+   [
+    "No cadáver sobrevive 2 anos completos mesmo sob sol quente, mas a -70 °C perde toda viabilidade em poucos dias",
+    "Cadáver = 45 horas pós-óbito (2 anos é M. bovis no solo/pasto); -70 °C conserva viabilidade indefinidamente."
+   ],
+   [
+    "Formol a 10% preserva o vírus vivo indefinidamente para inoculação biológica em camundongos a 4 °C",
+    "Formalina/formol inativa o vírus (usada para histopatologia, slide 41); virologia usa salina + glicerina 50%."
+   ]
+  ],
+  "pista": "Tema dado (estabilidade físico-química do slide 7); ordena 50 °C, 45h, 4 °C, -20 °C glicerina e -70 °C.",
+  "outro": "Na mesma página (slide 2), lembre os nomes históricos citados: Aristóteles (saliva), Celsus (ferro quente), Pasteur (contra espontaneidade) e Adelchi Negri (1906).",
+  "ref": "Slides 2, 7 e 41"
+ },
+ "A5": {
+  "t": "A",
+  "ang": "Ponte",
+  "ponte": "Envelope lipídico (Slides 5–6) ↔ Conduta imediata na mordedura (Slide 49)",
+  "q": "Qual característica estrutural do Lyssavirus apresentada nos slides 5 e 6 explica diretamente por que a primeira ordem médica imediata após uma mordedura (slide 49) é lavar a ferida exaustivamente com água e sabão?",
+  "ok": "Sabão dissolve a bicamada lipídica do envelope viral, reduzindo o inóculo já na ferida aberta",
+  "er": [
+   [
+    "Porque o sabão neutraliza imediatamente os corpúsculos de Negri já formados dentro dos neurônios piramidais do cérebro",
+    "Corpúsculos de Negri são inclusões intracitoplasmáticas tardias no SNC; o sabão age localmente rompendo o envelope viral na ferida."
+   ],
+   [
+    "Porque a água e o sabão elevam a temperatura local da pele para 70 °C, igualando a conservação em glicerina tamponada",
+    "Água e sabão atuam por dissolução lipídica (sabão) e remoção mecânica, não por aquecimento a 70 °C."
+   ],
+   [
+    "Porque o sabão bloqueia os receptores de GABA na medula espinhal impedindo qualquer paralisia flácida",
+    "Bloqueio de GABA é o mecanismo do tétano, sem relação com lavagem local de mordedura rábica."
+   ]
+  ],
+  "pista": "Une estrutura do envelope (5) + ação de sabões/detergentes (6) à conduta prática frente à mordedura (49).",
+  "outro": "Depois de lavar com água e sabão, deve-se encaminhar o acidentado ao atendimento médico para avaliar vacinação (2–5 doses) e soroterapia.",
+  "ref": "Slides 5, 6 e 49"
+ },
+ "B1": {
+  "t": "B",
+  "ang": "Identificação",
+  "q": "Espécie hematófaga de destaque no ciclo aéreo da raiva rural nas Américas (entre 140 espécies de morcegos e 31 positivos identificados no Brasil), apontada como vetor central dos surtos em herbívoros como bovinos e equinos. Qual é?",
+  "ok": "Desmodus rotundus",
+  "er": [
+   [
+    "Mephitis mephitis, morcego hematófago responsável exclusivo pela raiva urbana em cães errantes",
+    "Mephitis mephitis é um reservatório silvestre terrestre (gambá norte-americano) citado no slide 13, não morcego."
+   ],
+   [
+    "Callithrix sp., único morcego hematófago brasileiro mantido frequentemente como animal doméstico",
+    "Callithrix sp. (sagui) é primata silvestre citado nos slides 14–15 frequentemente tratado como pet doméstico."
+   ],
+   [
+    "Dusicyon vetulus, morcego frugívoro de cavernas urbanas citado no programa PNPR de 1973",
+    "Dusicyon vetulus é raposa/cachorro-do-mato silvestre (slide 14), e morcegos insetívoros citados no slide 18 são Tadarida brasiliensis e N. macrotis."
+   ]
+  ],
+  "pista": "Morcego hematófago + ciclo aéreo + raiva dos herbívoros + Brasil (140 espécies / 31 VR).",
+  "outro": "Além de Desmodus rotundus (hematófago), o slide 18 ilustra também morcegos não-hematófagos como Tadarida brasiliensis e N. macrotis.",
+  "ref": "Slides 10 e 18"
+ },
+ "B2": {
+  "t": "B",
+  "ang": "Princípio",
+  "q": "O que define exatamente um 'Hospedeiro Natural / Reservatório Natural' na epidemiologia da raiva (slide 12), e por que o controle efetivo da doença exige identificá-lo antes de agir (slide 19)?",
+  "ok": "Espécie que mantém o vírus continuamente sem doença fatal nem reintrodução; vacinar/controlá-la corta o ciclo",
+  "er": [
+   [
+    "É o hospedeiro que sempre morre em 3 dias sem conseguir passar o vírus, bastando vacinar apenas animais humanos",
+    "Um hospedeiro acidental que morre rápido sem manter o ciclo não sustenta o vírus sem reintrodução; reservatório mantém sem morrer facilmente."
+   ],
+   [
+    "É qualquer objeto inanimado como água e seringa, pois nenhum animal silvestre pode albergar vírus rábico sem óbito imediato",
+    "Slide 12 define espécie viva (ex.: Mephitis, Procyon, Vulpes, raposas, cães assintomáticos Etiópia/hienas África, morcegos)."
+   ],
+   [
+    "É exclusivamente o bovino confinado, pois cães e morcegos não participam da manutenção do ciclo urbano ou rural",
+    "Bovinos no ciclo rural são vítimas finais (morcegos → herbívoros → morte); cães mantêm o urbano e morcegos mantêm o aéreo/rural."
+   ]
+  ],
+  "pista": "Slide 12 ('sem reintrodução' + 'sem doença grave/fatal ao próprio') + slide 19 (foco vacinal/controle no reservatório principal).",
+  "outro": "Assim, elimina-se o ciclo urbano vacinando em massa o cão (principal agressor em países em desenvolvimento) e protege-se o ciclo rural controlando morcegos hematófagos.",
+  "ref": "Slides 12, 13, 16, 19 e 58"
+ },
+ "B3": {
+  "t": "B",
+  "ang": "Armadilha",
+  "q": "Observando um sagui (Callithrix sp.) vestido com roupinha no colo de uma família (slide 15) e vendo morcegos em área urbana, um técnico afirma que 'apenas morcegos Desmodus rotundus e cães de rua transmitem raiva no Brasil, nunca saguis nem cães de estimação'. O que os slides 14–18 corrigem?",
+  "ok": "Os 4 ciclos se conectam; Callithrix e raposas são reservatórios e há 31 espécies de morcegos com VR",
+  "er": [
+   [
+    "De fato saguis domésticos são 100% imunes à raiva e apenas animais da África (hienas) atuam como reservatórios silvestres",
+    "Slide 14–15 questiona exatamente 'Silvestre ou doméstico?' mostrando Callithrix sp. como reservatório silvestre levado para dentro de casa."
+   ],
+   [
+    "Na verdade morcegos nunca infectam humanos no ciclo aéreo, limitando-se somente a picar bovinos e equinos",
+    "O diagrama do ciclo epidemiológico (slides 11 e 21) mostra seta direta do ciclo aéreo (morcego) também para humanos e ciclo silvestre/rural."
+   ],
+   [
+    "Cães e gatos só entram no ciclo se forem totalmente selvagens, nunca quando semi-domiciliados ou comunitários",
+    "Slide 17 especifica justamente 'cães e gatos semi domiciliados, comunitários, errantes' no ciclo urbano."
+   ]
+  ],
+  "pista": "Conexões dos 4 ciclos (slides 11 e 21) + Callithrix sp. ('Silvestre ou doméstico?', 14–15) + 31 espécies de morcegos com VR (18).",
+  "outro": "Em países em desenvolvimento como um todo, o slide 58 destaca que o CÃO segue como principal agressor transmissor humano.",
+  "ref": "Slides 11, 14, 15, 17, 18, 21 e 58"
+ },
+ "B4": {
+  "t": "B",
+  "ang": "Ponte",
+  "ponte": "Ciclo Aéreo/Rural nas Américas (Mapa slide 10) ↔ Vigilância regional (CE)",
+  "q": "Analisando o mapa da raiva rural nas Américas (slide 10), por que áreas do interior do Ceará (como Jaguaribe e Boa Viagem) aparecem com focos notificados apesar de serem fora das zonas temperadas frias?",
+  "ok": "Combinam distribuição de Desmodus rotundus e densidade pecuária, pedindo cobertura vacinal e controle",
+  "er": [
+   [
+    "Porque o Nordeste é classificado no mapa como 'área livre de vetor hematófago' com risco zero para herbívoros",
+    "No mapa, apenas extremos frios (Canadá/norte dos EUA) são áreas livres do vetor hematófago; o Nordeste/Ceará tem presença de Desmodus rotundus."
+   ],
+   [
+    "Porque no Ceará não existem cães nem bovinos, ocorrendo os focos exclusivamente por transplante de córnea humano",
+    "Os focos destacados no mapa referem-se à 'Raiva dos Herbívoros (Bovinos, Equinos, Ovinos/Caprinos)' ligada ao ciclo silvestre/hematófago."
+   ],
+   [
+    "Porque o Desmodus rotundus só existe em países livres da Europa Ocidental e Austrália, migrando em junho para o Ceará",
+    "Europa Ocidental e Austrália são áreas LIVRES de raiva terrestre no mapa global (slide 9)."
+   ]
+  ],
+  "pista": "Leitura do mapa infográfico (slide 10): vetor Desmodus rotundus + alta densidade pecuária + focos CE + proteção vacinal.",
+  "outro": "É exatamente nesses focos cearenses que a Adagri entra com monitoramento no Sidagro e pasta vampiricida (slide 56).",
+  "ref": "Slides 10 e 56"
+ },
+ "C1": {
+  "t": "C",
+  "ang": "Identificação",
+  "q": "Na comparação entre espécies quanto ao período de incubação da raiva (slide 23), qual sequência corresponde corretamente a Homem, Cães/Gatos e Bovinos?",
+  "ok": "Homem: 14 dias a 2 meses; Cães e gatos: 10 dias a 2 meses; Bovinos: 25 dias a 5 meses",
+  "er": [
+   [
+    "Homem: 3 a 5 dias; Cães e gatos: 2 a 4 dias; Bovinos: 3 a 21 dias",
+    "2–4 dias é excreção salivar pré-sintoma; 3–5 dias é tempo até a morte; e 3–21 dias é incubação do Tétano."
+   ],
+   [
+    "Homem: 25 dias a 5 meses; Cães e gatos: 14 dias a 2 meses; Bovinos: 10 dias a 2 meses",
+    "Inverte os prazos: bovinos têm o intervalo mais longo citado (25 dias a 5 meses), e cães/gatos o início mais curto (10 dias)."
+   ],
+   [
+    "Todas as três espécies incubam exatamente em 45 horas fixas após a mordedura",
+    "45 horas é tempo de sobrevivência viral no CADÁVER pós-óbito (slide 7), não incubação."
+   ]
+  ],
+  "pista": "Tabela numérica exata do slide 23 (14d–2m / 10d–2m / 25d–5m).",
+  "outro": "Esse prazo variável depende diretamente de quatro fatores do slide 25: carga viral, local da mordedura (proximidade ao SNC), variante do vírus e idade/estado imune.",
+  "ref": "Slides 23 e 25"
+ },
+ "C2": {
+  "t": "C",
+  "ang": "Princípio",
+  "q": "De acordo com o fluxograma da patogenia (slide 27), qual caminho anatômico o vírus percorre desde a entrada até atingir o sistema nervoso central, explicando tanto a forma furiosa quanto a paralítica e a eliminação salivar?",
+  "ok": "Músculo → receptores acetilcolina → axônios → SNC (límbico/córtex) → glândulas salivares e órgãos",
+  "er": [
+   [
+    "Vai direto pelo sangue da veia porta até o fígado, onde se liga ao fator intrínseco para alcançar o cérebro em 24 horas",
+    "O vírus rábico propaga-se por via NERVOSA (axônios após replicação muscular e receptores de acetilcolina), não via sangue portal."
+   ],
+   [
+    "Entra exclusivamente pelos linfonodos mesentéricos dos suínos, ficando retido lá sem nunca atingir glândulas adrenais, córnea ou saliva",
+    "Retenção em linfonodos mesentéricos pertence à tuberculose suína; na raiva há disseminação nervosa centrífuga até glândulas salivares, adrenais, pâncreas, rim, córnea e folículo piloso (27 e 29)."
+   ],
+   [
+    "Sobe pelas placas motoras para bloquear GABA e glicina no interneurônio mantendo o animal vivo por até 2 anos",
+    "Bloqueio de GABA/glicina é da tetanospasmina (Tétano); a raiva lesa centros nervosos vitais levando ao óbito."
+   ]
+  ],
+  "pista": "Diagrama do slide 27 (músculo → acetilcolina → axônios → medula/límbico [furiosa] / córtex [paralítica] → glândulas salivares).",
+  "outro": "A disseminação centrífuga tardia para retina, córnea, folículos pilosos e glândulas salivares explica por que exames como RT-PCR em folículo piloso (Recife) e IFD funcionam.",
+  "ref": "Slides 26, 27 e 29"
+ },
+ "C3": {
+  "t": "C",
+  "ang": "Armadilha",
+  "q": "Um cão sem sintomas aparentes morde uma criança hoje. O dono argumenta: 'Como o cachorro ainda está comendo normal e sem baba nem agressividade, é impossível haver vírus na saliva dele hoje'. Por que o slide 24 refuta isso com risco fatal?",
+  "ok": "Excreção na saliva começa no fim da incubação, de 2 a 4 dias ANTES dos sintomas (morte em 3–5d)",
+  "er": [
+   [
+    "Porque cães sempre eliminam o vírus na saliva desde o segundo dia após serem mordidos durante os 2 meses inteiros",
+    "Slide 24 localiza a excreção no FINAL do período de incubação: 2 a 4 dias antes dos sintomas."
+   ],
+   [
+    "Porque o perigo na mordida sem sintomas existe apenas em aves e nunca em cães ou gatos",
+    "Aves nem são mamíferos (slide 1: 'Todos os animais mamíferos são suscetíveis'); o slide 24 ilustra exatamente um cão pré-sintomático."
+   ],
+   [
+    "Porque o cachorro só passa a ter vírus na saliva depois de morto há pelo menos 45 horas",
+    "Após o óbito o vírus dura cerca de 45 horas no cadáver; a transmissão salivar inicia-se 2–4 dias ANTES dos sintomas enquanto vivo."
+   ]
+  ],
+  "pista": "Regra crucial do período de transmissibilidade (slide 24): 2 a 4 dias antes dos sintomas + morte em 3 a 5 dias.",
+  "outro": "Por esse motivo também não basta a mordedura: arranhadura, lambedura em mucosas/lesões e contato com secreções/tecidos contaminados transmitem o vírus (slide 22).",
+  "ref": "Slides 22 e 24"
+ },
+ "C4": {
+  "t": "C",
+  "ang": "Inversão",
+  "q": "Se uma mordedura com alta carga viral ocorre próxima ao crânio (cabeça/pescoço) em um animal jovem com imunidade baixa em comparação a uma ferida superficial na pata de um adulto, o que os fatores dos slides 23 e 25 preveem?",
+  "ok": "Incubação encurta muito por alta carga viral, proximidade imediata ao SNC e baixa imunidade",
+  "er": [
+   [
+    "O período de incubação alonga para mais de 5 meses em todos os casos porque a cabeça tem menos receptores de acetilcolina",
+    "Slide 23 afirma que depende da quantidade de vírus e da PROXIMIDADE ao SNC (perto do SNC + alta carga = incubação mais curta)."
+   ],
+   [
+    "A localização da mordedura nunca altera o tempo clínico, pois o vírus rábico viaja somente pela circulação linfática abdominal",
+    "Viaja pelos nervos/axônios; quanto mais próxima ao SNC (e maior carga/menor imunidade, slide 25), mais rápida a evolução."
+   ],
+   [
+    "Mordeduras próximas ao cérebro impedem totalmente o desenvolvimento da forma furiosa e transformam o vírus em bactéria",
+    "O sistema límbico ('perda do controle cortical', slide 27) fica justamente no encéfalo."
+   ]
+  ],
+  "pista": "Tema dado (4 fatores da incubação nos slides 23 e 25); analisa efeito da distância ao SNC + carga + estado imune.",
+  "outro": "Lembrando que, além de mordedura, lambedura e arranhadura, a transmissão inter-humana rara já foi documentada em transplante de córnea (8 casos), transplacentária (1 caso), saliva e transplante de órgãos (slide 39).",
+  "ref": "Slides 23, 25 e 39"
+ },
+ "C5": {
+  "t": "C",
+  "ang": "Ponte",
+  "ponte": "Disseminação nervosa centrífuga (Slides 27, 29) ↔ Exemplos raros de transmissão e RT-PCR",
+  "q": "Como o mapa tecidual de replicação tardia do slide 29 (córnea, folículo piloso, glândulas salivares, órgãos vitais) explica simultaneamente os casos históricos de transmissão por transplante (slide 39) e o exame usado no Protocolo de Recife (slide 47)?",
+  "ok": "Chega a córnea, órgãos e folículo piloso — explicando transplantes (8 córneas) e RT-PCR em pelo",
+  "er": [
+   [
+    "Porque o vírus replica apenas dentro das hemácias sanguíneas e só sai pelo líquido cefalorraquidiano após a vacinação pós-exposição",
+    "Slide 29 lista epiderme, folículo piloso, retina/córnea, glândulas lacrimais/adrenais, pulmões, fígado, miocárdio, bexiga, etc. via disseminação nervosa."
+   ],
+   [
+    "Porque o Protocolo de Recife usou biopsia de linfonodo mesentérico de boi, não tendo relação alguma com folículo piloso",
+    "Slide 47 especifica textualmente: 'Confirmado pelo RT-PCR em 22/10/2008: folículo piloso'."
+   ],
+   [
+    "Porque transplante de córnea só transmite tuberculose por M. avium e nunca vírus rábico",
+    "Slide 39 lista na Transmissão inter-humana: Transplante córnea (8 casos), Transplacentária (1 caso), Saliva e Transplante órgãos."
+   ]
+  ],
+  "pista": "Liga lista de tecidos alvo (slide 29) + transplante de córnea/órgãos (39) + RT-PCR em folículo piloso (47).",
+  "outro": "No exame post-mortem animal clássico, em vez de biópsia de folículo piloso em vida, coleta-se material encefálico em glicerina 50% ou formol (slide 41).",
+  "ref": "Slides 27, 29, 39 e 47"
+ },
+ "D1": {
+  "t": "D",
+  "ang": "Identificação",
+  "q": "Em pequenos ruminantes (slide 36), predomina a forma paralítica com isolamento, apatia, baba, ranger de dentes e paralisia traseira em 3–6 dias, somada a hiperexcitabilidade e dois comportamentos muito marcantes desse grupo; em suínos (slide 37), a forma paralítica faz o animal adotar certa postura típica antes de morrer em até 3 dias. Quais são?",
+  "ok": "Pequenos ruminantes: coceira ou automutilação intensa; Suínos: andar 'sentado' (posição de cão)",
+  "er": [
+   [
+    "Pequenos ruminantes: andar 'sentado' (posição de cão); Suínos: timpanismo com prolapso da terceira pálpebra",
+    "Posição 'sentado' (de cão) é dos SUÍNOS (slide 37); coceira/automutilação é de PEQUENOS RUMINANTES (slide 36); prolapso 3ª pálpebra é Tétano."
+   ],
+   [
+    "Pequenos ruminantes: agressividade exclusivamente furiosa sem ranger dentes; Suínos: recuperação espontânea após 14 dias",
+    "Ovinos/caprinos apresentam ranger de dentes + coceira/automutilação (morte 3–6d); suínos morrem de forma fulminante em até 3 dias."
+   ],
+   [
+    "Pequenos ruminantes: 'passo de ganso' com exsudato ocular; Suínos: cauda em bandeira",
+    "'Passo de ganso' pertence à deficiência de ácido pantotênico em suínos e cauda em bandeira ao Tétano."
+   ]
+  ],
+  "pista": "Coceira/automutilação + 3–6d (pequenos ruminantes, 36) vs. posição 'sentado de cão' + ≤3d (suínos, 37).",
+  "outro": "Nos suínos, quando ocorre a forma furiosa em vez da paralítica, observam-se febre, agitação extrema, mordedura de objetos/tratador e guinchos roucos anormais.",
+  "ref": "Slides 36 e 37"
+ },
+ "D2": {
+  "t": "D",
+  "ang": "Princípio",
+  "q": "Por que a 'Fase de Engasgo' da raiva paralítica em bovinos (slide 35) representa uma das armadilhas de contágio mais graves para o produtor ou tratador na fazenda?",
+  "ok": "A paralisia faríngea gera falsa aparência de corpo estranho engasgado com baba viscosa; pôr a mão na boca contamina com saliva rábica",
+  "er": [
+   [
+    "Porque o boi está com um osso de osteofagia preso e ao abrir a boca libera esporos de Clostridium botulinum",
+    "No 'engasgo' rábico NÃO há objeto preso — é paralisia viral dos músculos da garganta, e a baba está carregada de Lyssavirus infectante."
+   ],
+   [
+    "Porque colocar a mão na boca do bovino transmite imediatamente tuberculose caprina por aerossóis em 24 horas",
+    "O perigo específico alertado em itálico no slide 35 é contaminação pela saliva da RAIVA ao achar que há algo preso."
+   ],
+   [
+    "Porque na fase de engasgo o animal tem mandíbula travada (trismo) igual ao tétano e só transmite se houver mordida profunda",
+    "Justamente na raiva paralítica ocorre paralisia do maxilar inferior (boca relaxada/aberta com baba viscosa), facilitando que o peão enfie a mão sem perceber."
+   ]
+  ],
+  "pista": "Alerta literal do slide 35: 'Cuidado: Nunca coloque a mão na boca do animal achando que há algo preso, pois você pode se contaminar'.",
+  "outro": "Essa confusão fica ainda mais perigosa considerando que a raiva paralítica pode durar 3–7 dias ou até causar morte súbita sem qualquer manifestação clínica (slide 34).",
+  "ref": "Slides 32, 34 e 35"
+ },
+ "D3": {
+  "t": "D",
+  "ang": "Armadilha",
+  "q": "Um tratador descarta raiva em um novilho que morreu subitamente no pasto sem sinais prévios, e em um cavalo agressivo porque 'raiva em herbívoros é só paralítica, nunca dá agressividade nem morte súbita'. Quais fatos dos slides 32 e 34 desmentem isso?",
+  "ok": "Bovinos podem ter MORTE SÚBITA sem sinais (slide 34), e equinos podem mostrar agressividade (32)",
+  "er": [
+   [
+    "De fato morte súbita sem sinais é impossível na raiva bovina, ocorrendo apenas no estágio terminal de 14 dias do tétano",
+    "Slide 34 traz placa de alerta destacada: 'MORTE SÚBITA SEM QUALQUER MANIFESTAÇÃO SINAIS CLINICOS' em Raiva paralítica."
+   ],
+   [
+    "Na verdade apenas cães podem apresentar agressividade, sendo os equinos e suínos incapazes de desenvolver sintomas furiosos",
+    "Slide 32 lista 'Agressividade em equinos' e slide 37 detalha forma furiosa em suínos (agressividade, morde tratador/objetos, guinchos)."
+   ],
+   [
+    "Bovinos só morrem por raiva se apresentarem obrigatoriamente 'andar sentado' e automutilação por 21 dias seguidos",
+    "Bovinos evoluem normalmente em 3 a 7 dias (isolamento/mugido → engasgo/baba → andar cambaleante/paralisia pélvica) ou até morte súbita."
+   ]
+  ],
+  "pista": "Exceções clínicas dos slides 32 ('Agressividade em equinos') e 34 ('morte súbita sem sinais clínicos').",
+  "outro": "Já na forma furiosa clássica em carnívoros (slide 31), observe também o detalhe: ou ficam agressivos mordendo tudo, OU ficam tristes procurando lugares escuros com paralisia ascendente ('descadeirados').",
+  "ref": "Slides 31, 32, 34 e 35"
+ },
+ "D4": {
+  "t": "D",
+  "ang": "Inversão",
+  "q": "Acompanhando um bovino com raiva paralítica clássica ao longo dos seus 3 a 7 dias de evolução (slides 32 e 35), em qual ordem cronológica as manifestações se sucedem?",
+  "ok": "Isolamento/mugido e anorexia → 'Engasgo'/baba → andar cambaleante, decúbito, fezes secas/micção",
+  "er": [
+   [
+    "Decúbito lateral rígido com opistótono no dia 1 → postura em cavalete → melhora do apetite e recuperação após 7 dias",
+    "Opistótono e cavalete descrevem Tétano; na Raiva paralítica a evolução culmina em decúbito e morte (não há recuperação)."
+   ],
+   [
+    "Andar 'sentado' em posição de cão → automutilação e coceira intensa → ausência total de salivação em todas as fases",
+    "Posição de cão é de suínos e coceira/automutilação de pequenos ruminantes; bovinos têm salivação abundante e viscosa."
+   ],
+   [
+    "Hemorragias digestivas pós-desmame → paralisia da língua flácida após roer ossos → normalização sem vacina",
+    "Osteofagia/língua caída/hemorragia são de Botulismo ou Vitamina K, não sequência da Raiva paralítica bovina."
+   ]
+  ],
+  "pista": "Tema dado (cronologia bovina em 3–7 dias); encadeia Inicial → Engasgo → Paralisia.",
+  "outro": "Caso o rebanho fosse de ovinos ou caprinos, a progressão seria semelhante porém com ranger de dentes, coceira/automutilação intensa e morte em 3 a 6 dias.",
+  "ref": "Slides 32 e 35"
+ },
+ "D5": {
+  "t": "D",
+  "ang": "Ponte",
+  "ponte": "Sinais neurológicos de Raiva (Slides 34–37) ↔ Vigilância laboratorial obrigatória (54 e 56)",
+  "q": "Como a possibilidade de sinais atípicos (morte súbita em bovinos, agressividade em equinos, posição 'de cão' em suínos) fundamenta a regra de vigilância do slide 54 e a ação da Adagri no slide 56?",
+  "ok": "Todo mamífero com qualquer sintoma neurológico ou suspeita de raiva deve ir ao diagnóstico laboratorial (técnicos coletam encéfalo nos focos)",
+  "er": [
+   [
+    "Porque basta o produtor observar se o boi não está furioso para descartar raiva sem nunca chamar o serviço oficial nem coletar encéfalo",
+    "Raiva em bovinos é geralmente PARALÍTICA (ou até morte súbita), nunca se descartando por ausência de fúria."
+   ],
+   [
+    "Porque apenas em suínos furiosos existe necessidade de coleta laboratorial, sendo dispensável em bovinos e pequenos ruminantes",
+    "Slide 54 exige: 'Todo mamífero que apresente qualquer sintoma neurológico, ou com diagnóstico clínico de raiva, deve ser submetido ao diagnóstico laboratorial'."
+   ],
+   [
+    "Porque se o animal morreu com menos de 7 dias, a pasta vampiricida no cadáver confirma sozinha o diagnóstico sem laboratório",
+    "Pasta vampiricida é para controlar MORCEGOS hematófagos vivos (anticoagulante), jamais teste diagnóstico em cadáver."
+   ]
+  ],
+  "pista": "Liga variedade clínica (34–37) à obrigatoriedade universal de diagnóstico laboratorial em qualquer mamífero neurológico (54) + coleta da Adagri (56).",
+  "outro": "Lembrando que, na hora de enviar esse encéfalo coletado pelo técnico, metade vai em salina + glicerina 50% (virologia) e metade em formol (histopatologia).",
+  "ref": "Slides 34, 41, 54 e 56"
+ },
+ "E1": {
+  "t": "E",
+  "ang": "Identificação",
+  "q": "Um paciente humano após mordedura desenvolve angústia, cefaleia, febre ligeira e alterações sensoriais próximas ao local da ferida, evoluindo para hiperestesia (luz/som), dilatação pupilar, salivação, espasmos de 'hidrofobia', convulsões e paralisia generalizada; entre 1970 e 2009 registraram-se apenas 8 sobreviventes mundiais. Que caso brasileiro famoso entrou nesse histórico em 2008?",
+  "ok": "Protocolo de Recife/PE (Milwaukee adaptado), em adolescente de 15 anos de Floresta-PE",
+  "er": [
+   [
+    "Protocolo da Adagri-CE (2016), focado em erradicar Febre de Malta humana com vacina B19",
+    "Adagri 2016 planejou prevalência de brucelose e tuberculose no Ceará; Recife/PE (2008) foi sobrevivente de raiva humana por morcego hematófago."
+   ],
+   [
+    "Protocolo de Sobral (2011), aplicando BCG intradérmica após 72h do início dos espasmos de hidrofobia",
+    "BCG é proibida em bovinos (TB) e não existe vacina curativa após instalação clínica de raiva."
+   ],
+   [
+    "Protocolo SINAN de São Paulo (1958), baseado apenas em sorologia no 10º dia sem internação",
+    "1958 foi a introdução da IFD (slide 43) e 1992 o início do SINAN (slide 3)."
+   ]
+  ],
+  "pista": "Hidrofobia + 8 sobreviventes (1970–2009) + adolescente 15 anos (Floresta-PE, 2008, Milwaukee adaptado).",
+  "outro": "No caso do Protocolo de Recife/PE (slide 47), a confirmação diagnóstica em vida foi feita por RT-PCR em amostra de folículo piloso.",
+  "ref": "Slides 40, 46, 47 e 48"
+ },
+ "E2": {
+  "t": "E",
+  "ang": "Princípio",
+  "q": "Qual realidade clínica torna a prevenção pré e pós-exposição absoluta prioridade na raiva humana (slides 40 e 46–48), mesmo existindo o marco do Protocolo de Recife?",
+  "ok": "Não há cura após sintomas (só 8 sobreviventes entre 1970 e 2009); trata-se só para aliviar dor",
+  "er": [
+   [
+    "Porque a vacina pós-exposição tomada depois que surgem a hidrofobia e as convulsões cura 98% dos casos em menos de 3 dias",
+    "Slide 46 afirma textualmente: 'Não existe tratamento para casos com manifestação clínica' (vacina e soro só funcionam ANTES do quadro clínico)."
+   ],
+   [
+    "Porque o Protocolo de Milwaukee funciona facilmente com qualquer antibiótico comum sem precisar de UTI ou diagnóstico por RT-PCR",
+    "A extrema raridade dos 8 sobreviventes entre 1970 e 2009 mostra que sobrevida após doença instalada é raríssima exceção médica."
+   ],
+   [
+    "Porque a doença humana não provoca alterações sensoriais nem respiratórias, permitindo meses para decidir sobre lavagem da ferida",
+    "A evolução após sintomas cursa rapidamente com perturbações sensoriais locais, hidrofobia, distúrbios respiratórios, convulsões e paralisia."
+   ]
+  ],
+  "pista": "Slide 46 ('Não existe tratamento para casos com manifestação clínica') + slide 48 ('1970 a 2009 – oito casos').",
+  "outro": "Inclusive no paciente de Floresta-PE (slide 47), mesmo com 4 doses de vacina antes do início dos sintomas (incubação 29d), a doença instalou-se antes de completar a proteção.",
+  "ref": "Slides 40, 46, 47 e 48"
+ },
+ "E3": {
+  "t": "E",
+  "ang": "Armadilha",
+  "q": "Um estudante lê o caso de Floresta-PE (slide 47) e conclui: 'Como esse jovem de 15 anos foi mordido por cão urbano, teve incubação de 2 dias e foi confirmado por Corpúsculo de Negri pós-morte antes de morrer, a raiva humana pós-sintoma já tem cura rotineira'. Quantos erros existem aí?",
+  "ok": "Quatro erros: agressor foi morcego; incubou 29d; confirmou RT-PCR em pelo vivo; e não há cura padrão",
+  "er": [
+   [
+    "Apenas um erro: realmente foi confirmado post-mortem por Corpúsculo de Negri, errando só na espécie agressora",
+    "Slide 47 lista paciente sobrevivente (slide 48), confirmado em vida por RT-PCR de folículo piloso em 22/10/2008, incubação 29 dias, morcego hematófago."
+   ],
+   [
+    "Nenhum erro na incubação de 2 dias nem na cura rotineira, pois desde 2008 a maioria dos pacientes sobrevive à hidrofobia",
+    "De 1970 a 2009 houve apenas 8 sobreviventes no mundo todo; não existe tratamento padrão eficaz após manifestação clínica."
+   ],
+   [
+    "Erra apenas ao citar morcego hematófago em vez de cão, pois o RT-PCR de folículo piloso nunca se aplica a pacientes vivos",
+    "Justamente o RT-PCR em folículo piloso permitiu confirmar a infecção em paciente vivo durante o tratamento em Recife."
+   ]
+  ],
+  "pista": "Ficha factual exata do slide 47 (Floresta-PE, morcego hematófago, 29 dias, RT-PCR folículo piloso) + slides 46/48.",
+  "outro": "Lembre que sintomas prodrômicos iniciais no humano também incluem sinais pouco específicos: angústia, cefaleia, febre ligeira e alterações sensoriais próximas à mordida (slide 40).",
+  "ref": "Slides 40, 46, 47 e 48"
+ },
+ "E4": {
+  "t": "E",
+  "ang": "Ponte",
+  "ponte": "Sinais locais na mordida (Slide 40) ↔ Patogenia neural e prevenção oportuna",
+  "q": "Por que as primeiras manifestações humanas da raiva (perturbações sensoriais próximas ao local da mordedura, slide 40) e a hidrofobia final refletem exatamente a rota do vírus vista na patogenia (slides 27 e 29)?",
+  "ok": "O vírus sobe pelos nervos periféricos desde o ponto da mordida até o SNC (causando dor/parestesia local e depois espasmos/hidrofobia e paralisia)",
+  "er": [
+   [
+    "Porque o vírus circula apenas nos vasos sanguíneos das mãos causando infarto muscular sem nunca entrar nos axônios nem no SNC",
+    "O vírus replica no músculo, liga-se a receptores de acetilcolina e sobe pelos axônios até medula, límbico e córtex."
+   ],
+   [
+    "Porque o paciente sente alergia retardada Tipo IV à água e sabão usada 29 dias antes na lavagem da ferida",
+    "Espasmos ('hidrofobia') são distúrbios neurológicos centrais graves da doença avançada, não reação cutânea à água e sabão."
+   ],
+   [
+    "Porque a vacina pré-exposição nos dias 0–7–28 causa obrigatoriamente cefaleia, salivação e hidrofobia em quem trabalha com animais",
+    "A pré-exposição protege contra exposições inaparentes sem causar sintomas de raiva."
+   ]
+  ],
+  "pista": "Une sintomas prodrômicos locais + fase neurológica humana (40) ao trajeto axonal retrógrado e central (27 e 29).",
+  "outro": "Justamente por não haver cura após o vírus atingir e lesar o SNC, toda a chance real está no bloqueio prévio: lavagem imediata + vacina/soro pós-exposição ou pré-exposição (49–51).",
+  "ref": "Slides 27, 29, 40 e 46"
+ },
+ "F1": {
+  "t": "F",
+  "ang": "Identificação",
+  "q": "Técnica de diagnóstico laboratorial da raiva introduzida em 1958 que utiliza esfregaço de tecido encefálico tratado com anticorpos específicos conjugados a isotiocianato de fluoresceína. Qual é?",
+  "ok": "Imunofluorescência Direta (IFD)",
+  "er": [
+   [
+    "Exame Histopatológico por Corpúsculo de Negri, que cora exclusivamente tecido fixado em salina e glicerina sem usar anticorpos",
+    "Histopatológico (slide 42) busca corpúsculos de Negri em tecido fixado em FORMOL; IFD (1958, slide 43) usa anticorpos com isotiocianato de fluoresceína."
+   ],
+   [
+    "Prova Biológica, que consiste em injetar isotiocianato diretamente em cães errantes vivos",
+    "Prova Biológica (slide 44) é a inoculação intracerebral/animal em camundongos em laboratório."
+   ],
+   [
+    "Teste Cervical Comparativo (TCC), que mede espessura cutânea com cutímetro 72 horas após injetar fluoresceína",
+    "TCC é exame intradérmico in vivo para Tuberculose bovina (com PPD bovina e aviária)."
+   ]
+  ],
+  "pista": "1958 + esfregaço de tecido + anticorpos específicos + isotiocianato de fluoresceína.",
+  "outro": "Já a busca microscópica de 'agregados de nucleocapsídeos' dentro de neurônios piramidais corresponde à detecção de Corpúsculo de Negri no Histopatológico (slide 42).",
+  "ref": "Slides 42 e 43"
+ },
+ "F2": {
+  "t": "F",
+  "ang": "Princípio",
+  "q": "Na remessa de material encefálico para diagnóstico de raiva (slide 41), por que parte da amostra segue em solução salina + glicerina 50% e outra parte segue em formol?",
+  "ok": "Glicerina 50% mantém o vírus viável (virologia); formol fixa células (histopatologia para Negri)",
+  "er": [
+   [
+    "Porque a glicerina 50% fixa as lâminas de histopatologia matando o vírus, e o formol mantém o vírus vivo para inocular camundongos",
+    "Inverte os dois frascos do slide 41: Virologia (seta amarela) = Solução salina + glicerina 50%; Histopatologia (seta vermelha) = Formol."
+   ],
+   [
+    "Porque a glicerina a 50% serve apenas para testar brucelose no Anel em Leite e o formol é obrigatório para vacinar bovinos",
+    "Ambos os meios pertencem ao envio de encéfalo suspeito de RAIVA (Virologia vs. Histopatologia)."
+   ],
+   [
+    "Porque o formol acelera a multiplicação do Lyssavirus nos neurônios piramidais durante o transporte até 45 horas",
+    "Formol fixa o tecido e inativa o agente; por isso quem precisa de agente viável (ex.: prova biológica) vai em salina + glicerina 50%."
+   ]
+  ],
+  "pista": "Diagrama do slide 41 (Virologia → salina+glicerina 50%; Histopatologia → formol) + slide 7 (glicerina tamponada preserva o vírus).",
+  "outro": "Quanto ao diagnóstico sorológico (slide 45), ele não analisa tecido encefálico em formol, mas títulos no soro ou líquido cefalorraquidiano (LCR).",
+  "ref": "Slides 7, 41, 42 e 44"
+ },
+ "F3": {
+  "t": "F",
+  "ang": "Armadilha",
+  "q": "Um técnico coleta todo o encéfalo de um bovino suspeito e mergulha 100% do material em formol antes de enviar ao laboratório pedindo Prova Biológica em camundongos e Sorologia vacinal. O que está errado?",
+  "ok": "Formol mata o vírus (impede Prova Biológica — pede glicerina 50%); sorologia usa soro ou líquor",
+  "er": [
+   [
+    "Erra só ao pedir Prova Biológica, pois camundongos sobrevivem melhor quando recebem amostra fixada em formol a 10%",
+    "O formol mata o vírus para fixar células; Prova Biológica (slide 44) exige vírus vivo preservado em salina + glicerina 50%."
+   ],
+   [
+    "O envio inteiro em formol é o padrão ideal tanto para Virologia quanto para quantificar títulos de 0,5 UI/mL no líquor",
+    "Títulos ≥0,5 UI/mL e elevação no LCR vêm de amostras de soro/LCR (Sorologia, slide 45), nunca de encéfalo em formol."
+   ],
+   [
+    "Na verdade o Corpúsculo de Negri é uma bactéria do solo visível apenas por cultura de 72 horas em cutímetro",
+    "Corpúsculos de Negri são agregados de nucleocapsídeos virais observados em neurônios piramidais na Histopatologia (slide 42)."
+   ]
+  ],
+  "pista": "Uso incompatível do formol para virologia/prova biológica + confusão entre amostra encefálica e LCR/soro.",
+  "outro": "Lembre das quatro utilidades listadas para a Sorologia no slide 45: elevação no LCR, imunogenicidade de vacinas, status de vacinados e comprovação de contato em não vacinados.",
+  "ref": "Slides 41, 42, 44 e 45"
+ },
+ "F4": {
+  "t": "F",
+  "ang": "Inversão",
+  "q": "Quais quatro finalidades específicas são atribuídas à Sorologia no diagnóstico e controle da raiva segundo o slide 45?",
+  "ok": "Títulos no LCR, imunogenicidade vacinal, status de vacinados e comprovação de contato em não vacinados",
+  "er": [
+   [
+    "Identificar Corpúsculos de Negri nos neurônios piramidais, medir prega caudal com cutímetro e cultivar M. bovis em 60 dias",
+    "Negri é histopatologia; prega caudal/cutímetro e cultivo de M. bovis pertencem à Tuberculose."
+   ],
+   [
+    "Substituir a lavagem com água e sabão na mordedura e dispensar completamente a coleta de encéfalo em animais neurológicos",
+    "Em animais com sintomas neurológicos o envio de encéfalo continua obrigatório (slide 54), e lavagem com sabão é conduta de ferida (49)."
+   ],
+   [
+    "Diagnosticar exclusivamente carência de vitamina A e selênio em bovinos confinados por anergia",
+    "Sorologia rábica avalia anticorpos contra Lyssavirus no soro e líquido cefalorraquidiano (LCR)."
+   ]
+  ],
+  "pista": "Tema dado (4 aplicações da Sorologia no slide 45).",
+  "outro": "Em profissionais sob risco, é justamente essa avaliação sorológica (no 10º dia após a última dose de pré-exposição) que confirma proteção ≥ 0,5 UI/mL (slides 50 e 52).",
+  "ref": "Slides 45, 50 e 52"
+ },
+ "F5": {
+  "t": "F",
+  "ang": "Ponte",
+  "ponte": "Adelchi Negri (1906) e Patogenia ↔ Achado histopatológico específico",
+  "q": "Conectando a linha histórica do slide 2 ao exame histopatológico do slide 42, o que exatamente são os 'Corpúsculos de Negri' observados nos neurônios piramidais?",
+  "ok": "São agregados intracitoplasmáticos de nucleocapsídeos do vírus da raiva acumulados durante sua replicação neuronal, descritos por Adelchi Negri (1906)",
+  "er": [
+   [
+    "São esporos dormentes de Clostridium tetani presos nos gânglios linfáticos mesentéricos após parto distócico",
+    "Esporos são de clostrídios e linfonodos mesentéricos da tuberculose suína; Negri são agregados de nucleocapsídeos virais da Raiva."
+   ],
+   [
+    "São anticorpos conjugados artificialmente com isotiocianato de fluoresceína injetados pelo veterinário antes do óbito",
+    "Anticorpos com isotiocianato de fluoresceína fazem parte do reagente laboratorial da IFD (1958), não do Corpúsculo de Negri natural."
+   ],
+   [
+    "São nódulos caseosos calcificados típicos de Mycobacterium bovis no parênquima pulmonar",
+    "Nódulos caseosos pulmonares pertencem à Tuberculose bovina."
+   ]
+  ],
+  "pista": "Une Adelchi Negri (1906, slide 2) ao termo exato do slide 42 ('Agregados de Nucleocapsídeos' + 'Neurônios Piramidais').",
+  "outro": "Junto com os achados neuronais do hipocampo/cérebro, a IFD (1958) e a Prova Biológica formam o tripé diagnóstico laboratorial clássico (slides 42–44).",
+  "ref": "Slides 2, 42 e 43"
+ },
+ "G1": {
+  "t": "G",
+  "ang": "Identificação",
+  "q": "Um esquema vacinal preventivo para profissionais sob risco segue aplicação nos dias 0 – 7 – 28, exige sorologia no 10º dia após a última dose confirmando título ≥ 0,5 UI/mL de anticorpos neutralizantes, e prevê repetição semestral (exposição continuada) ou anual (risco menor). Qual protocolo é esse?",
+  "ok": "Tratamento profilático pré-exposição (Raiva humana)",
+  "er": [
+   [
+    "Tratamento profilático pós-exposição imediata após mordedura de cão errante sem soro",
+    "Pós-exposição envolve 2 a 5 doses (com ou sem soro) após o acidente e lavagem imediata com água e sabão (slide 49)."
+   ],
+   [
+    "Protocolo vacinal rural de herbívoros em áreas endêmicas",
+    "Em herbívoros/suínos rurais (slide 38), o protocolo é 1ª dose aos 3 meses, reforço 30 dias depois e revacinação anual."
+   ],
+   [
+    "Esquema obrigatório de saneamento de tuberculose bovina pelo PNCEBT",
+    "Saneamento de TB testa >6 semanas a cada 60–90 dias até 2 negativos seguidos — sem dias 0–7–28 nem título 0,5 UI/mL."
+   ]
+  ],
+  "pista": "Dias 0 – 7 – 28 + 10º dia ≥ 0,5 UI/mL + semestral (continuada) / anual (risco menor).",
+  "outro": "A regra de ouro desse protocolo (slide 52) é clara: ninguém deve ser exposto conscientemente a riscos sem confirmação sorológica ≥ 0,5 UI/mL.",
+  "ref": "Slides 50 e 52"
+ },
+ "G2": {
+  "t": "G",
+  "ang": "Princípio",
+  "q": "Quais quatro vantagens práticas justificam fazer a profilaxia pré-exposição em médicos veterinários, agrônomos e trabalhadores sob risco de contato rábico (slide 51)?",
+  "ok": "Protege exposição inaparente, dispensa soro pós-exposição, reduz doses e acelera resposta booster",
+  "er": [
+   [
+    "Substitui a obrigatoriedade de usar máscara N95 em tuberculose e dispensa para sempre lavar mordidas com água e sabão",
+    "Lavar mordedura com água e sabão continua imediato na pós-exposição, e máscara N95 é EPI específico para foco de tuberculose."
+   ],
+   [
+    "Garante proteção eterna de 50 anos sem precisar jamais fazer controle sorológico semestral nem anual",
+    "Slide 50 e 52 exigem sorologia a partir do 10º dia pós-dose (≥0,5 UI/mL) e repetição semestral ou anual conforme o risco."
+   ],
+   [
+    "Torna o profissional imune também contra tétano, botulismo e febre de Malta sem nenhuma outra vacina",
+    "É vacina específica anti-rábica, gerando memória imunológica (resposta secundária booster) especificamente contra o vírus da raiva."
+   ]
+  ],
+  "pista": "As 4 vantagens listadas no slide 51 (inaparentes + sem soro/passiva + menos doses + booster rápido).",
+  "outro": "Por outro lado, o uso abusivo ou desnecessário da pós-exposição completa (2–5 doses com/sem soro, slide 49) expõe a efeitos adversos e desperdiça recursos públicos.",
+  "ref": "Slides 49, 50, 51 e 52"
+ },
+ "G3": {
+  "t": "G",
+  "ang": "Armadilha",
+  "q": "Um estudante que estagia manejando cavernas e rebanhos rurais completa as doses nos dias 0, 7 e 28 e entra direto no trabalho de campo sem esperar nem fazer sorologia, acreditando que basta vacinar uma vez na vida e nunca mais repetir. Quais regras dos slides 50 e 52 ele viola?",
+  "ok": "Exige confirmar título ≥ 0,5 UI/mL no 10º dia antes da exposição, e risco contínuo repete todo semestre",
+  "er": [
+   [
+    "Viola apenas os intervalos das doses, pois para exposição continuada o esquema certo seria 30 e 60 dias com título mínimo de 0,05 UI/mL",
+    "Dias corretos são 0–7–28 e título satisfatório é ≥ 0,5 UI/mL (não 0,05) medido no 10º dia após a última dose."
+   ],
+   [
+    "Não viola nenhuma regra, porque após os dias 0–7–28 todo ser humano atinge 100% de proteção automática sem precisar de sorologia",
+    "O slide 52 traz um quadro inteiro dedicado à regra: 'Ninguém deve ser exposto conscientemente a riscos, sem a confirmação sorológica de títulos ≥ 0,5 UI/mL'."
+   ],
+   [
+    "Erra só porque a repetição sorológica em risco continuado deve ser a cada 10 anos, igual ao controle de risco menor",
+    "Slide 50 define: Exposição continuada = SEMESTRALMENTE; Risco menor = ANUALMENTE."
+   ]
+  ],
+  "pista": "Slide 50 (10º dia, ≥ 0,5 UI/mL, semestral vs. anual) + trava absoluta do slide 52.",
+  "outro": "Lembrando que, se mesmo protegido ele vier a sofrer uma mordedura suspeita, lava logo com água e sabão e procura atendimento médico — agora com esquema simplificado (sem soro, menos doses e booster rápido).",
+  "ref": "Slides 49, 50, 51 e 52"
+ },
+ "G4": {
+  "t": "G",
+  "ang": "Ponte",
+  "ponte": "Pré-exposição vs. Pós-exposição ↔ Uso racional de recursos e proteção profissional",
+  "q": "Integrando os slides 49, 50 e 51, como a pré-exposição bem conduzida resolve dois problemas apontados no slide 49 para acidentes pós-exposição (efeitos adversos e desperdício de recursos públicos) quando um profissional sofre contato de risco?",
+  "ok": "Reduz o número de doses e elimina a necessidade de imunização passiva (soro) pós-exposição graças ao efeito booster rápido e títulos prévios ≥0,5 UI/mL",
+  "er": [
+   [
+    "Porque quem tem pré-exposição nunca precisa notificar caso humano suspeito ao SINAN nem verificar mordeduras",
+    "Todo caso humano suspeito/confirmado é de notificação compulsória imediata (slide 3)."
+   ],
+   [
+    "Porque a pré-exposição impede completamente que cães do bairro transmitam raiva antes dos 4 dias de sintomas",
+    "Pré-exposição protege o profissional humano; o controle urbano depende de vacinação anual canina/felina e captura de errantes (53)."
+   ],
+   [
+    "Porque dispensa o uso de pasta vampiricida pela Adagri e libera o produtor para capturar morcegos com as próprias mãos",
+    "Produtor nunca deve tentar capturar ou matar morcegos por conta própria (slide 57); controle do vetor cabe a órgãos como Adagri."
+   ]
+  ],
+  "pista": "Liga slide 49 (2–5 doses c/ ou s/ soro, efeitos adversos, desperdício) às vantagens do slide 51 (elimina soro, reduz doses, booster).",
+  "outro": "Já na profilaxia em animais rurais jovens, lembre que a vacina segue esquema distinto: 1ª dose aos 3 meses, reforço em 30 dias e revacinação anual (slide 38).",
+  "ref": "Slides 49, 50 e 51"
+ },
+ "H1": {
+  "t": "H",
+  "ang": "Identificação",
+  "q": "Na saúde animal brasileira (slide 4), dois programas foram criados em datas distintas — um em 1966 voltado aos herbívoros/produção rural e outro em 1973 voltado a cães e gatos na zona urbana — enquanto em 1998 uma portaria determinou notificação compulsória imediata de todo caso suspeito/confirmado humano (após implantação do SINAN em 1992). Quais são as duas siglas dos programas animais?",
+  "ok": "PNCRH (1966 — herbívoros) e PNPR (1973 — cães e gatos)",
+  "er": [
+   [
+    "PNPR (1966 — herbívoros) e PNCEBT (1973 — cães e gatos)",
+    "Inverte os nomes e mistura o PNCEBT (Brucelose e Tuberculose); 1966 = PNCRH (herbívoros); 1973 = PNPR (raiva urbana/cães e gatos)."
+   ],
+   [
+    "SINAN (1966 — bovinos) e Sidagro (1973 — cães e gatos)",
+    "SINAN é de 1992 (sistema de informação de agravos de notificação humana) e Sidagro é sistema de georreferenciamento da Adagri."
+   ],
+   [
+    "PNCEBT (1966 — morcegos) e IN 19/2011 (1973 — suínos)",
+    "PNCEBT e IN 19/2011 tratam de Brucelose e Tuberculose, não de Raiva."
+   ]
+  ],
+  "pista": "1966 (Raiva rural/herbívoros) vs. 1973 (Raiva urbana/cães e gatos) + SINAN (1992) e Portaria (1998).",
+  "outro": "Junto a esses dois programas veterinários, as normas técnicas de vigilância do Ministério da Saúde (2005, slide 54) fixam ainda metas sistemáticas anuais de envio de amostras caninas.",
+  "ref": "Slides 3 e 4"
+ },
+ "H2": {
+  "t": "H",
+  "ang": "Princípio",
+  "q": "Por que as Normas Técnicas do Ministério da Saúde (slide 54) obrigam municípios pequenos (< 20.000 habitantes) a enviar pelo menos 12 amostras caninas/ano mesmo sem surto visível, além de testar todo mamífero com sintoma neurológico?",
+  "ok": "Mantém vigilância ativa contínua (0,2% cães/ano ou ≥12 amostras) para detectar circulação precoce",
+  "er": [
+   [
+    "Porque municípios com menos de 20.000 habitantes estão proibidos de vacinar cães e gatos uma vez ao ano",
+    "É dever dos governos (Federal, Estadual e Municipal) efetuar vacinação de cães e gatos pelo menos uma vez ao ano em qualquer município (slides 53 e 55)."
+   ],
+   [
+    "Porque amostras caninas abaixo de 12 por ano permitem substituir o exame laboratorial apenas pela pasta vampiricida em humanos",
+    "O envio sistemático (0,2% ou ≥12 amostras em <20 mil hab.) visa exatamente diagnóstico laboratorial contínuo para vigilância epidemiológica."
+   ],
+   [
+    "Porque somente em municípios abaixo de 20.000 habitantes o cão é transmissor, nunca em capitais ou países em desenvolvimento",
+    "Em países em desenvolvimento como um todo o cão é o principal agressor transmissor (slide 58), exigindo vigilância permanente mesmo em áreas silenciosas."
+   ]
+  ],
+  "pista": "Meta de 0,2% vs. piso de 12 amostras/ano (<20 mil hab.) + 'independente da situação epidemiológica' (slide 54).",
+  "outro": "Esse monitoramento sistemático se soma aos demais deveres governamentais do slide 55: captura de cães errantes, controle de colônias hematófagas, controle de posse ilegal de silvestres e educação em saúde.",
+  "ref": "Slides 53, 54 e 55"
+ },
+ "H3": {
+  "t": "H",
+  "ang": "Armadilha",
+  "q": "Um gestor municipal lê o slide 54 e decide enviar amostras laboratoriais APENAS quando houver confirmação clínica prévia de raiva na cidade (poupando o envio anual canino por não ter tido surto nos últimos anos). Por que descumpre a norma técnica?",
+  "ok": "Deve enviar 0,2% dos cães ao ano (≥12 amostras se <20 mil hab.) independente da situação local",
+  "er": [
+   [
+    "Descumpre apenas porque a regra de 0,2% se aplica só a bovinos leiteiros e nunca à população canina estimada",
+    "Slide 54 define expressamente: '0,2% da população CANINA estimada' (com piso de 12 amostras em municípios <20.000 habitantes)."
+   ],
+   [
+    "Na verdade o gestor só erra se deixar de vacinar morcegos hematófagos silvestres com vacina injetável anual",
+    "A vacinação governamental anual refere-se a CÃES E GATOS; morcegos hematófagos sofrem controle populacional de colônias (slides 55–56)."
+   ],
+   [
+    "Está dentro da norma porque em municípios sem casos recentes o governo municipal fica isento também da captura de errantes e educação",
+    "Slide 55 estabelece os deveres contínuos dos três níveis de governo (Federal, Estadual e Municipal) mesmo sem surto instalado."
+   ]
+  ],
+  "pista": "Expressão exata do slide 54: 'independente da situação epidemiológica da região' + piso de 12 amostras (<20 mil hab.).",
+  "outro": "E quanto a casos humanos, a Portaria de 1998 (slide 3) também não espera confirmação definitiva: todo caso SUSPEITO ou confirmado já é de notificação compulsória e imediata.",
+  "ref": "Slides 3, 54 e 55"
+ },
+ "H4": {
+  "t": "H",
+  "ang": "Ponte",
+  "ponte": "Vigilância urbana (PNPR / MS) ↔ Dever do Governo em saúde única (Slide 55)",
+  "q": "Por que a lista de deveres governamentais do slide 55 inclui simultaneamente vacinar cães/gatos, capturar errantes, controlar posse ilegal de silvestres e controlar morcegos hematófagos?",
+  "ok": "Porque os ciclos urbano (cães/gatos), silvestre (ex.: Callithrix ilegal como pet) e aéreo/rural (hematófagos) trocam vírus entre si — bloqueá-los exige ação integrada",
+  "er": [
+   [
+    "Porque animais silvestres mantidos ilegalmente em casa só transmitem tuberculose aviária por prega caudal",
+    "Slide 14–15 ilustra Callithrix sp. ('Silvestre ou doméstico?') justamente como risco de transmissão silvestre-doméstica da RAIVA."
+   ],
+   [
+    "Porque basta capturar cães errantes para eliminar automaticamente as 31 espécies de morcegos com vírus rábico nas cavernas",
+    "Morcegos hematófagos mantêm o ciclo aéreo/rural independentemente dos cães, exigindo ações específicas sobre suas colônias."
+   ],
+   [
+    "Porque o governo federal transfere a captura de morcegos hematófagos diretamente ao produtor rural comum com armadilhas caseiras",
+    "Slide 55 diz ser dever do GOVERNO controlar colônias de morcegos, e slide 57 proíbe o produtor de tentar capturar ou matar morcegos sozinho."
+   ]
+  ],
+  "pista": "Conecta os 4 ciclos (slides 11, 15 e 21) às frentes coordenadas do Estado (slide 55).",
+  "outro": "Em áreas rurais como o Ceará, essa ponta operacional de controle de abrigos e pasta vampiricida é conduzida diretamente pela Adagri (slide 56).",
+  "ref": "Slides 11, 15, 53 e 55"
+ },
+ "I1": {
+  "t": "I",
+  "ang": "Identificação",
+  "q": "No Ceará, técnicos de defesa sanitária mapeiam cavernas, bueiros, fendas e casas abandonadas por georreferenciamento no sistema Sidagro, capturam morcegos hematófagos aplicando pasta vampiricida anticoagulante e coletam encéfalo de bovinos suspeitos em focos. Qual órgão e medidas são descritos?",
+  "ok": "Adagri (Agência de Defesa Agropecuária do Ceará) — controle vetorial, monitoramento de abrigos e atendimento a focos",
+  "er": [
+   [
+    "SINAN, órgão responsável exclusivamente pelo georreferenciamento de cavernas no sistema Sidagro para controle de tuberculose",
+    "SINAN (1992) é sistema de notificação de agravos na saúde humana; Sidagro e pasta vampiricida pertencem à Adagri (slide 56)."
+   ],
+   [
+    "Produtor rural autônomo, que segundo o slide 57 deve capturar os morcegos sozinho com pasta anticoagulante nas cavernas",
+    "Slide 57 proíbe exatamente o produtor: 'Não Tentar Capturar ou matar os morcegos por conta própria' — quem faz isso são equipes técnicas da Adagri."
+   ],
+   [
+    "Instituto Pasteur de 1958, responsável pela aplicação obrigatória da vacina B19 contra raiva bovina",
+    "Instituto Pasteur aparece como fonte histórica/técnica e B19 pertence à Brucelose; controle rural cearense com Sidagro está no slide 56."
+   ]
+  ],
+  "pista": "Sidagro + cavernas/bueiros/fendas + pasta vampiricida (anticoagulante) + coleta encefálica = Adagri (slide 56).",
+  "outro": "Ao mesmo tempo em que a Adagri atua nos abrigos e focos, cabe ao produtor vacinar o rebanho, identificar mordeduras (pescoço/cupim) e notificar (slide 57).",
+  "ref": "Slides 56 e 57"
+ },
+ "I2": {
+  "t": "I",
+  "ang": "Princípio",
+  "q": "Por que o produtor rural NÃO deve tentar capturar ou matar morcegos hematófagos por conta própria ao notar mordeduras no pescoço ou cupim do gado (slides 56 e 57), mas sim notificar e manter o rebanho vacinado?",
+  "ok": "Evita risco de exposição humana direta ao vírus sem preparo/sorologia e permite à Adagri mapear abrigos (Sidagro) e aplicar pasta vampiricida controlada no vetor",
+  "er": [
+   [
+    "Porque matar morcegos no pasto libera esporos de C. botulinum no ar causando botulismo em todos os cavalos",
+    "Esporos no solo/carcaças são de clostrídios; o risco com morcegos é dispersão de colônias e contato humano direto com vírus rábico."
+   ],
+   [
+    "Porque apenas morcegos mordidos por cães errantes transmitem raiva, bastando passar cal virgem no cupim dos bois",
+    "Cal virgem é desinfetante de curral/resíduos na tuberculose; a Adagri trata mordeduras/morcegos capturados com pasta vampiricida específica (anticoagulante)."
+   ],
+   [
+    "Porque suínos e ovinos jamais precisam ser vacinados em áreas endêmicas de morcegos hematófagos",
+    "Slide 38 indica vacinação inclusive de suínos e pequenos ruminantes em regiões endêmicas/alto risco com morcegos ou histórico de focos."
+   ]
+  ],
+  "pista": "Divisão de papéis: produtor (vacinar + observar pescoço/cupim + notificar + NÃO capturar) vs. Adagri (Sidagro + pasta vampiricida).",
+  "outro": "Lembrando que, se qualquer profissional de defesa sanitária for manipular abrigos ou morcegos, precisa estar sob pré-exposição e título comprovado ≥ 0,5 UI/mL (slides 50–52).",
+  "ref": "Slides 38, 56 e 57"
+ },
+ "I3": {
+  "t": "I",
+  "ang": "Armadilha",
+  "q": "Em uma propriedade situada em região endêmica com presença constante de morcegos hematófagos e focos vizinhos, o dono vacina os bois apenas uma vez na vida (aos 3 meses, sem reforço) e deixa suínos e ovinos sem vacina porque 'só bovino toma vacina anti-rábica'. Quais erros há nessa conduta?",
+  "ok": "Em regiões endêmicas deve-se vacinar também pequenos ruminantes e suínos, e o protocolo bovino padrão exige 1ª dose aos 3 meses, reforço 30 dias depois e revacinação ANUAL",
+  "er": [
+   [
+    "Erra apenas na idade da 1ª dose, pois a vacina contra raiva é realmente dose única na vida igual à B19 da brucelose",
+    "Dose única na vida entre 3–8 meses é a BRUCELOSE (fêmeas); na Raiva o slide 38 exige 3 meses + reforço em 30 dias + revacinação ANUAL."
+   ],
+   [
+    "Não há erro algum quanto aos ovinos e suínos, pois caprinos, ovinos e suínos são resistentes à raiva em áreas de morcegos",
+    "Slide 36–37 mostra raiva fatal em pequenos ruminantes (3–6d) e suínos (≤3d), e slide 38 recomenda vacinação em regiões endêmicas/alto risco."
+   ],
+   [
+    "Na verdade em áreas endêmicas vacina-se o rebanho a cada 60–90 dias até dois testes positivos no cutímetro",
+    "Cutímetro em 60–90 dias pertence ao saneamento de Tuberculose; o protocolo de raiva rural do slide 38 é 3m + 30d + anual."
+   ]
+  ],
+  "pista": "Regra do slide 38 (suínos e pequenos ruminantes em regiões endêmicas + 3m / 30d / anual) + slide 57.",
+  "outro": "A vacinação rigorosa de bovinos, equinos, ovinos e caprinos citada no slide 57 protege o lote enquanto o produtor vigia o pescoço e cupim buscando mordeduras.",
+  "ref": "Slides 38 e 57"
+ },
+ "I4": {
+  "t": "I",
+  "ang": "Ponte",
+  "ponte": "Protocolo rural de Raiva (38, 56–57) ↔ Contraste com calendário do PNCEBT e GTA",
+  "q": "Integrando as três grandes doenças de rebanhos estudadas (Tuberculose, Brucelose, Tétano e Raiva rural), qual distinção exata separa seus esquemas obrigatórios e vacinais no manejo da fazenda?",
+  "ok": "Tuberculose: vacina PROIBIDA (teste TIF + abate); Brucelose: dose ÚNICA fêmeas 3–8m (B19/RB51); Tétano: recomendada (não cobrada na GTA); Raiva: 3m + reforço 30d + ANUAL",
+  "er": [
+   [
+    "Todas as quatro exigem vacinação anual obrigatória em bovinos e bubalinos para emissão da GTA em qualquer estado",
+    "Tuberculose tem vacina proibida (IN 19/2011); Brucelose é dose única (3–8m); Tétano não é cobrado na GTA."
+   ],
+   [
+    "Brucelose aplica-se com reforço em 30 dias e anual em machos, enquanto a Raiva aplica dose única só em fêmeas de 3–8 meses",
+    "Inverte exatamente os dois protocolos vacinais (Brucelose vs. Raiva rural)."
+   ],
+   [
+    "Na Raiva o controle usa pasta vampiricida em bezerras de 3 meses e no Tétano usa-se BCG antes dos eventos de aglomeração",
+    "Pasta vampiricida aplica-se a morcegos capturados/redor de mordeduras pela Adagri, e BCG é proibida para TB."
+   ]
+  ],
+  "pista": "Síntese comparativa de calendário e legislação entre Tuberculose, Brucelose, Tétano e Raiva.",
+  "outro": "Esse quadro comparativo evita o erro típico de prova e de campo: misturar 'dose única 3–8m' (Brucelose), 'proibida' (Tuberculose) e '3m + 30d + anual' (Raiva).",
+  "ref": "Slide 38 (Raiva) integrado a TB/Brucelose e Clostridioses"
+ }
+};
+var ORDER = ["B1","A1","F1","D1","H1","C1","I1","E1","G1","D2","G2","A2","H2","C2","I2","F2","B2","E2","I3","E3","B3","G3","D3","A3","F3","C3","H3","C4","F4","A4","D4","E4","B4","H4","A5","G4","C5","I4","F5","D5"];
+var app=document.getElementById('app');
+var queue,pos,answers,t0,cur,locked,optList,famSeen,FAMQ;
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x}return a}
+function start(ids){queue=ids;pos=0;answers=[];t0=Date.now();famSeen={};FAMQ={};ids.forEach(function(id){FAMQ[Q[id].t]=(FAMQ[Q[id].t]||0)+1});render()}
+function render(){
+  if(pos>=queue.length){return finish()}
+  var id=queue[pos],q=Q[id];cur=id;locked=false;
+  var opts=[{x:q.ok,ok:true,why:''}].concat(q.er.map(function(e){return{x:e[0],ok:false,why:e[1]}}));
+  optList=shuffle(opts);
+  var L='ABCD';
+  var h='<h1>A Raiva (Urbana, Rural e Profilaxia)</h1><p class="sub">Agente, ciclos, patogenia, clínica animal/humana, diagnóstico e defesa sanitária (slides 1 a 60)</p>';
+  h+='<div class="meta"><span>Questão '+(pos+1)+' de '+queue.length+'</span><span>'+answers.filter(function(a){return a.ok}).length+' acertos</span></div>';
+  h+='<div class="bar"><i style="width:'+(pos/queue.length*100)+'%"></i></div>';
+  h+='<p class="stem">'+q.q+'</p><div id="opts">';
+  optList.forEach(function(o,i){h+='<button class="opt" data-i="'+i+'"><b>'+L[i]+'</b><span>'+o.x+'</span></button>'});
+  h+='</div><div id="fb"></div><p class="hint">Atalhos: 1–4 escolhem a alternativa; Enter avança.</p>';
+  app.innerHTML=h;
+  Array.prototype.forEach.call(app.querySelectorAll('.opt'),function(b){b.onclick=function(){pick(+b.getAttribute('data-i'))}});
+}
+function pick(i){
+  if(locked||!optList[i])return;locked=true;
+  var q=Q[cur],o=optList[i];
+  var btns=app.querySelectorAll('.opt');
+  Array.prototype.forEach.call(btns,function(b,k){b.disabled=true;if(optList[k].ok)b.classList.add('ok');else if(k===i)b.classList.add('ko')});
+  famSeen[q.t]=(famSeen[q.t]||0)+1;
+  var nth=famSeen[q.t];
+  answers.push({id:cur,t:q.t,ok:o.ok,ang:q.ang});
+  var th=T[q.t];
+  var f='<div class="fb"><p class="h '+(o.ok?'ok':'ko')+'">'+(o.ok?'Correto.':'Errado.')+'</p>';
+  f+='<p><em>Tema:</em> '+th.nome+' <em>('+q.ang+')</em></p>';
+  f+='<p><em>Pista que entregou:</em> '+q.pista+'</p>';
+  f+='<p><em>Núcleo:</em> '+th.nucleo+'</p>';
+  if(!o.ok)f+='<p><em>Por que a sua escolha está errada:</em> '+o.why+'</p>';
+  f+='<p><em>Se fosse o outro tema:</em> '+q.outro+'</p>';
+  f+='<p><em>Referência:</em> '+q.ref+'</p>';
+  f+='<p><em>Progresso da família:</em> '+th.nome.split(' - ')[0]+' - '+nth+' de '+FAMQ[q.t]+'</p>';
+  f+='<button class="main" id="nx">'+(pos+1>=queue.length?'Ver fechamento':'Próxima')+'</button></div>';
+  document.getElementById('fb').innerHTML=f;
+  document.getElementById('nx').onclick=next;
+  document.getElementById('nx').focus();
+}
+function next(){pos++;render();window.scrollTo(0,0)}
+document.addEventListener('keydown',function(e){
+  if(!queue||pos>=queue.length)return;
+  if(!locked&&e.key>='1'&&e.key<='4'){pick(+e.key-1)}
+  else if(locked&&e.key==='Enter'){e.preventDefault();next()}
+});
+function fmt(ms){var s=Math.round(ms/1000);return Math.floor(s/60)+'min '+('0'+(s%60)).slice(-2)+'s'}
+function finish(){
+  var tot=answers.length,ac=answers.filter(function(a){return a.ok}).length;
+  var by={};answers.forEach(function(a){by[a.t]=by[a.t]||{n:0,k:0};by[a.t].n++;if(a.ok)by[a.t].k++});
+  var h='<h1>Fechamento - A Raiva</h1><p class="sub">Epidemiologia, clínica e profilaxia da Raiva (60 slides)</p>';
+  h+='<div class="score">'+(ac/tot*10).toFixed(1)+' / 10</div><p>'+ac+' de '+tot+' acertos · tempo '+fmt(Date.now()-t0)+'</p>';
+  h+='<h2>Mapa</h2><table><tr><th>Tema</th><th>Núcleo</th><th>Pistas</th><th>Confusão</th><th>Acertos</th></tr>';
+  Object.keys(T).forEach(function(k){
+    if(!by[k])return;var p=by[k].k/by[k].n;
+    h+='<tr><td>'+T[k].nome+'</td><td>'+T[k].nucleo+'</td><td>'+T[k].pistas+'</td><td>'+T[k].conf+'</td><td class="p'+(p<0.7?' low':'')+'">'+by[k].k+'/'+by[k].n+'</td></tr>';
+  });
+  h+='</table>';
+  h+='<h2>Pontes</h2><ul>';
+  answers.filter(function(a){return a.ang==='Ponte'}).forEach(function(a){h+='<li>'+Q[a.id].ponte+' '+(a.ok?'(acertou)':'(errou)')+'</li>'});
+  h+='</ul>';
+  var soltos=Object.keys(by).filter(function(k){return by[k].k/by[k].n<0.7});
+  h+='<h2>Pontos soltos (abaixo de 70%)</h2>';
+  h+=soltos.length?'<ul>'+soltos.map(function(k){return'<li>'+T[k].nome+' - '+by[k].k+'/'+by[k].n+'</li>'}).join('')+'</ul>':'<p>Nenhum tema abaixo de 70%.</p>';
+  h+='<p class="note">Famílias menores que 5 por peso dos slides e teto de 40 questões: B, E, G, H e I (4 questões cada: Identificação, Princípio, Armadilha e Ponte).</p>';
+  var erros=answers.filter(function(a){return!a.ok}).map(function(a){return a.id});
+  h+='<button class="sec" id="rs">Recomeçar</button>';
+  if(erros.length)h+='<button class="main" id="re">Refazer só os erros ('+erros.length+')</button>';
+  if(soltos.length)h+='<p class="hint">Para uma rodada extra com ângulos novos dos temas abaixo de 70%, peça ao Ultron: este arquivo só repete as questões existentes.</p>';
+  app.innerHTML=h;
+  document.getElementById('rs').onclick=function(){start(ORDER)};
+  if(erros.length)document.getElementById('re').onclick=function(){start(erros)};
+}
+start(ORDER);
+</script>
+</body>
+</html>

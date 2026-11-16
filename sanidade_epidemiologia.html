@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Princípios de Epidemiologia - Sanidade Animal e Agronomia</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:20px;font-family:system-ui,-apple-system,sans-serif;background:transparent;color:var(--foreground,#18181b);font-size:15px;line-height:1.5}
+  @media (prefers-color-scheme:dark){body{color:var(--foreground,#e4e4e7)}}
+  .app{
+    --c-card:var(--card,#ffffff);--c-bd:var(--border,#d4d4d8);--c-fg:var(--foreground,#18181b);
+    --c-mut:var(--muted-foreground,#52525b);--c-pri:var(--primary,#15803d);--c-prifg:var(--primary-foreground,#ffffff);
+    --ok:#16a34a;--ko:#dc2626;
+    max-width:780px;margin:0 auto;background:var(--c-card);color:var(--c-fg);border:1px solid var(--c-bd);border-radius:14px;padding:24px;box-shadow:0 4px 12px rgba(0,0,0,0.05)
+  }
+  @media (prefers-color-scheme:dark){.app{--c-card:var(--card,#1c1c1f);--c-bd:var(--border,#3f3f46);--c-fg:var(--foreground,#e4e4e7);--c-mut:var(--muted-foreground,#a1a1aa);--c-pri:var(--primary,#22c55e);--c-prifg:var(--primary-foreground,#0b1220);--ok:#4ade80;--ko:#f87171}}
+  h1{font-size:20px;margin:0 0 2px;color:var(--c-fg)}
+  .sub{color:var(--c-mut);font-size:13px;margin:0 0 14px}
+  .bar{height:6px;background:var(--c-bd);border-radius:99px;overflow:hidden;margin:6px 0 16px}
+  .bar>i{display:block;height:100%;background:var(--c-pri);width:0;transition:width .25s ease-out}
+  .meta{display:flex;justify-content:space-between;font-size:13px;color:var(--c-mut);font-weight:500}
+  .stem{font-size:16px;font-weight:600;margin:0 0 14px;line-height:1.45}
+  .opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--c-bd);border-radius:10px;padding:12px 14px;margin:0 0 9px;cursor:pointer;transition:border-color .15s, background .15s}
+  .opt:hover:not(:disabled){border-color:var(--c-pri);background:rgba(21,128,61,0.07)}
+  .opt b{min-width:22px;color:var(--c-pri);font-size:15px}
+  .opt:disabled{cursor:default;opacity:.6}
+  .opt.ok{opacity:1;border-color:var(--ok);background:rgba(22,163,74,0.16);font-weight:500}
+  .opt.ko{opacity:1;border-color:var(--ko);background:rgba(220,38,38,0.16)}
+  @media (prefers-color-scheme:dark){
+    .opt:hover:not(:disabled){background:rgba(34,197,94,0.10)}
+    .opt.ok{background:rgba(74,222,128,0.16)}
+    .opt.ko{background:rgba(248,113,113,0.16)}
+  }
+  .fb{border-top:1px dashed var(--c-bd);margin-top:16px;padding-top:14px;font-size:14px}
+  .fb p{margin:0 0 7px}
+  .fb .h{font-weight:700;font-size:16px}
+  .fb .h.ok{color:var(--ok)} .fb .h.ko{color:var(--ko)}
+  .fb em{color:var(--c-mut);font-style:normal;font-weight:600}
+  button.main{font:inherit;font-weight:600;background:var(--c-pri);color:var(--c-prifg);border:0;border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  button.sec{font:inherit;font-weight:600;background:transparent;color:var(--c-fg);border:1px solid var(--c-bd);border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0 16px}
+  th,td{border:1px solid var(--c-bd);padding:7px 10px;text-align:left;vertical-align:top}
+  th{color:var(--c-mut);background:rgba(113,113,122,0.12)}
+  td.p{white-space:nowrap;font-weight:700}
+  .low{color:var(--ko);font-weight:700}
+  .score{font-size:38px;font-weight:800;margin:6px 0;color:var(--c-pri)}
+  h2{font-size:16px;margin:18px 0 6px}
+  ul{margin:4px 0 10px;padding-left:20px;font-size:14px}
+  .hint{font-size:12px;color:var(--c-mut);margin-top:14px}
+  .note{font-size:13px;color:var(--c-mut);border-left:3px solid var(--c-pri);padding-left:10px;margin:12px 0}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+var T = {
+ "A": {
+  "nome": "A - Definição, população e objetivos agronômicos",
+  "nucleo": "Epidemiologia estuda saúde em populações específicas (nunca o indivíduo isolado) para controlar problemas; na Agronomia (fitopatologia e sanidade animal), analisa patógenos × hospedeiros × ambiente × interferência humana.",
+  "pistas": "4 pilares (Distribuição, Determinantes, Eventos, População), nunca indivíduo isolado, adaptação agronômica e 4 objetivos.",
+  "conf": "Achar que epidemiologia foca diagnóstico clínico individual ou excluir a interferência humana do modelo agronômico."
+ },
+ "B": {
+  "nome": "B - Distribuição, incidência e prevalência",
+  "nucleo": "Distribuição responde quem, onde e quando. Incidência mede casos NOVOS ao longo de um período (Medida de Risco); Prevalência mede o TOTAL de casos existentes (novos + antigos) num momento (Medida de Carga; ex.: estudo Adagri 2016).",
+  "pistas": "Quem/onde/quando; novos + período = Incidência (risco); novos+antigos + momento = Prevalência (carga) e Adagri 2016.",
+  "conf": "Trocar Incidência (casos novos/risco) por Prevalência (total existente/carga) no estudo de 2016 da Adagri."
+ },
+ "C": {
+  "nome": "C - Determinantes, eventos e agravos não infecciosos",
+  "nucleo": "Determinantes são causas/riscos testados na epidemiologia analítica (coorte, caso-controle, transversais); Eventos vão além de doenças (inclui mortes súbitas, feiras irregulares); Agravos abrangem danos não infecciosos (manejo, nutricionais, climáticos, parasitas).",
+  "pistas": "Coorte/caso-controle/transversais (exposição → desfecho), feiras não autorizadas, 4 tipos de agravos (canibalismo, cetose, falha ventilação, miíase).",
+  "conf": "Reduzir eventos ou agravos exclusivamente a doenças infecciosas contagiosas."
+ },
+ "D": {
+  "nome": "D - Saúde, doença subclínica, zoonoses e triângulo",
+  "nucleo": "Saúde agrícola = equilíbrio fisiológico/imunológico e máxima produtividade sem doença clínica ou subclínica (ex.: mastite subclínica); Zoonoses (Virchow, OMS) ligam vertebrados e humanos (e vice-versa); Triângulo = Hospedeiro ↔ Patógeno ↔ Ambiente.",
+  "pistas": "OMS vs. equilíbrio agrícola, mastite subclínica/imagem do produto, Virchow + vertebrados e vice-versa, Triângulo da Doença.",
+  "conf": "Ignorar prejuízos ocultos da doença subclínica ou achar que zoonose ocorre apenas em sentido animal → humano."
+ },
+ "E": {
+  "nome": "E - Endemia, epidemia (surto) e pandemia",
+  "nucleo": "Endemia ('dentro') = presença habitual com incidência esperada e estável (mastite subclínica, verminoses); Epidemia/Surto ('sobre') = excede claramente a frequência esperada; Pandemia = ampla área geográfica/múltiplos países (H1N1, H5N1, PSA).",
+  "pistas": "Raízes gregas, estável/previsível (endemia) vs. elevação súbita acima do esperado (surto) vs. vários países/PSA/H5N1 (pandemia).",
+  "conf": "Chamar doença habitual e previsível de epidemia ou confundir extensão geográfica global com alta gravidade local."
+ },
+ "F": {
+  "nome": "F - Cadeia de transmissão e resiliência ovina",
+  "nucleo": "Agente tem infectividade, patogenicidade e virulência; Fonte/Reservatório (solo, plantas daninhas, animais) libera pela Porta de Saída (exsudato, fezes, aerossol). Resiliência (ovino): alto OPG mantendo escore e mucosa FAMACHA© normal sem anemia visível.",
+  "pistas": "Infectar vs. causar doença vs. casos graves; reservatório vs. porta de saída; alto OPG + FAMACHA normal = resiliente.",
+  "conf": "Confundir patogenicidade com virulência, ou achar que animal resiliente está livre do parasita (OPG zero)."
+ },
+ "G": {
+  "nome": "G - Vias de transmissão direta e indireta",
+  "nucleo": "Direta = contato imediato ou próxima proximidade sem intermediário inanimado longo (mordedura/Raiva, sexual/Brucelose, aerossol/Influenza Suína). Indireta = veículo/fômite (água, agulhas, cama) ou vetor mecânico/biológico (carrapato → Tristeza Parasitária Bovina).",
+  "pistas": "Raiva/Brucelose/Influenza (direta) vs. fômites (agulhas/luvas/água) e vetor biológico/mecânico (carrapato → TPB).",
+  "conf": "Classificar aerossóis ou contato sexual como transmissão indireta, ou chamar agulha contaminada de vetor biológico."
+ }
+};
+var Q = {
+ "A1": {
+  "t": "A",
+  "ang": "Identificação",
+  "q": "Na adaptação agronômica (fitopatologia e sanidade animal/vegetal), certo campo analisa populações de patógenos interagindo com populações de hospedeiros sob influência do ambiente e da interferência humana, jamais tratando o indivíduo isolado como foco final. Que campo é esse?",
+  "ok": "Epidemiologia aplicada à Agronomia",
+  "er": [
+   [
+    "Clínica terapêutica individual voltada ao tratamento cirúrgico de animais isolados",
+    "O slide de Populações destaca exatamente que o foco da epidemiologia NUNCA é o indivíduo isolado, mas coletivos."
+   ],
+   [
+    "Toxicologia metabólica isolada focada apenas em deficiências vitamínicas individuais",
+    "A abordagem descrita agrega dados populacionais (patógenos × hospedeiros × ambiente × interferência humana)."
+   ],
+   [
+    "Melhoramento zootécnico clássico restrito à seleção individual de carcaça no abatedouro",
+    "Trata da ocorrência e controle de doenças em populações e ecossistemas agrícolas, não seleção de carcaça."
+   ]
+  ],
+  "pista": "Populações de patógenos × hospedeiros × ambiente × interferência humana (sem foco no indivíduo isolado).",
+  "outro": "Se a pergunta destacasse o diagrama tridimensional de interação causal (Hospedeiro ↔ Patógeno ↔ Ambiente), seria o Triângulo da Doença.",
+  "ref": "Slides 3, 7 e 10 (Bonita et al., 2010)"
+ },
+ "A2": {
+  "t": "A",
+  "ang": "Princípio",
+  "q": "Por que a definição clássica de Epidemiologia (Bonita et al., 2010) combina quatro palavras-chave — Distribuição, Determinantes, Eventos e População — e como isso se traduz nos objetivos práticos da Agronomia?",
+  "ok": "Descreve ocorrência, aponta determinantes e prognóstico, planeja controle e vigia ecossistemas agrícolas",
+  "er": [
+   [
+    "Substitui a coleta de dados em rebanhos pelo tratamento isolado de cada animal doente sem planejar políticas públicas",
+    "O método epidemiológico agrega dados populacionais justamente para subsidiar planejamento, execução e políticas de controle."
+   ],
+   [
+    "Restringe os objetivos apenas a doenças infecciosas virais em animais silvestres, ignorando culturas agrícolas e ecossistemas",
+    "O slide 11 engloba doenças fitossanitárias, sanidade animal/zoonoses e vigilância de ecossistemas agrícolas."
+   ],
+   [
+    "Foca unicamente na descrição histórica sem avaliar medidas de controle, manejo nem prognóstico das enfermidades",
+    "Os quatro objetivos enumerados incluem identificar determinantes, história natural/prognóstico, planejar controle e vigiar ecossistemas."
+   ]
+  ],
+  "pista": "Pilares de Bonita et al. (slide 3) + agregação populacional (slide 7) + objetivos 1 a 4 (slide 11).",
+  "outro": "Se a questão pedisse especificamente o ramo que testa hipóteses estatísticas entre exposição e desfecho (coorte, caso-controle), seria Epidemiologia analítica.",
+  "ref": "Slides 3, 7 e 11"
+ },
+ "A3": {
+  "t": "A",
+  "ang": "Armadilha",
+  "q": "Um estudante afirma: 'A epidemiologia na Agronomia avalia caso a caso de forma clínica individual e considera apenas patógeno e hospedeiro, deixando manejo humano e ambiente fora do sistema'. Quais erros há nessa leitura?",
+  "ok": "Foco sempre coletivo (não indivíduo), e a doença une patógeno, hospedeiro, ambiente e manejo humano",
+  "er": [
+   [
+    "Na verdade o foco é mesmo o indivíduo isolado no tronco, mas a interferência humana entra apenas em doenças de plantas",
+    "O slide 7 afirma 'nunca é o indivíduo isolado' e o slide 10 traz '(plantas, animais)' juntos sob ambiente e interferência humana."
+   ],
+   [
+    "A afirmação erra apenas ao excluir o ambiente, pois na sanidade animal a interferência humana não afeta a doença populacional",
+    "O slide 10 cita literalmente 'sob a influência do ambiente e a interferência humana'."
+   ],
+   [
+    "O método epidemiológico dispensa dados populacionais agregados, exigindo apenas autópsias individuais sem aplicação em políticas",
+    "Slide 7: 'agregando dados populacionais... para subsidiar planejamento, execução e avaliação de políticas públicas e controle'."
+   ]
+  ],
+  "pista": "Regra do coletivo (slide 7) + equação completa da adaptação agronômica (slide 10).",
+  "outro": "Se o enunciado questionasse se a definição de 'doença' vale apenas para sintomas visíveis no animal, o erro seria ignorar doenças subclínicas (slide 13).",
+  "ref": "Slides 7 e 10"
+ },
+ "A4": {
+  "t": "A",
+  "ang": "Inversão",
+  "q": "Ao aplicar o método epidemiológico com base populacional em um sistema agropecuário, que série encadeada de resultados práticos essa abordagem entrega segundo os slides 7 e 11?",
+  "ok": "Descreve ocorrência, aponta causas e prognóstico, orienta controle e monitora políticas e ecossistemas",
+  "er": [
+   [
+    "Elimina a necessidade de vigilância em saúde, pois políticas públicas dependem exclusivamente de registros clínicos individuais",
+    "O método agrega dados populacionais exatamente para orientar intervenções e vigilância de ecossistemas agrícolas."
+   ],
+   [
+    "Permite prever apenas mortalidades súbitas em feiras, ficando impotente diante de doenças fitossanitárias ou prognóstico crônico",
+    "Os objetivos abrangem expressamente fitossanidade, sanidade animal, história natural e prognóstico."
+   ],
+   [
+    "Concentra toda ação em hospitais veterinários individuais, separando completamente saúde humana, animal e vegetal",
+    "O próprio material de referência conecta saúde humana, animal e vegetal nas cadeias produtivas."
+   ]
+  ],
+  "pista": "Tema dado (objetivos da epidemiologia na Agronomia); pede os 4 desdobramentos práticos.",
+  "outro": "Se o desdobramento pedido envolvesse o prejuízo econômico direto quando há desvio subclínico de saúde, entraria custo de tratamento, descarte de leite/carne e imagem do produto.",
+  "ref": "Slides 7 e 11"
+ },
+ "A5": {
+  "t": "A",
+  "ang": "Ponte",
+  "ponte": "Adaptação agronômica ↔ Triângulo da Doença e Intervenção Técnica",
+  "q": "Conectando os slides 10, 13 e 15: por que a 'interferência humana' destacada na adaptação agronômica aparece tanto na origem do problema quanto na sua solução?",
+  "ok": "Decisões de manejo alteram o Triângulo (Hospedeiro–Patógeno–Ambiente) gerando doença ou perda subclínica; cabe ao agrônomo/técnico intervir para reequilibrar",
+  "er": [
+   [
+    "Porque apenas seres humanos transmitem patógenos vegetais por aerossóis, sem papel do ambiente ou da imunidade do hospedeiro",
+    "O Triângulo da Doença (slide 15) mostra interação mútua contínua entre Hospedeiro, Patógeno e Ambiente."
+   ],
+   [
+    "Porque somente em doenças com morte súbita o técnico intervém, já que doenças subclínicas não alteram produtividade nem imagem do produto",
+    "Slide 13 destaca que doença subclínica (ex.: mastite) reduz produtividade e exige intervenção técnica para restabelecer o equilíbrio."
+   ],
+   [
+    "Porque a interferência humana só existe nos levantamentos de Prevalência da Adagri, nunca no manejo de pastagens ou instalações",
+    "Manejo humano influencia diretamente o sistema produtivo (e agravos de manejo, ambientais e sanitários)."
+   ]
+  ],
+  "pista": "Liga slide 10 (interferência humana) + slide 13 (intervenção do agrônomo/técnico) + slide 15 (Triângulo).",
+  "outro": "Se a ponte ligasse o papel do agrônomo aos tipos de danos não infecciosos evitáveis pelo manejo, seriam os 4 grupos de Agravos (slide 9).",
+  "ref": "Slides 10, 13 e 15"
+ },
+ "B1": {
+  "t": "B",
+  "ang": "Identificação",
+  "q": "Uma medida epidemiológica contabiliza o número TOTAL de casos existentes (novos e antigos) numa população em um momento específico (Medida de Carga), como no estudo planejado pela Adagri em 2016 para brucelose e tuberculose no Ceará. Qual é essa medida?",
+  "ok": "Prevalência",
+  "er": [
+   [
+    "Incidência, medida de risco que soma casos novos e antigos num instante pontual",
+    "Incidência conta APENAS casos NOVOS em uma população em risco durante um período de tempo (Medida de Risco)."
+   ],
+   [
+    "Virulência, parâmetro que estima a carga total existente de casos antigos no estado",
+    "Virulência é propriedade do patógeno de causar casos graves, não indicador populacional de casos existentes."
+   ],
+   [
+    "Letalidade subclínica, que mede somente desvios de bem-estar sem contabilizar infecções antigas",
+    "O slide 20 e 21 nomeiam exatamente Prevalência (novos e antigos num momento = Medida de Carga)."
+   ]
+  ],
+  "pista": "Total existente (novos + antigos) + momento específico + Medida de Carga + Adagri 2016.",
+  "outro": "Se o indicador medisse apenas casos NOVOS surgidos durante um intervalo de tempo numa população em risco (Medida de Risco), seria Incidência.",
+  "ref": "Slides 4, 20 e 21"
+ },
+ "B2": {
+  "t": "B",
+  "ang": "Princípio",
+  "q": "Que três perguntas estruturam a análise de 'Distribuição' na epidemiologia descritiva, e o que separa conceitualmente Incidência de Prevalência?",
+  "ok": "Responde quem, onde e quando; Incidência mede casos novos no período (risco) e Prevalência o total atual (carga)",
+  "er": [
+   [
+    "Responde apenas quanto custa tratar e quem vendeu os insumos; Incidência mede casos antigos e Prevalência só mede mortes súbitas",
+    "Incidência = casos novos num período; Prevalência = casos existentes (novos+antigos) num momento; Distribuição = quem, onde e quando."
+   ],
+   [
+    "Responde onde e qual vetor biológico atua; Incidência é estática num dia fixo e Prevalência acompanha surtos ao longo de anos",
+    "Inverte os papéis temporais: Incidência acompanha novos casos num período (dinâmica/risco); Prevalência retrata carga em momento específico."
+   ],
+   [
+    "Responde apenas o sexo dos animais afetados; ambas as medidas são sinônimos perfeitos que somam animais vacinados e sadios",
+    "Medem dimensões distintas da ocorrência da doença: risco de adoecer (Incidência) vs. carga total presente (Prevalência)."
+   ]
+  ],
+  "pista": "Quem/onde/quando (slide 4) + Incidência (risco/período/novos) vs. Prevalência (carga/momento/total) (slide 21).",
+  "outro": "Se a pergunta fosse sobre os estudos analíticos que investigam o 'porquê' (exposição vs. desfecho), mudaria de Distribuição para Determinantes.",
+  "ref": "Slides 4 e 21"
+ },
+ "B3": {
+  "t": "B",
+  "ang": "Armadilha",
+  "q": "Em 2016, uma pesquisa estadual testa o rebanho em um recorte pontual para saber quantos animais — somando infectados antigos e recém-infectados — apresentam brucelose e tuberculose naquele momento, e um aluno chama isso de 'Taxa de Incidência'. Qual o erro técnico?",
+  "ok": "Somar novos e antigos num momento mede Prevalência (Medida de Carga, caso da Adagri), e não Incidência",
+  "er": [
+   [
+    "Não há erro: Incidência e Prevalência sempre somam novos e antigos indistintamente em qualquer pesquisa da Adagri",
+    "O slide 21 separa rigorosamente: Incidência = novos casos no período (risco); Prevalência = novos + antigos no momento (carga)."
+   ],
+   [
+    "O erro está em usar a palavra 'momento', pois a Prevalência exige acompanhar o nascimento de casos novos por cinco anos",
+    "Justamente a Prevalência avalia um momento específico; acompanhar casos novos durante um período define a Incidência."
+   ],
+   [
+    "Testes pontuais de brucelose e tuberculose medem exclusivamente virulência e mortalidade pandêmica, nunca carga de doença",
+    "Slide 20 literalmente intitula: 'Adagri planeja estudo de prevalência' para brucelose e tuberculose no Ceará."
+   ]
+  ],
+  "pista": "Armadilha clássica: novos+antigos num corte pontual = Prevalência (carga), nunca Incidência (risco).",
+  "outro": "Se a fazenda já tivesse sido testada antes (limpa) e agora contasse quantos animais NEGATIVOS positivaram nos últimos 90 dias, aí sim seria Incidência.",
+  "ref": "Slides 20 e 21"
+ },
+ "B4": {
+  "t": "B",
+  "ang": "Inversão",
+  "q": "Se uma propriedade adota medida sanitária que reduz drasticamente o surgimento de casos novos, mas mantém vivos por vários anos os portadores crônicos antigos no rebanho, o que acontece respectivamente com Incidência e Prevalência?",
+  "ok": "A Incidência cai (menos casos novos), mas a Prevalência segue alta pelo acúmulo de portadores antigos",
+  "er": [
+   [
+    "A Incidência dispara rapidamente enquanto a Prevalência zera imediatamente pela sobrevivência dos portadores crônicos",
+    "Sobrevivência de portadores antigos sustenta a Prevalência (total existente); Incidência só contabiliza casos novos."
+   ],
+   [
+    "Ambas caem exatamente na mesma proporção porque casos antigos nunca entram no cálculo de Prevalência",
+    "O slide 21 define Prevalência exatamente como 'casos existentes (novos e antigos)'."
+   ],
+   [
+    "Nenhuma das duas muda porque tanto Incidência quanto Prevalência medem apenas óbitos em 24 horas",
+    "Ambas contabilizam casos de doença (morbidade), não apenas óbitos agudos."
+   ]
+  ],
+  "pista": "Tema dado (Incidência = novos vs. Prevalência = novos+antigos); testa o impacto da cronicidade sobre ambas.",
+  "outro": "Se a doença fosse de morte rápida em poucos dias (sem acúmulo de portadores antigos), a Prevalência cairia junto com os casos novos.",
+  "ref": "Slides 4 e 21"
+ },
+ "B5": {
+  "t": "B",
+  "ang": "Ponte",
+  "ponte": "Distribuição (Incidência/Prevalência) ↔ Endemia e Epidemia (Surto)",
+  "q": "Como o conceito de Incidência (slide 21) é indispensável para diferenciar uma Endemia (slide 17) de uma Epidemia/Surto (slide 18)?",
+  "ok": "Na Endemia a taxa de incidência é esperada e estável ao longo dos anos; na Epidemia/Surto a ocorrência excede claramente a frequência esperada",
+  "er": [
+   [
+    "Porque a Endemia exige incidência zero por dez anos, enquanto qualquer caso antigo isolado define automaticamente uma pandemia global",
+    "Endemia tem presença habitual e persistente (não zero), com taxa de incidência esperada e perdas previsíveis."
+   ],
+   [
+    "Porque a Epidemia ocorre apenas quando a prevalência permanece estável e previsível sem variação na morbidade",
+    "Elevação súbita e significativa da morbidade/mortalidade acima do esperado caracteriza exatamente a Epidemia (ou Surto)."
+   ],
+   [
+    "Porque Incidência mede somente parasitas externos em ovinos, sendo inútil para comparar mastite subclínica com surtos",
+    "Mastites subclínicas e verminoses são justamente os exemplos dados de Endemia (taxa esperada e estável)."
+   ]
+  ],
+  "pista": "Une 'taxa de incidência esperada e estável' (slide 17) com 'excede claramente a frequência esperada' (slide 18) e 'novos casos' (slide 21).",
+  "outro": "Se essa elevação súbita acima do esperado ultrapassasse fronteiras alcançando múltiplos países ou continentes (como PSA ou H5N1), passaria a Pandemia.",
+  "ref": "Slides 17, 18 e 21"
+ },
+ "C1": {
+  "t": "C",
+  "ang": "Identificação",
+  "q": "Na epidemiologia veterinária, um ramo busca testar hipóteses e medir correlação estatística entre uma exposição (ex.: endoparasitas, mastite, vírus) e um desfecho, valendo-se de estudos de coorte, caso-controle e transversais e da análise de risco. De que conceito e abordagem se trata?",
+  "ok": "Determinantes — Epidemiologia analítica",
+  "er": [
+   [
+    "Eventos — exclusivamente levantamentos de feiras agropecuárias autorizadas pelo estado",
+    "Eventos englobam suspeitas, alterações ambientais, feiras não autorizadas e mortes súbitas; testar exposição × desfecho é Epidemiologia analítica (Determinantes)."
+   ],
+   [
+    "Agravos climáticos — restritos a picadas de animais peçonhentos e falhas de ventilação",
+    "Esses são subtipos de agravos físicos/ambientais (slide 9), não o método analítico de coorte e caso-controle."
+   ],
+   [
+    "Endemia — descrição exclusiva de quem, onde e quando sem testar hipóteses causais",
+    "Quem, onde e quando é Distribuição (descritiva); testar correlação estatística entre exposição e desfecho é Determinantes (Epidemiologia analítica)."
+   ]
+  ],
+  "pista": "Coorte, caso-controle, transversais + correlação exposição × desfecho + análise de risco.",
+  "outro": "Se a descrição listasse canibalismo, acidose, falha de ventilação e miíases como danos não necessariamente infecciosos, seriam os Agravos (slides 8–9).",
+  "ref": "Slide 5"
+ },
+ "C2": {
+  "t": "C",
+  "ang": "Princípio",
+  "q": "Por que a definição de 'Agravos' (slides 8–9) e a lista de 'Eventos' (slide 6) obrigam o agrônomo a olhar muito além das bactérias e vírus contagiosos tradicionais?",
+  "ok": "Eventos somam alertas ambientais e mortes súbitas; agravos somam danos de manejo, metabólicos e climáticos",
+  "er": [
+   [
+    "Porque apenas fungos de plantas entram em Agravos, enquanto problemas metabólicos e fraturas pertencem somente à Medicina Humana",
+    "O slide 9 cita explicitamente em animais: canibalismo, fraturas, lesão de casco, cetose, acidose, estresse calórico, asfixia e miíases."
+   ],
+   [
+    "Porque doenças infecciosas crônicas não geram eventos notificáveis nem interferem na produtividade ou bem-estar do rebanho",
+    "O slide 6 e 8 somam tanto doenças infecciosas/crônicas quanto outros danos físicos, mentais e sociais que comprometem bem-estar e produção."
+   ],
+   [
+    "Porque agravos climáticos e nutricionais são sinônimos de pandemias continentais causadas obrigatoriamente por vetores biológicos",
+    "Cetose, acidose, falha de ventilação e fraturas são agravos não infecciosos tradicionais, distintos de pandemias virais."
+   ]
+  ],
+  "pista": "Amplitude de Eventos (slide 6) + definição de Agravos (slide 8) + 4 categorias do slide 9.",
+  "outro": "Se o enfoque focasse especificamente doenças infecciosas transmissíveis entre vertebrados e humanos, seria Zoonoses (slide 14).",
+  "ref": "Slides 6, 8 e 9"
+ },
+ "C3": {
+  "t": "C",
+  "ang": "Armadilha",
+  "q": "Um técnico classifica cetose, acidose e lesão de casco por piso ruim junto com febre aftosa dizendo: 'Todo agravo no rebanho é necessariamente causado por doença infecciosa tradicional'. Como os slides 8 e 9 corrigem isso?",
+  "ok": "Agravo é dano físico/mental/social NÃO necessariamente infeccioso (manejo, cetose, acidose, calor)",
+  "er": [
+   [
+    "Cetose e acidose são de fato infecciosas causadas por ectoparasitas, embora lesão de casco seja puramente genética",
+    "Slide 9 separa claramente Agravos Nutricionais/Metabólicos (cetose, intoxicação, acidose) de Parasitas/Vetores (miíase, anemias por ectoparasitas) e Manejo (casco/fraturas)."
+   ],
+   [
+    "O termo agravo aplica-se apenas a mortes súbitas em feiras não autorizadas, nunca a danos de manejo ou nutrição",
+    "Feiras não autorizadas aparecem como exemplos de Eventos (alerta/vigilância no slide 6); agravos englobam todos os quatro grupos do slide 9."
+   ],
+   [
+    "Na verdade agravos comprometem só o bem-estar individual sem jamais afetar produtividade do rebanho ou saúde pública",
+    "Slide 8: 'situações que comprometem o bem-estar animal, a produtividade do rebanho e a saúde pública'."
+   ]
+  ],
+  "pista": "Definição negativa-chave do slide 8 ('não seja necessariamente causado por doença infecciosa tradicional') + exemplos do slide 9.",
+  "outro": "Se o dano citado fosse anemia sem sinal visível causada por alta carga parasitária (OPG) num ovino bem nutrido, entraria o conceito de Resiliência (slide 23).",
+  "ref": "Slides 8 e 9"
+ },
+ "C4": {
+  "t": "C",
+  "ang": "Inversão",
+  "q": "Dada a classificação dos quatro grupos de Agravos (slide 9), como você enquadra corretamente um caso de asfixia por falha de ventilação num galpão e um caso de canibalismo com fraturas?",
+  "ok": "Asfixia/ventilação = Ambiental e Climático; canibalismo/fraturas = Manejo e Instalações",
+  "er": [
+   [
+    "Asfixia por ventilação = Agravo Nutricional e Metabólico; canibalismo e fraturas = Agravo por Parasitas e Vetores",
+    "Troca completamente as categorias: ventilação/estresse calórico/peçonhentos são Ambientais/Climáticos; canibalismo/fraturas/casco são Manejo/Instalações."
+   ],
+   [
+    "Ambos pertencem aos Agravos Nutricionais e Metabólicos por envolverem deficiência aguda de vitaminas e cálcio",
+    "Nutricionais e Metabólicos nos slides citam cetose, intoxicação e acidose."
+   ],
+   [
+    "Canibalismo pertence a Agravo Ambiental e asfixia pertence a Agravos por Parasitas e Vetores devido ao calor",
+    "Parasitas e Vetores no slide 9 exemplificam miíase e anemias por ectoparasitas."
+   ]
+  ],
+  "pista": "Tema dado (4 grupos de Agravos do slide 9); mapeia corretamente os exemplos.",
+  "outro": "Se os exemplos dados fossem miíase e anemias por ectoparasitas, o grupo correspondente seria Agravos por Parasitas e Vetores.",
+  "ref": "Slide 9"
+ },
+ "D1": {
+  "t": "D",
+  "ang": "Identificação",
+  "q": "Derivada do grego clássico ('ser vivo' + 'doença/moléstia') e associada historicamente a Rudolf Virchow (século XIX), qual categoria designa doenças ou infecções naturalmente transmissíveis entre animais vertebrados e seres humanos (e vice-versa) segundo a OMS?",
+  "ok": "Zoonoses",
+  "er": [
+   [
+    "Endemias rurais, doenças restritas apenas a animais invertebrados sem interface com seres humanos",
+    "Endemia refere-se à estabilidade temporal de ocorrência numa população, não à interface vertebrado ↔ humano."
+   ],
+   [
+    "Agravos subclínicos, definidos por Rudolf Virchow como perdas econômicas sem nenhum patógeno envolvido",
+    "Agravos não infecciosos e mastite subclínica são conceitos próprios; Virchow e 'zoon + nosos' definem Zoonoses."
+   ],
+   [
+    "Epizootias vegetais, termo usado pela OMS para transmissões exclusivas entre plantas daninhas e fungos de solo",
+    "Zoonoses envolvem explicitamente animais vertebrados e seres humanos."
+   ]
+  ],
+  "pista": "Zoon + Nosos + Rudolf Virchow (séc. XIX) + vertebrados ↔ humanos (OMS).",
+  "outro": "Se a definição OMS falasse de 'estado de completo bem-estar físico, mental e social, e não apenas ausência de doença', seria Saúde.",
+  "ref": "Slide 14"
+ },
+ "D2": {
+  "t": "D",
+  "ang": "Princípio",
+  "q": "Por que o conceito de 'Saúde' no contexto agrícola vai além da ausência de sintomas visíveis e exige atenção especial à doença subclínica?",
+  "ok": "A subclínica (ex.: mastite) derruba produção e gera custo de tratamento, descarte e dano à imagem",
+  "er": [
+   [
+    "Porque toda doença subclínica mata instantaneamente o rebanho em 24 horas antes de haver qualquer perda produtiva ou descarte",
+    "Justamente por NÃO matar logo nem dar sinal visível, a forma subclínica corrói ganhos de peso, leite e qualidade de forma silenciosa."
+   ],
+   [
+    "Porque somente doenças visíveis com morte do animal causam prejuízo financeiro real ou demandam ação do Engenheiro Agrônomo",
+    "Slide 13 nega exatamente isso: o prejuízo vai além da morte (tratamento, descarte, imagem) e o desvio exige intervenção do Agrônomo."
+   ],
+   [
+    "Porque a OMS define saúde animal exclusivamente como ganho de peso em pasto, ignorando segurança alimentar e risco de zoonoses",
+    "Slide 12 inclui equilíbrio fisiológico/imunológico, bem-estar, segurança alimentar e saúde pública (risco de zoonoses)."
+   ]
+  ],
+  "pista": "Slide 12 (equilíbrio, segurança alimentar, zoonoses) + slide 13 (mastite subclínica, descarte, imagem do produto).",
+  "outro": "Se o exemplo silencioso em ovinos mostrasse parasitas no exame (alto OPG) sem perda de escore ou anemia visível, seria o conceito de Resiliência.",
+  "ref": "Slides 12 e 13"
+ },
+ "D3": {
+  "t": "D",
+  "ang": "Armadilha",
+  "q": "Um estudante lê sobre Zoonoses e afirma: 'Zoonose significa exclusivamente uma doença que o animal transmite ao humano, nunca do humano para o animal, e inclui também insetos vetores como hospedeiros vertebrados da definição'. Onde erra?",
+  "ok": "A OMS define entre vertebrados e humanos '(e vice-versa)' — é bidirecional e exclui insetos desse par",
+  "er": [
+   [
+    "Erra só nos insetos, pois a transmissão realmente ocorre apenas no sentido animal → humano sem jamais ocorrer do humano ao animal",
+    "O slide 14 destaca textualmente entre parênteses '(e vice-versa)' ao final da definição da OMS."
+   ],
+   [
+    "Erra apenas porque Rudolf Virchow definiu zoonose como exclusiva de fungos em culturas agrícolas sem relação com vertebrados",
+    "Virchow estudou a interface animal-humano em vertebrados (séc. XIX)."
+   ],
+   [
+    "Não há erro na direção nem nos animais, pois a OMS inclui apenas cães domésticos errantes como animais transmissores",
+    "A definição da OMS abrange qualquer animal vertebrado e seres humanos nos dois sentidos."
+   ]
+  ],
+  "pista": "Dois detalhes textuais do slide 14: 'animais vertebrados' e '(e vice-versa)'.",
+  "outro": "Se o papel do inseto/carrapato entrasse na discussão, ele atuaria como VETOR na transmissão indireta (slide 25), não como reservatório vertebrado da definição de zoonose.",
+  "ref": "Slide 14"
+ },
+ "D4": {
+  "t": "D",
+  "ang": "Inversão",
+  "q": "Considerando os três vértices em interação mútua no 'Triângulo da Doença na Agronomia' (slide 15), o que é necessário para que surja a 'Doença Resultante'?",
+  "ok": "Interação mútua de Hospedeiro, Patógeno e Ambiente (cortar um elo controla ou evita a doença)",
+  "er": [
+   [
+    "Basta a presença isolada do Patógeno no ambiente, sendo irrelevantes as condições ambientais e a suscetibilidade do Hospedeiro",
+    "As setas duplas ('INTERAÇÃO') ligam todos os três vértices convergindo para a 'DOENÇA RESULTANTE' no centro."
+   ],
+   [
+    "Apenas Ambiente desfavorável e Hospedeiro estressado já geram doença infecciosa específica mesmo sem Agente Etiológico",
+    "Sem patógeno há agravos não infecciosos, mas a doença resultante no Triângulo nasce da interação dos três vértices."
+   ],
+   [
+    "O Triângulo substitui o Patógeno pelo Reservatório e exclui totalmente o Hospedeiro animal quando o manejo falha",
+    "Os três vértices exatos do diagrama (slide 15) são Hospedeiro (Animal), Patógeno (Agente Etiológico) e Ambiente (Condições)."
+   ]
+  ],
+  "pista": "Tema dado (Triângulo da Doença no slide 15); analisa a necessidade de interação dos 3 vértices.",
+  "outro": "Se a figura discutida detalhasse os 3 elos internos do processo de contágio (Patógeno → Fonte/Reservatório → Porta de Saída), seria a Cadeia de Transmissão.",
+  "ref": "Slide 15"
+ },
+ "D5": {
+  "t": "D",
+  "ang": "Ponte",
+  "ponte": "Doença subclínica / Zoonoses ↔ Custos da cadeia produtiva e Saúde Única",
+  "q": "Ligando os slides 12, 13, 14 e 26, por que o controle de uma doença em fazenda (mesmo subclínica) interessa tanto ao bolso do produtor quanto à saúde pública?",
+  "ok": "Reduz perdas invisíveis, tratamento, descarte de leite/carne e dano de imagem, enquanto bloqueia zoonoses na interface animal–humano–ambiente",
+  "er": [
+   [
+    "Porque o único custo da doença ocorre quando o animal morre no campo, e zoonoses nunca trafegam pela cadeia alimentar de leite e carne",
+    "Slide 13 cita tratamento, descarte de leite/carne e imagem do produto; slide 12 e 26 integram segurança alimentar e Saúde Única."
+   ],
+   [
+    "Porque doenças subclínicas como mastite garantem imunidade natural contra zoonoses globais e aumentam a produção de leite",
+    "Mastite subclínica causa queda de produtividade e compromete saúde e equilíbrio do rebanho."
+   ],
+   [
+    "Porque só órgãos humanos tratam de zoonoses, não cabendo ao Engenheiro Agrônomo nenhuma intervenção sanitária na propriedade",
+    "Slide 13 afirma que desvios de saúde exigem intervenção do Engenheiro Agrônomo/Técnico para restabelecer o equilíbrio."
+   ]
+  ],
+  "pista": "Une Saúde agrícola (12) + impacto econômico subclínico (13) + Zoonoses (14) + interface Saúde Única (26).",
+  "outro": "Se a ponte buscasse diferenciar agentes dentro dessa cadeia pelo dano causado, distinguiríamos Infectividade, Patogenicidade e Virulência (slide 22).",
+  "ref": "Slides 12, 13, 14 e 26"
+ },
+ "E1": {
+  "t": "E",
+  "ang": "Identificação",
+  "q": "Um rebanho apresenta ocorrência de casos de doença em número que excede claramente a frequência esperada durante determinado período, com elevação súbita e significativa da taxa de morbidade ou mortalidade em fazendas vizinhas. Como se classifica esse fenômeno?",
+  "ok": "Epidemia (ou Surto)",
+  "er": [
+   [
+    "Endemia, pois trata de presença habitual com incidência esperada e perdas previsíveis ao longo dos anos",
+    "Endemia tem taxa esperada e estável sob controle; elevação súbita acima do esperado define Epidemia/Surto."
+   ],
+   [
+    "Pandemia, porque afeta inevitavelmente múltiplos continentes inteiros a partir de duas fazendas vizinhas",
+    "Pandemia exige ampla área geográfica (múltiplos países, continentes ou mundo); surto/epidemia foca rebanho ou região acima do esperado."
+   ],
+   [
+    "Resiliência populacional, pois o aumento súbito de mortalidade indica controle silencioso sem sintomas clínicos",
+    "Resiliência ocorre quando o hospedeiro lida com alta carga parasitária sem comprometer visivelmente a produção."
+   ]
+  ],
+  "pista": "Excede claramente a frequência esperada + elevação súbita de morbidade/mortalidade + rebanho/fazendas vizinhas.",
+  "outro": "Se a doença se mantivesse em nível constante, esperado e previsível por vários anos (como verminoses ou mastite subclínica), seria Endemia.",
+  "ref": "Slide 18"
+ },
+ "E2": {
+  "t": "E",
+  "ang": "Princípio",
+  "q": "Com base nas raízes conceituais e definições dos slides 16 a 19, qual critério separa Endemia, Epidemia (Surto) e Pandemia?",
+  "ok": "Endemia tem taxa estável/esperada; Epidemia excede o esperado; Pandemia atinge vários países",
+  "er": [
+   [
+    "Endemia é sempre viral fatal; Epidemia ocorre apenas em plantas; Pandemia restringe-se exclusivamente a verminoses ovinas",
+    "Verminoses e mastites subclínicas são exemplos de Endemia; H1N1, H5N1 e Peste Suína Africana (PSA) exemplificam Pandemia."
+   ],
+   [
+    "O critério único é a espécie afetada: Endemia em bovinos, Epidemia em aves e Pandemia exclusivamente em suínos domésticos",
+    "Os três conceitos diferem por comportamento temporal da frequência (estável vs. súbito acima do esperado) e escala geográfica."
+   ],
+   [
+    "Epidemia significa ocorrência esperada sob controle ao longo dos anos, enquanto Endemia significa salto brusco da mortalidade",
+    "Inverte exatamente Endemia e Epidemia."
+   ]
+  ],
+  "pista": "Grego ('dentro' vs. 'sobre' vs. 'grande alcance') + estabilidade vs. excesso súbito vs. escala geográfica global.",
+  "outro": "Se a dúvida fosse medir a carga pontual versus casos novos em uma dessas situações, usaríamos respectivamente Prevalência e Incidência.",
+  "ref": "Slides 16, 17, 18 e 19"
+ },
+ "E3": {
+  "t": "E",
+  "ang": "Armadilha",
+  "q": "Um produtor lê que 'a mastite subclínica está sempre presente na sua fazenda há anos' e declara estar vivendo uma Pandemia permanente. Por que o termo está duplamente errado?",
+  "ok": "Presença habitual com taxa esperada e previsível é Endemia (Pandemia exige escala multinacional)",
+  "er": [
+   [
+    "Na verdade mastite subclínica em uma fazenda é mesmo Pandemia, errando apenas por não atingir também verminoses",
+    "Ambos — mastites subclínicas e verminoses — são citados literalmente como exemplos de Endemia no slide 17."
+   ],
+   [
+    "Está errado apenas porque mastite subclínica não causa perda econômica alguma, não configurando problema sanitário",
+    "Slide 13 enfatiza que mastite subclínica causa clara perda de produtividade, embora em nível endêmico estável."
+   ],
+   [
+    "Deveria chamar de Epidemia e não Pandemia, já que qualquer doença que permaneça estável por vários anos é uma Epidemia",
+    "Permanência habitual e estável ao longo dos anos é Endemia; Epidemia exige elevação súbita acima do esperado."
+   ]
+  ],
+  "pista": "Exemplo literal de Endemia no slide 17 (mastites subclínicas e verminoses) vs. escala de Pandemia (slide 19).",
+  "outro": "Exemplos corretos de Pandemia citados no material são H1N1, Gripe aviária H5N1 e Peste Suína Africana (PSA).",
+  "ref": "Slides 17 e 19"
+ },
+ "E4": {
+  "t": "E",
+  "ang": "Inversão",
+  "q": "Se uma enfermidade classificada no slide 19 — como Gripe Aviária H5N1 ou Peste Suína Africana (PSA) — rompe fronteiras afetando populações animais em múltiplos países e continentes, em que categoria entra?",
+  "ok": "Pandemia (epidemia espalhada por ampla área geográfica afetando grande número de populações animais)",
+  "er": [
+   [
+    "Endemia localizada, pois o alcance geográfico continental confirma incidência esperada e perdas previsíveis",
+    "Alcance de múltiplos países, continentes ou mundo acima do esperado define Pandemia."
+   ],
+   [
+    "Agravo por manejo e instalações, já que envolve apenas lesões mecânicas restritas a um único galpão",
+    "H5N1, H1N1 e PSA são agentes infecciosos de escala pandêmica descritos no slide 19."
+   ],
+   [
+    "Fômite inanimado, pois epidemias de grande alcance perdem o caráter de doença populacional",
+    "Fômites são objetos veículos na transmissão indireta, não categoria de ocorrência populacional."
+   ]
+  ],
+  "pista": "Tema dado (exemplos H1N1, H5N1 e PSA); pede enquadramento na escala geográfica global.",
+  "outro": "Se o evento ficasse restrito a uma elevação súbita em apenas uma fazenda ou fazendas vizinhas acima do esperado, seria Epidemia (ou Surto).",
+  "ref": "Slides 18 e 19"
+ },
+ "E5": {
+  "t": "E",
+  "ang": "Ponte",
+  "ponte": "Escalas epidemiológicas (Endemia/Surto/Pandemia) ↔ Eventos e Vigilância",
+  "q": "Por que os sistemas de vigilância em saúde listam 'suspeita/alerta, alteração ambiental repentina, aglomeração/feira não autorizada e mortes súbitas' como Eventos (slide 6)?",
+  "ok": "Flagrar cedo desvios da linha basal endêmica antes que virem surtos locais ou pandemias",
+  "er": [
+   [
+    "Porque feiras agropecuárias não autorizadas eliminam automaticamente todas as endemias e impedem transmissão por aerossóis",
+    "Aglomerações e feiras irregulares amplificam contato direto/indireto e risco de surtos (epidemias)."
+   ],
+   [
+    "Porque eventos substituem todos os levantamentos de incidência e prevalência por inspeções puramente individuais sem registro",
+    "Slide 6 aponta que eventos alimentam justamente sistemas de vigilância em saúde, inquéritos e registros de morbidade."
+   ],
+   [
+    "Porque mortes súbitas sempre indicam apenas animais resilientes com FAMACHA© normal que não necessitam de controle",
+    "Morte súbita é sinal de alerta agudo para eventual surto ou agravo grave, jamais sinônimo de resiliência."
+   ]
+  ],
+  "pista": "Conecta Eventos de alerta (slide 6) à detecção de passagem de Endemia (17) para Surto/Epidemia (18).",
+  "outro": "Se a vigilância investigasse a origem daquela aglomeração ligando água contaminada, seringas e moscas, estaria rastreando Transmissão Indireta (slide 25).",
+  "ref": "Slides 6, 17, 18 e 19"
+ },
+ "F1": {
+  "t": "F",
+  "ang": "Identificação",
+  "q": "Um ovino apresenta alta carga parasitária (alto OPG), mas mantém bom escore corporal e coloração de mucosa normal na avaliação pelo método FAMACHA©, sem sinais visíveis de anemia — ou seja, está infectado, porém o corpo lida com a infecção sem queda visível de produção. Como se chama essa condição?",
+  "ok": "Resiliência",
+  "er": [
+   [
+    "Imunidade estéril, pois o animal impede completamente o parasita de se multiplicar mantendo OPG igual a zero",
+    "O slide 23 ressalva que o animal resiliente TEM alto OPG e está afetado, mas suporta a carga sem anemia visível."
+   ],
+   [
+    "Virulência máxima, medida que expressa exclusivamente quantos parasitas o animal excreta por grama de fezes",
+    "Virulência é capacidade do patógeno de causar casos graves (slide 22), não tolerância fisiológica do hospedeiro."
+   ],
+   [
+    "Patogenicidade clínica, pois alto OPG sempre gera imediatamente mucosas pálidas e queda severa de peso",
+    "Justamente na resiliência o animal mantém bom escore e mucosa normal apesar do alto OPG."
+   ]
+  ],
+  "pista": "Alto OPG + bom escore corporal + FAMACHA© normal sem anemia visível = lidando sem queda visível.",
+  "outro": "Se a pergunta distinguisse a capacidade do patógeno de infectar vs. causar doença vs. causar gravidade, seriam Infectividade, Patogenicidade e Virulência.",
+  "ref": "Slide 23"
+ },
+ "F2": {
+  "t": "F",
+  "ang": "Princípio",
+  "q": "Na Cadeia de Transmissão (slide 22), qual é a distinção exata entre Infectividade, Patogenicidade e Virulência de um agente etiológico?",
+  "ok": "Infectividade = infectar; Patogenicidade = causar doença; Virulência = causar casos graves",
+  "er": [
+   [
+    "Infectividade = causar casos graves; Patogenicidade = sobreviver no solo; Virulência = apenas infectar plantas daninhas",
+    "Embaralha todas as três definições do slide 22 (capacidade de infectar, de causar doença e de causar casos graves)."
+   ],
+   [
+    "Todas as três palavras são sinônimos perfeitos que designam a porta de saída do agente por fezes e aerossóis",
+    "Porta de saída é outro elo da cadeia (fezes, urina, exsudatos, aerossóis); as três são atributos do agente etiológico."
+   ],
+   [
+    "Patogenicidade mede a carga total de casos antigos, Infectividade mede casos novos e Virulência mede resistência ao FAMACHA©",
+    "Medir casos novos/antigos pertence a Incidência/Prevalência, e FAMACHA© avalia anemia/resiliência no hospedeiro."
+   ]
+  ],
+  "pista": "Três escalas crescentes do Agente Etiológico no slide 22 (infectar → adoecer → agravar).",
+  "outro": "Se a pergunta focasse onde o agente vive e se multiplica (solo, planta daninha, animais) e por onde sai, seriam Fonte/Reservatório e Porta de Saída.",
+  "ref": "Slide 22"
+ },
+ "F3": {
+  "t": "F",
+  "ang": "Armadilha",
+  "q": "Ao examinar um carneiro com mucosa corada no FAMACHA© e ótimo escore corporal, um criador garante: 'Ele tem zero vermes e não contamina o piquete'. Por que o slide 23 desmente essa conclusão?",
+  "ok": "Um ovino resiliente suporta alta carga parasitária (alto OPG) sem anemia visível nem perda de escore — logo está infectado e elimina ovos",
+  "er": [
+   [
+    "Porque o método FAMACHA© mede apenas tuberculose em caprinos e não avalia anemia em ovinos",
+    "O slide 23 mostra explicitamente 'Um ovino resiliente... cor de mucosa normal (avaliada pelo método FAMACHA©), sem mostrar sinais visíveis de anemia'."
+   ],
+   [
+    "Porque alto OPG significa sempre imunidade total contra vírus e bactérias, nunca presença de vermes gastrointestinais",
+    "Alto OPG traduz alta eliminação de ovos de parasitas nas fezes — o animal está sendo afetado, mas lidando sem anemia aparente."
+   ],
+   [
+    "Porque animais resilientes jamais eliminam nenhum patógeno por qualquer porta de saída (nem fezes nem aerossóis)",
+    "Alto OPG significa justamente eliminação de ovos nas fezes (porta de saída), mantendo contaminação ambiental."
+   ]
+  ],
+  "pista": "Falsa sensação de segurança na resiliência: 'Isso não significa que o animal não esteja sendo afetado'.",
+  "outro": "Se o animal avaliado apresentasse queda de produção sem sintomas clínicos externos em vacas leiteiras, o paralelo conceitual seria doença subclínica (slide 13).",
+  "ref": "Slides 22 e 23"
+ },
+ "F4": {
+  "t": "F",
+  "ang": "Ponte",
+  "ponte": "Reservatório/Porta de saída ↔ Resiliência como fonte silenciosa no rebanho",
+  "q": "Integrando os slides 22 e 23, que papel epidemiológico um animal resiliente com alto OPG desempenha na Cadeia de Transmissão do piquete?",
+  "ok": "Atua como Fonte/Reservatório silencioso: mantém e multiplica o agente sem sinais clínicos evidentes, liberando-o pelas fezes (porta de saída)",
+  "er": [
+   [
+    "Interrompe completamente o ciclo no ambiente porque destrói os ovos no estômago e elimina apenas aerossóis estéreis",
+    "Alto OPG significa excreção contínua nas fezes, alimentando o reservatório de pastagem para animais menos resilientes."
+   ],
+   [
+    "Transforma a cadeia parasitária direta em pandemia viral por meio de transmissão exclusivamente sexual",
+    "Nematoides seguem ciclo ambiental/fecal no pasto; contato sexual foi citado para Brucelose na transmissão direta."
+   ],
+   [
+    "Prova que o patógeno perdeu 100% da infectividade e da patogenicidade, não podendo infectar outros ovinos do lote",
+    "Quem resiste clinicamente é o hospedeiro resiliente; outros animais suscetíveis do lote continuam expostos à carga eliminada."
+   ]
+  ],
+  "pista": "Conecta Fonte/Reservatório + Porta de saída (fezes) (22) ao portador resiliente de alto OPG (23).",
+  "outro": "Se o foco fosse animais silvestres ou plantas daninhas mantendo um agente para rebanhos vizinhos, continuariam sendo exemplos de Fonte/Reservatório no slide 22.",
+  "ref": "Slides 22 e 23"
+ },
+ "G1": {
+  "t": "G",
+  "ang": "Identificação",
+  "q": "Uma propriedade sofre transmissão de Tristeza Parasitária Bovina via carrapato (onde o agente se multiplica no ácaro) junto com disseminação sanitária por agulhas, seringas, luvas mal higienizadas e cama suja. Como se classifica essa via de transmissão e seus dois componentes?",
+  "ok": "Transmissão Indireta — Vetor biológico (carrapato) e Fômites (agulhas, seringas, cama)",
+  "er": [
+   [
+    "Transmissão Direta — pois carrapato e agulha tocam diretamente a pele sem intermediário de longa duração",
+    "Transmissão Direta dispensa intermediários (ex.: mordida/Raiva, contato sexual/Brucelose, aerossol/Influenza)."
+   ],
+   [
+    "Transmissão Direta por Aerossóis — sendo o carrapato apenas um fômite inanimado de seringa",
+    "Carrapato é ser vivo (vetor biológico); agulha, cama, luva e água são objetos inanimados (fômites)."
+   ],
+   [
+    "Porta de Saída endêmica — pois somente fezes e saliva em lambeduras integram transmissão indireta",
+    "Lambeduras e mordidas pertencem ao Contato Físico na Transmissão Direta (slide 24)."
+   ]
+  ],
+  "pista": "Intermediário vivo (vetor/carrapato → TPB) + intermediário inanimado (fômites: agulhas, seringas, cama, água).",
+  "outro": "Se a transmissão ocorresse por contato imediato sem intermediário (mordida na Raiva, sexo na Brucelose ou tosse na Influenza Suína), seria Direta.",
+  "ref": "Slides 24 e 25"
+ },
+ "G2": {
+  "t": "G",
+  "ang": "Princípio",
+  "q": "Na Transmissão Indireta (slide 25), o que diferencia um Veículo Comum (Fômite), um Vetor Mecânico e um Vetor Biológico?",
+  "ok": "Fômite é objeto/meio inanimado (água, agulha); vetor mecânico carrega o agente nas patas; vetor biológico multiplica o agente dentro de si",
+  "er": [
+   [
+    "Fômite é inseto que multiplica o vírus; vetor mecânico é água contaminada; vetor biológico é luva mal higienizada",
+    "Inverte completamente os conceitos de objeto inanimado (fômite) vs. ser vivo (vetor mecânico vs. biológico)."
+   ],
+   [
+    "Todos os três ocorrem exclusivamente no contato sexual ou por gotículas de tosse entre animais encostados no mesmo cocho",
+    "Contato sexual e aerossóis de tosse/espirro pertencem à Transmissão Direta (slide 24)."
+   ],
+   [
+    "Vetor biológico e mecânico distinguem-se apenas pelo tamanho da agulha utilizada ou volume de cama suja no curral",
+    "Agulha e cama suja são Fômites (inanimados); vetores são artrópodes vivos como moscas, mosquitos e ácaros."
+   ]
+  ],
+  "pista": "Inanimado (fômite) vs. vivo apenas carregando nas patas (mecânico) vs. vivo com multiplicação interna (biológico).",
+  "outro": "Se não houvesse intermediário inanimado de longa duração nem vetor artrópode, seria Transmissão Direta (contato físico ou aerossóis).",
+  "ref": "Slide 25"
+ },
+ "G3": {
+  "t": "G",
+  "ang": "Armadilha",
+  "q": "Um estudante lê sobre transmissão por 'aerossóis expelidos por tosse/espirro' (Influenza Suína) e por 'uso repetido da mesma agulha suja', afirmando que ambos são exemplos de transmissão indireta por veículos comuns (fômites). Qual o erro?",
+  "ok": "Aerossóis de tosse/espirro em proximidade imediata são Transmissão Direta (slide 24); apenas agulha, água, cama e luvas são fômites (Indireta)",
+  "er": [
+   [
+    "Na verdade a agulha é transmissão direta e os aerossóis da Influenza Suína são sempre vetores biológicos",
+    "Inverte os quadros 24 e 25: aerossóis estão listados em Transmissão Direta; agulhas/seringas em Veículos Comuns (Fômites)."
+   ],
+   [
+    "Ambos são realmente indiretos porque o contato sexual na Brucelose é o único exemplo de Transmissão Direta",
+    "Slide 24 coloca tanto Contato Físico (lamber/mordida/Raiva, sexual/Brucelose) quanto Aerossóis (tosse/espirro/Influenza) em Direta."
+   ],
+   [
+    "Agulhas contaminadas são vetores mecânicos vivos iguais ao carrapato da Tristeza Parasitária Bovina",
+    "Agulha é objeto inanimado (fômite); carrapato na TPB é vetor vivo biológico."
+   ]
+  ],
+  "pista": "Posição exata de 'Aerossóis (ex.: Influenza Suína)' em Transmissão Direta (slide 24) vs. 'seringas, agulhas' em Indireta (slide 25).",
+  "outro": "Se ele citasse água de bebida contaminada e luvas sujas ao lado das seringas, todos seriam fômites da Transmissão Indireta.",
+  "ref": "Slides 24 e 25"
+ },
+ "G4": {
+  "t": "G",
+  "ang": "Ponte",
+  "ponte": "Cadeia de Transmissão ↔ Controle em pontos distintos (Direta vs. Indireta)",
+  "q": "Ligando os slides 22, 24 e 25: como distinguir a medida certa de bloqueio para Brucelose/Influenza Suína (direta) versus TPB/contaminação por seringas (indireta)?",
+  "ok": "Direta exige isolar/manejar contato imediato (sexual, mordida, aerossol); Indireta exige higienizar fômites (água, agulhas, luvas) e controlar vetores (carrapato)",
+  "er": [
+   [
+    "Basta trocar as seringas para erradicar a Influenza Suína por aerossol e controlar mosquitos para bloquear a transmissão sexual da Brucelose",
+    "Troca os alvos: aerossóis/contato sexual são diretos; seringas (fômites) e artrópodes (vetores) são indiretos."
+   ],
+   [
+    "Tanto na transmissão direta quanto na indireta, a única intervenção existente é vacinar apenas cães contra mordidas",
+    "Cada via pede corte específico na cadeia: limpeza de fômites/água/cama, controle de ácaros/insetos ou barreira ao contato próximo."
+   ],
+   [
+    "Como vetores biológicos não multiplicam o agente, lavar bebedouros já elimina completamente a Tristeza Parasitária Bovina",
+    "Vetor biológico (carrapato na TPB) multiplica o agente internamente e exige controle do vetor, não apenas lavar bebedouro."
+   ]
+  ],
+  "pista": "Cruza Porta de Saída (22) + Direta (24) + Fômites/Vetores (25) para escolher o ponto de corte sanitário.",
+  "outro": "Se o cenário envolvesse também animais reservatórios silenciosos com alto OPG contaminando pasto, somaria vigilância de Fonte/Reservatório (slides 22–23).",
+  "ref": "Slides 22, 24 e 25"
+ }
+};
+var ORDER = ["B1","A1","F1","C1","E1","D1","G1","D2","G2","A2","E2","B2","F2","C2","E3","C3","G3","A3","F3","D3","B3","A4","E4","C4","D4","B4","F4","B5","G4","E5","A5","D5"];
+var app=document.getElementById('app');
+var queue,pos,answers,t0,cur,locked,optList,famSeen,FAMQ;
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x}return a}
+function start(ids){queue=ids;pos=0;answers=[];t0=Date.now();famSeen={};FAMQ={};ids.forEach(function(id){FAMQ[Q[id].t]=(FAMQ[Q[id].t]||0)+1});render()}
+function render(){
+  if(pos>=queue.length){return finish()}
+  var id=queue[pos],q=Q[id];cur=id;locked=false;
+  var opts=[{x:q.ok,ok:true,why:''}].concat(q.er.map(function(e){return{x:e[0],ok:false,why:e[1]}}));
+  optList=shuffle(opts);
+  var L='ABCD';
+  var h='<h1>Princípios de Epidemiologia</h1><p class="sub">Conceitos de saúde/doença, medidas, cadeia de transmissão e vias (slides 1 a 26)</p>';
+  h+='<div class="meta"><span>Questão '+(pos+1)+' de '+queue.length+'</span><span>'+answers.filter(function(a){return a.ok}).length+' acertos</span></div>';
+  h+='<div class="bar"><i style="width:'+(pos/queue.length*100)+'%"></i></div>';
+  h+='<p class="stem">'+q.q+'</p><div id="opts">';
+  optList.forEach(function(o,i){h+='<button class="opt" data-i="'+i+'"><b>'+L[i]+'</b><span>'+o.x+'</span></button>'});
+  h+='</div><div id="fb"></div><p class="hint">Atalhos: 1–4 escolhem a alternativa; Enter avança.</p>';
+  app.innerHTML=h;
+  Array.prototype.forEach.call(app.querySelectorAll('.opt'),function(b){b.onclick=function(){pick(+b.getAttribute('data-i'))}});
+}
+function pick(i){
+  if(locked||!optList[i])return;locked=true;
+  var q=Q[cur],o=optList[i];
+  var btns=app.querySelectorAll('.opt');
+  Array.prototype.forEach.call(btns,function(b,k){b.disabled=true;if(optList[k].ok)b.classList.add('ok');else if(k===i)b.classList.add('ko')});
+  famSeen[q.t]=(famSeen[q.t]||0)+1;
+  var nth=famSeen[q.t];
+  answers.push({id:cur,t:q.t,ok:o.ok,ang:q.ang});
+  var th=T[q.t];
+  var f='<div class="fb"><p class="h '+(o.ok?'ok':'ko')+'">'+(o.ok?'Correto.':'Errado.')+'</p>';
+  f+='<p><em>Tema:</em> '+th.nome+' <em>('+q.ang+')</em></p>';
+  f+='<p><em>Pista que entregou:</em> '+q.pista+'</p>';
+  f+='<p><em>Núcleo:</em> '+th.nucleo+'</p>';
+  if(!o.ok)f+='<p><em>Por que a sua escolha está errada:</em> '+o.why+'</p>';
+  f+='<p><em>Se fosse o outro tema:</em> '+q.outro+'</p>';
+  f+='<p><em>Referência:</em> '+q.ref+'</p>';
+  f+='<p><em>Progresso da família:</em> '+th.nome.split(' - ')[0]+' - '+nth+' de '+FAMQ[q.t]+'</p>';
+  f+='<button class="main" id="nx">'+(pos+1>=queue.length?'Ver fechamento':'Próxima')+'</button></div>';
+  document.getElementById('fb').innerHTML=f;
+  document.getElementById('nx').onclick=next;
+  document.getElementById('nx').focus();
+}
+function next(){pos++;render();window.scrollTo(0,0)}
+document.addEventListener('keydown',function(e){
+  if(!queue||pos>=queue.length)return;
+  if(!locked&&e.key>='1'&&e.key<='4'){pick(+e.key-1)}
+  else if(locked&&e.key==='Enter'){e.preventDefault();next()}
+});
+function fmt(ms){var s=Math.round(ms/1000);return Math.floor(s/60)+'min '+('0'+(s%60)).slice(-2)+'s'}
+function finish(){
+  var tot=answers.length,ac=answers.filter(function(a){return a.ok}).length;
+  var by={};answers.forEach(function(a){by[a.t]=by[a.t]||{n:0,k:0};by[a.t].n++;if(a.ok)by[a.t].k++});
+  var h='<h1>Fechamento - Princípios de Epidemiologia</h1><p class="sub">Epidemiologia aplicada à Agronomia (26 slides)</p>';
+  h+='<div class="score">'+(ac/tot*10).toFixed(1)+' / 10</div><p>'+ac+' de '+tot+' acertos · tempo '+fmt(Date.now()-t0)+'</p>';
+  h+='<h2>Mapa</h2><table><tr><th>Tema</th><th>Núcleo</th><th>Pistas</th><th>Confusão</th><th>Acertos</th></tr>';
+  Object.keys(T).forEach(function(k){
+    if(!by[k])return;var p=by[k].k/by[k].n;
+    h+='<tr><td>'+T[k].nome+'</td><td>'+T[k].nucleo+'</td><td>'+T[k].pistas+'</td><td>'+T[k].conf+'</td><td class="p'+(p<0.7?' low':'')+'">'+by[k].k+'/'+by[k].n+'</td></tr>';
+  });
+  h+='</table>';
+  h+='<h2>Pontes</h2><ul>';
+  answers.filter(function(a){return a.ang==='Ponte'}).forEach(function(a){h+='<li>'+Q[a.id].ponte+' '+(a.ok?'(acertou)':'(errou)')+'</li>'});
+  h+='</ul>';
+  var soltos=Object.keys(by).filter(function(k){return by[k].k/by[k].n<0.7});
+  h+='<h2>Pontos soltos (abaixo de 70%)</h2>';
+  h+=soltos.length?'<ul>'+soltos.map(function(k){return'<li>'+T[k].nome+' - '+by[k].k+'/'+by[k].n+'</li>'}).join('')+'</ul>':'<p>Nenhum tema abaixo de 70%.</p>';
+  h+='<p class="note">Famílias menores que 5 por peso dos slides: C (4q, sem Ponte isolada), F e G (4q cada, sem Inversão separada).</p>';
+  var erros=answers.filter(function(a){return!a.ok}).map(function(a){return a.id});
+  h+='<button class="sec" id="rs">Recomeçar</button>';
+  if(erros.length)h+='<button class="main" id="re">Refazer só os erros ('+erros.length+')</button>';
+  if(soltos.length)h+='<p class="hint">Para uma rodada extra com ângulos novos dos temas abaixo de 70%, peça ao Ultron: este arquivo só repete as questões existentes.</p>';
+  app.innerHTML=h;
+  document.getElementById('rs').onclick=function(){start(ORDER)};
+  if(erros.length)document.getElementById('re').onclick=function(){start(erros)};
+}
+start(ORDER);
+</script>
+</body>
+</html>

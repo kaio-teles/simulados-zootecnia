@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tuberculose e Brucelose - PNCEBT e Defesa Sanitária</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;padding:20px;font-family:system-ui,-apple-system,sans-serif;background:transparent;color:var(--foreground,#18181b);font-size:15px;line-height:1.5}
+  @media (prefers-color-scheme:dark){body{color:var(--foreground,#e4e4e7)}}
+  .app{
+    --c-card:var(--card,#ffffff);--c-bd:var(--border,#d4d4d8);--c-fg:var(--foreground,#18181b);
+    --c-mut:var(--muted-foreground,#52525b);--c-pri:var(--primary,#15803d);--c-prifg:var(--primary-foreground,#ffffff);
+    --ok:#16a34a;--ko:#dc2626;
+    max-width:780px;margin:0 auto;background:var(--c-card);color:var(--c-fg);border:1px solid var(--c-bd);border-radius:14px;padding:24px;box-shadow:0 4px 12px rgba(0,0,0,0.05)
+  }
+  @media (prefers-color-scheme:dark){.app{--c-card:var(--card,#1c1c1f);--c-bd:var(--border,#3f3f46);--c-fg:var(--foreground,#e4e4e7);--c-mut:var(--muted-foreground,#a1a1aa);--c-pri:var(--primary,#22c55e);--c-prifg:var(--primary-foreground,#0b1220);--ok:#4ade80;--ko:#f87171}}
+  h1{font-size:20px;margin:0 0 2px;color:var(--c-fg)}
+  .sub{color:var(--c-mut);font-size:13px;margin:0 0 14px}
+  .bar{height:6px;background:var(--c-bd);border-radius:99px;overflow:hidden;margin:6px 0 16px}
+  .bar>i{display:block;height:100%;background:var(--c-pri);width:0;transition:width .25s ease-out}
+  .meta{display:flex;justify-content:space-between;font-size:13px;color:var(--c-mut);font-weight:500}
+  .stem{font-size:16px;font-weight:600;margin:0 0 14px;line-height:1.45}
+  .opt{display:flex;gap:12px;align-items:flex-start;width:100%;text-align:left;font:inherit;color:inherit;background:transparent;border:1px solid var(--c-bd);border-radius:10px;padding:12px 14px;margin:0 0 9px;cursor:pointer;transition:border-color .15s, background .15s}
+  .opt:hover:not(:disabled){border-color:var(--c-pri);background:rgba(21,128,61,0.07)}
+  .opt b{min-width:22px;color:var(--c-pri);font-size:15px}
+  .opt:disabled{cursor:default;opacity:.6}
+  .opt.ok{opacity:1;border-color:var(--ok);background:rgba(22,163,74,0.16);font-weight:500}
+  .opt.ko{opacity:1;border-color:var(--ko);background:rgba(220,38,38,0.16)}
+  @media (prefers-color-scheme:dark){
+    .opt:hover:not(:disabled){background:rgba(34,197,94,0.10)}
+    .opt.ok{background:rgba(74,222,128,0.16)}
+    .opt.ko{background:rgba(248,113,113,0.16)}
+  }
+  .fb{border-top:1px dashed var(--c-bd);margin-top:16px;padding-top:14px;font-size:14px}
+  .fb p{margin:0 0 7px}
+  .fb .h{font-weight:700;font-size:16px}
+  .fb .h.ok{color:var(--ok)} .fb .h.ko{color:var(--ko)}
+  .fb em{color:var(--c-mut);font-style:normal;font-weight:600}
+  button.main{font:inherit;font-weight:600;background:var(--c-pri);color:var(--c-prifg);border:0;border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  button.sec{font:inherit;font-weight:600;background:transparent;color:var(--c-fg);border:1px solid var(--c-bd);border-radius:9px;padding:10px 20px;cursor:pointer;margin:8px 8px 0 0}
+  table{border-collapse:collapse;width:100%;font-size:13px;margin:10px 0 16px}
+  th,td{border:1px solid var(--c-bd);padding:7px 10px;text-align:left;vertical-align:top}
+  th{color:var(--c-mut);background:rgba(113,113,122,0.12)}
+  td.p{white-space:nowrap;font-weight:700}
+  .low{color:var(--ko);font-weight:700}
+  .score{font-size:38px;font-weight:800;margin:6px 0;color:var(--c-pri)}
+  h2{font-size:16px;margin:18px 0 6px}
+  ul{margin:4px 0 10px;padding-left:20px;font-size:14px}
+  .hint{font-size:12px;color:var(--c-mut);margin-top:14px}
+  .note{font-size:13px;color:var(--c-mut);border-left:3px solid var(--c-pri);padding-left:10px;margin:12px 0}
+</style>
+</head>
+<body>
+<div class="app" id="app"></div>
+<script>
+var T = {
+ "A": {
+  "nome": "A - Tuberculose: etiologia, lesões e incidência por espécie",
+  "nucleo": "Doença bacteriana crônica granulomatosa (tubérculos caseosos em pulmões/linfonodos); Mycobacterium bovis (principal foco PNCEBT, zoonose via leite cru) e Complexo M. avium. Incidência MAPA/SDA (2024): Leite Moderada; Corte Baixa; Suínos Localizada/Alta (M. avium); Caprinos Crescente (confundida com Linfadenite Caseosa); Aves Rara comercial (fundo de quintal).",
+  "pistas": "Tubérculos caseosos, M. bovis vs. M. avium, leite não pasteurizado, Tabela MAPA/SDA 2024 (Linfadenite Caseosa em caprinos).",
+  "conf": "Atribuir maior incidência a gado de corte ou esquecer a confusão com Linfadenite Caseosa em bacias leiteiras caprinas."
+ },
+ "B": {
+  "nome": "B - Sinais clínicos em ruminantes e suscetibilidade por manejo",
+  "nucleo": "Emagrecimento progressivo (mesmo com bom pasto), linfonodos aumentados (retrofaríngeos e acima do úbere), tosse seca persistente (manejo/exercício), dispneia e queda gradual de leite. Suscetibilidade inicial é igual entre sexos, mas fêmeas leiteiras são mais diagnosticadas por longevidade, lactação e aglomeração em ordenha (aerossóis). Observação: pelo seco, cabeça baixa, discrepância de escore e mucosas pálidas/amareladas.",
+  "pistas": "Retrofaríngeos/acima do úbere, tosse no exercício, manejo leiteiro vs. machos jovens, pelo arrepiado/mucosas/escore.",
+  "conf": "Achar que fêmeas têm suscetibilidade genética maior ou ignorar sinais de alerta no lote (discrepância de peso na mesma dieta)."
+ },
+ "C": {
+  "nome": "C - Diagnóstico da tuberculose: PPD, testes, anergia e pós-morte",
+  "nucleo": "Tuberculinização (PPD, hipersensibilidade tardia Tipo IV): 0,1 ml intradérmica, leitura exata em 72h com cutímetro. TCS (pescoço, leite); TPC (prega caudal, corte); TCC (confirmatório: PPD bovina + aviária no pescoço). Anergia: animal muito debilitado dá FALSO NEGATIVO (associar exame clínico). Pós-morte: histopatológico, cultura e PCR.",
+  "pistas": "Tipo IV, 0,1 ml intradérmica, 72h, cutímetro, TCS vs. TPC vs. TCC (bovina+aviária), anergia = falso negativo, histo/cultura/PCR.",
+  "conf": "Achar que a tuberculina é subcutânea, ler fora de 72h ou interpretar resultado negativo em vaca caquética como garantia de ausência da doença."
+ },
+ "D": {
+  "nome": "D - Tuberculose em caprinos, ovinos, aves, equinos e suínos",
+  "nucleo": "Caprinos (M. bovis/caprae): altamente suscetíveis, lesões liquefazem rápido (grandes disseminadoras, risco leite/queijo artesanal) vs. ovinos resistentes. Aves (M. avium, extensivas/vida longa): intestinal, peito em quilha, fezes contaminam solo, oportunista em imunossuprimidos. Equinos/Suínos: hospedeiros acidentais/terminais via digestiva (equinos = osteomielite cervical/sarcomatoso sem calcificar; suínos = sentinela em linfonodos cervical/mesentérico, condenação de carcaça).",
+  "pistas": "Caprinos liquefazem vs. ovinos resistem; aves intestinal/quilha; equinos osteomielite cervical; suínos sentinela/abatedouro.",
+  "conf": "Trocar o caráter respiratório dos caprinos pelo intestinal predominante das aves, ou chamar suíno de grande disseminador aerógeno."
+ },
+ "E": {
+  "nome": "E - Resistência do M. bovis, desinfecção, vazio e biosseguridade",
+  "nucleo": "M. bovis persiste 2 anos (instalações/fezes/solo/pasto), 1 ano (água), 10 meses (carcaça). Desinfetantes: Fenóis (Alta, ativos com matéria orgânica) e Cal virgem/CaO (Alta em solos/madeira) vs. Hipoclorito 2–5% (Média, falha com lama/esterco) vs. Amônia quaternária (Baixa/ineficaz). Vazio: instalações 15–30 dias (sol) e pastagens ≥60 dias. Biosseguridade: N95/PFF2, rodolúvio, água limpa, IN 8/2004 e controle de aves silvestres (evita falsos positivos por M. avium).",
+  "pistas": "2 anos / 1 ano / 10 meses; Fenóis & CaO vs. Hipoclorito vs. Amônia quaternária; 15–30d / 60d; N95/PFF2; aves silvestres → falso positivo.",
+  "conf": "Usar amônia quaternária em foco de tuberculose ou liberar pasto sombreado antes de 60 dias."
+ },
+ "F": {
+  "nome": "F - Brucelose: etiologia, sintomas, zoonose e vacinação (B19/RB51)",
+  "nucleo": "Espécies: B. abortus (bovinos/bubalinos/equinos — principal reservatório bovino), B. melitensis (caprinos/ovinos), B. suis (suínos), B. ovis, B. canis. Sintomas: aborto (5º–7º mês), retenção de placenta, orquite e epididimite em machos. Zoonose: Febre Ondulante / de Malta (leite cru/contato). Vacinação obrigatória: fêmeas bovinas e bubalinas de 3 a 8 meses, dose única na vida (B19 ou RB51) por veterinário cadastrado com Atestado.",
+  "pistas": "5º–7º mês, orquite/epididimite, Febre Ondulante/de Malta, fêmeas 3–8 meses dose única B19/RB51 com atestado.",
+  "conf": "Vacinar machos ou vacas adultas fora de 3–8 meses com B19 dose múltipla, ou trocar B. melitensis por B. abortus em caprinos."
+ },
+ "G": {
+  "nome": "G - Proibição da BCG vs. manejo do foco e saneamento",
+  "nucleo": "Vacina BCG contra Tuberculose é PROIBIDA por lei (IN nº 19/2011) por interferir no diagnóstico (PPD), ter eficácia parcial e gerar barreiras comerciais. Em foco (MAPA IN 10/2017; Adagri Portaria 524/2015): Notificação Compulsória Imediata (até 24h), isolamento, abate sanitário/eutanásia em até 30 dias (SIF/SIE/SIM), testar >6 semanas a cada 60–90 dias até 2 negativos consecutivos; incineração/cal virgem e nunca dar leite de reagentes a bezerros ou porcos.",
+  "pistas": "IN 19/2011 (proíbe vacina TB), 24h notificação, abate 30 dias (SIF/SIE/SIM), testes 60–90d (>6 sem) até 2 negativos, proibido leite cru a bezerros/porcos.",
+  "conf": "Achar que existe vacina obrigatória para tuberculose ou liberar a propriedade com apenas um teste negativo."
+ },
+ "H": {
+  "nome": "H - PNCEBT: economia, regionalização e gestão do agrônomo",
+  "nucleo": "PNCEBT foca bovinos/bubalinos por razões econômicas, sanitárias e biológicas estratégicas (Sul detém 98% dos estabelecimentos livres certificados). Perdas diretas: abortos, redução de até 25% no leite, descarte de matrizes de alto valor genético (maior perda na TB) e barreiras comerciais. Gestão do agrônomo: calendário de Febre Aftosa (UF), rastreabilidade de nascimentos (3–8m brucelose), exames de TB/Anel em Leite (T.A.) para trânsito/eventos e notificação imediata das 3 doenças compulsórias.",
+  "pistas": "98% no Sul, até 25% queda no leite, Anel em Leite (T.A.), reprodução/aglomeração, 3 compulsórias (Aftosa, Brucelose, TB).",
+  "conf": "Reduzir o impacto do PNCEBT apenas à morte do animal ou dispensar exame em eventos de aglomeração."
+ }
+};
+var Q = {
+ "A1": {
+  "t": "A",
+  "ang": "Identificação",
+  "q": "Segundo dados do MAPA/SDA (2024) e PNCEBT (slide 3), uma espécie apresenta nível de incidência 'Crescente', sendo um desafio silencioso em bacias leiteiras (PE, PB, MG) frequentemente confundido com Linfadenite Caseosa. A que espécie se refere?",
+  "ok": "Caprinos",
+  "er": [
+   [
+    "Bovinos de leite, onde ocorre confusão clínica frequente com Linfadenite Caseosa em PE/PB/MG",
+    "Bovinos leite têm incidência 'Moderada' por confinamento e longevidade; 'Crescente' com Linfadenite Caseosa em PE/PB/MG é de Caprinos."
+   ],
+   [
+    "Suínos, que possuem incidência 'Crescente' em bacias leiteiras do Nordeste",
+    "Suínos aparecem como 'Localizada/Alta' na inspeção de carcaça (linfonodos), frequentemente causada por M. avium."
+   ],
+   [
+    "Aves comerciais industriais, onde é confundida com linfadenite no abatedouro",
+    "Em granjas industriais de aves a incidência é 'Rara (Comercial)' (quase zero pelo ciclo curto), aparecendo mais em fundo de quintal."
+   ]
+  ],
+  "pista": "Incidência 'Crescente' + bacias leiteiras (PE, PB, MG) + confusão com Linfadenite Caseosa.",
+  "outro": "Se a tabela indicasse incidência 'Localizada/Alta' detectada em linfonodos na inspeção de carcaça por M. avium, seriam os Suínos.",
+  "ref": "Slides 2, 3 e 6"
+ },
+ "A2": {
+  "t": "A",
+  "ang": "Princípio",
+  "q": "Por que bovinos de leite apresentam incidência 'Moderada' de tuberculose frente à incidência 'Baixa' em bovinos de corte na tabela MAPA/SDA (2024), e por que Mycobacterium bovis é o foco sanitário de saúde pública?",
+  "ok": "Leite tem confinamento e longevidade (corte abate cedo); M. bovis infecta via leite não pasteurizado",
+  "er": [
+   [
+    "Porque o leite pasteurizado transmite mais tuberculose que o leite cru, enquanto bois de corte nunca sofrem infecção pulmonar",
+    "É o oposto: o perigo zoonótico principal ocorre via leite NÃO pasteurizado (slide 8), e corte tem baixa detecção por abate precoce."
+   ],
+   [
+    "Porque o Complexo M. avium afeta exclusivamente touros de corte em confinamento, causando apenas aborto no 5º mês",
+    "Aborto no 5º–7º mês pertence à Brucelose; M. avium é agente aviário que também infecta suínos/equinos e gera reação cruzada."
+   ],
+   [
+    "Porque gado de corte fica confinado a vida inteira nas salas de ordenha onde há maior circulação de fezes de aves",
+    "Confinamento, vida longa e aglomeração em salas de ordenha são fatores do rebanho LEITEIRO (slides 3 e 9)."
+   ]
+  ],
+  "pista": "Contraste manejo leiteiro vs. abate precoce (slide 3) + risco zoonótico do leite cru (slide 8).",
+  "outro": "Em aves industriais o mesmo princípio de 'ciclo curto' explica por que a incidência comercial é quase zero frente a criações de fundo de quintal.",
+  "ref": "Slides 3, 6 e 8"
+ },
+ "A3": {
+  "t": "A",
+  "ang": "Armadilha",
+  "q": "Um estudante afirma: 'Cada espécie de Mycobacterium só infecta exatamente seu hospedeiro original sem jamais cruzar entre espécies, sendo os nódulos caseosos no pulmão bovino exclusividade de M. avium'. O que os slides 2, 6 e 8 desmentem?",
+  "ok": "Cruzam espécies, e nos ruminantes os tubérculos pulmonares caseosos são foco de M. bovis",
+  "er": [
+   [
+    "Na verdade o gênero Mycobacterium não forma lesões granulomatosas caseosas nem afeta todos os animais de produção",
+    "Slide 2 define exatamente doença crônica de lesões granulomatosas (tubérculos) atingindo TODOS os animais de produção."
+   ],
+   [
+    "Apenas o M. avium infecta ruminantes causando zoonose pelo leite, enquanto M. bovis só sobrevive em aves industriais",
+    "Inverte os agentes principais: M. bovis é o agente clássico dos ruminantes no PNCEBT; M. avium vem de aves e infecta suínos/equinos."
+   ],
+   [
+    "A transmissão interespécies existe apenas por picada de carrapato, nunca envolvendo leite cru nem linfonodos",
+    "Carrapato transmite Tristeza Parasitária; tuberculose tem transmissão aerógena e digestiva (ex.: leite não pasteurizado)."
+   ]
+  ],
+  "pista": "Slide 2 ('podem cruzar a barreira das espécies') + slide 6/8 (tubérculos caseosos em pulmão/linfonodo por M. bovis).",
+  "outro": "Se a pergunta focasse quais micobactérias específicas são citadas nos caprinos (além de M. bovis), o slide 18 acrescenta M. caprae.",
+  "ref": "Slides 2, 6 e 8"
+ },
+ "A4": {
+  "t": "A",
+  "ang": "Inversão",
+  "q": "Quando M. bovis se estabelece cronicamente em bovinos e bubalinos dentro de um sistema leiteiro não saneado, quais consequências sanitárias e produtivas obrigatórias incidem sobre o animal positivo e a saúde humana?",
+  "ok": "Gera tubérculos pulmonares/linfonodais com descarte obrigatório e risco por leite não pasteurizado",
+  "er": [
+   [
+    "O animal cura-se espontaneamente após dois meses de pasto sombreado e pode continuar fornecendo leite cru aos bezerros",
+    "A doença é crônica e leva ao descarte obrigatório; jamais se deve fornecer leite de vacas reagentes a bezerros ou porcos."
+   ],
+   [
+    "Ocorre apenas aborto no 7º mês e epididimite nos machos sem qualquer lesão pulmonar nem descarte obrigatório",
+    "Aborto do 5º–7º mês e orquite/epididimite caracterizam a Brucelose, não os tubérculos pulmonares da Tuberculose."
+   ],
+   [
+    "As lesões ficam restritas aos cascos causando manqueira aguda em 24 horas sem risco algum ao consumidor de derivados crus",
+    "Manqueira é Carbúnculo Sintomático (C. chauvoei); M. bovis é crônico pulmonar/linfonodal e grave zoonose em leite não pasteurizado."
+   ]
+  ],
+  "pista": "Tema dado (M. bovis em ruminantes); junta patologia crônica, descarte obrigatório e risco zoonótico (slide 8).",
+  "outro": "Se fosse Tuberculose em suínos, a lesão ficaria contida em linfonodos cervical/mesentérico causando condenação de carcaças no abatedouro.",
+  "ref": "Slides 6 e 8"
+ },
+ "A5": {
+  "t": "A",
+  "ang": "Ponte",
+  "ponte": "Incidência por espécie (Slide 3) ↔ Biosseguridade e diagnóstico cruzado",
+  "q": "Como o perfil do Complexo M. avium em aves ('fundo de quintal') e suínos (slide 3) se conecta diretamente ao risco de erro diagnóstico bovino citado no slide 28?",
+  "ok": "Aves silvestres/de quintal eliminam M. avium, que ao expor bovinos provoca reações cruzadas (falsos positivos) dificultando o saneamento",
+  "er": [
+   [
+    "Porque aves comerciais de ciclo curto transmitem M. avium ao leite de vaca pasteurizado causando surtos humanos de anergia",
+    "Aves industriais têm incidência quase zero; M. avium vem de aves silvestres/extensivas e causa reação cruzada no teste bovino (não anergia)."
+   ],
+   [
+    "Porque o M. avium imuniza os bovinos contra M. bovis funcionando como a vacina BCG liberada pela IN 19/2011",
+    "A IN 19/2011 PROÍBE a vacinação contra tuberculose justamente porque interfere no diagnóstico (assim como reações cruzadas dificultam o saneamento)."
+   ],
+   [
+    "Porque caprinos confundem M. avium com brucelose na prova do Anel em Leite no abatedouro",
+    "Caprinos confundem TB com Linfadenite Caseosa; Anel em Leite (T.A.) pertence à Brucelose."
+   ]
+  ],
+  "pista": "Liga M. avium (slides 2, 3 e 19) ao 'Controle de Aves Silvestres → reações cruzadas/falsos positivos em bovinos' (slide 28).",
+  "outro": "É justamente para diferenciar M. bovis de outras micobactérias (como M. avium) que existe o Teste Cervical Comparativo (TCC) com PPD bovina e aviária.",
+  "ref": "Slides 3, 15 e 28"
+ },
+ "B1": {
+  "t": "B",
+  "ang": "Identificação",
+  "q": "Uma vaca leiteira apresenta emagrecimento progressivo mesmo com boa oferta de pasto, inchaços nos linfonodos retrofaríngeos e acima do úbere, tosse seca persistente perceptível após exercício/manejo, dispneia avançada e queda gradual de leite sem causa nutricional. De qual quadro se trata?",
+  "ok": "Tuberculose clínica em ruminantes (curso crônico)",
+  "er": [
+   [
+    "Brucelose aguda, cujos sinais típicos são tosse seca no exercício e linfonodos acima do úbere",
+    "Brucelose manifesta-se por aborto (5º–7º mês), retenção de placenta e orquite/epididimite, não quadro respiratório crônico."
+   ],
+   [
+    "Botulismo crônico, que causa emagrecimento com boa oferta de pasto e inchaço retrofaríngeo sem afetar músculos",
+    "Botulismo causa paralisia flácida progressiva aguda (vaca caída/língua caída), não tosse crônica nem aumento de linfonodos."
+   ],
+   [
+    "Raiva paralítica na fase inicial, marcada por queda gradual leiteira por meses mesmo com bom pasto",
+    "Raiva tem evolução curta/aguda (3 a 7 dias até morte em bovinos), nunca emagrecimento crônico lento."
+   ]
+  ],
+  "pista": "Emagrecimento com pasto bom + linfonodos retrofaríngeos/acima do úbere + tosse seca pós-exercício + dispneia + ↓leite.",
+  "outro": "Se os sinais de alerta no rebanho incluíssem apenas inspeção visual indireta (slide 10), veríamos pelo seco/arrepiado, cabeça baixa, mucosas pálidas e discrepância de peso.",
+  "ref": "Slides 4, 5, 7 e 10"
+ },
+ "B2": {
+  "t": "B",
+  "ang": "Princípio",
+  "q": "Embora a suscetibilidade biológica inicial à tuberculose seja parecida entre machos e fêmeas, por que fêmeas leiteiras acumulam muito mais diagnósticos positivos que machos de corte?",
+  "ok": "Fêmeas vivem mais sob estresse da lactação e aglomeração na ordenha (aerossóis); machos saem jovens",
+  "er": [
+   [
+    "Porque o cromossomo sexual masculino bloqueia a entrada de M. bovis nos pulmões após o desmame de bezerros",
+    "Slide 9 afirma que a suscetibilidade biológica inicial é SIMILAR entre os sexos; a diferença vem do Fator Manejo."
+   ],
+   [
+    "Porque apenas as fêmeas tomam a vacina BCG obrigatória aos 3 meses, gerando reação cruzada positiva no teste",
+    "Vacinação BCG é proibida para ambos os sexos (IN 19/2011); vacina obrigatória de fêmeas aos 3–8 meses é contra Brucelose."
+   ],
+   [
+    "Porque os machos de corte nunca compartilham bebedouros ou pastos com outros ruminantes infectados",
+    "Eles se expõem menos tempo porque são descartados mais jovens para corte, antes de a doença crônica evoluir e ser detectada."
+   ]
+  ],
+  "pista": "Suscetibilidade inicial igual + Fator Manejo (vida útil longa + estresse produtivo + salas de ordenha/aerossóis).",
+  "outro": "Esse mesmo princípio (longevidade + estresse + aglomeração vs. ciclo curto) explica também na tabela do slide 3 por que aves industriais quase não têm TB.",
+  "ref": "Slides 3 e 9"
+ },
+ "B3": {
+  "t": "B",
+  "ang": "Armadilha",
+  "q": "Um produtor vê uma vaca do mesmo lote e da mesma dieta perder escore corporal muito abaixo das companheiras, com pelo arrepiado e seco e mucosas pálidas, e diz: 'Se ela tivesse doença respiratória crônica como tuberculose, o pasto bom já teria recuperado o peso e nunca afetaria pelo ou mucosas'. Qual erro há nisso?",
+  "ok": "Na TB emagrece mesmo em bom pasto, com pelo seco, isolamento e mucosas pálidas ou amareladas",
+  "er": [
+   [
+    "Na verdade o pasto verde bom cura completamente a tuberculose bovina crônica em 30 dias sem exigir descarte",
+    "Não há cura em pasto; a doença é crônica com emagrecimento progressivo mesmo com boa oferta de pasto e exige abate sanitário."
+   ],
+   [
+    "Pelo arrepiado e discrepância de peso na mesma dieta indicam exclusivamente brucelose por cepa RB51",
+    "O slide 10 está diretamente na sequência clínica da Tuberculose bovina associando esses sinais a desnutrição ou doença crônica."
+   ],
+   [
+    "A tosse seca da tuberculose sempre melhora com exercício no manejo, desaparecendo totalmente quando o animal corre",
+    "Slide 7 especifica que a tosse seca persistente fica MAIS perceptível durante o manejo ou após o exercício."
+   ]
+  ],
+  "pista": "Contraste 'mesmo com boa oferta de pasto' + tosse pós-exercício (7) + quadro observacional (10).",
+  "outro": "Se a discrepância de escore com mucosas pálidas estivesse avaliando ovinos sob verminose pelo método FAMACHA©, entraria o diferencial de resiliência vs. anemia parasitária.",
+  "ref": "Slides 7 e 10"
+ },
+ "B4": {
+  "t": "B",
+  "ang": "Inversão",
+  "q": "Ao observar o lote no pasto e no curral segundo os 4 alertas visuais do slide 10, quais sinais práticos indicam suspeita de doença crônica ou subnutrição para triagem clínica?",
+  "ok": "Pelo arrepiado/seco, cabeça baixa/isolada, discrepância de peso na dieta e mucosas pálidas/amarelas",
+  "er": [
+   [
+    "Trismo mandibular travado, postura em cavalete, cauda em bandeira e prolapso da terceira pálpebra ao bater palmas",
+    "Esses quatro sinais definem tétano agudo (paralisia espástica), não o quadro de triagem crônica do slide 10."
+   ],
+   [
+    "Agressividade furiosa súbita, salivação viscosa por engasgo e morte em até 7 dias",
+    "Isso descreve o curso agudo de Raiva em bovinos (3 a 7 dias)."
+   ],
+   [
+    "Orquite unilateral aguda, aborto no 6º mês e retenção placentária sem alteração respiratória nem de pelo",
+    "Orquite, retenção e aborto no 5º–7º mês são a marca reprodutiva da Brucelose."
+   ]
+  ],
+  "pista": "Tema dado (4 sinais de alerta do slide 10: Pelo, Postura, Escore Corporal, Mucosas).",
+  "outro": "Em animais cronicamente muito debilitados desse perfil, o exame clínico torna-se vital justamente para flagrar casos de Anergia falsamente negativos na tuberculina.",
+  "ref": "Slides 10 e 14"
+ },
+ "B5": {
+  "t": "B",
+  "ang": "Ponte",
+  "ponte": "Sinais clínicos e manejo (Slides 7, 9, 10) ↔ Limitação da tuberculinização (Slide 14)",
+  "q": "Por que os slides recomendam NUNCA confiar cegamente em um resultado negativo isolado no teste intradérmico em vacas velhas leiteiras emaciadas com tosse crônica e mucosas pálidas?",
+  "ok": "Anergia: animais muito debilitados dão falso negativo no teste, exigindo associar exame clínico",
+  "er": [
+   [
+    "Porque fêmeas leiteiras velhas são geneticamente resistentes à tuberculose, gerando falso positivo apenas por estresse térmico",
+    "Fêmeas leiteiras são mais diagnosticadas por longevidade/aglomeração, e anergia gera FALSO NEGATIVO (não falso positivo)."
+   ],
+   [
+    "Porque na sala de ordenha todas as vacas perdem a reação do Tipo IV devido ao uso obrigatório de hipoclorito nos tetos",
+    "Hipoclorito é desinfetante de superfície que não altera a resposta celular do animal no teste intradérmico."
+   ],
+   [
+    "Porque animais emaciados desenvolvem automaticamente resistência total ao M. bovis após os 2 anos no rebanho",
+    "O animal anérgico está 'infestado de bactérias' (slide 14), sendo perigoso disseminador se não for identificado clinicamente."
+   ]
+  ],
+  "pista": "Liga debilidade extrema crônica (7 e 10) à solução do Fenômeno da Anergia (slide 14).",
+  "outro": "Já o fenômeno inverso — FALSO POSITIVO dificultando o saneamento — pode ocorrer pela exposição a M. avium de aves silvestres (slide 28).",
+  "ref": "Slides 7, 10 e 14"
+ },
+ "C1": {
+  "t": "C",
+  "ang": "Identificação",
+  "q": "Um teste confirmatório para tuberculose aplica duas injeções intradérmicas (0,1 ml) simultaneamente no pescoço — uma de PPD bovina e outra de PPD aviária — com leitura exatamente 72 horas depois via cutímetro, para distinguir infecção por M. bovis de outras micobactérias. Qual teste é esse?",
+  "ok": "Teste Cervical Comparativo (TCC)",
+  "er": [
+   [
+    "Teste Cervical Simples (TCS), que aplica apenas uma dose de PPD aviária na base da cauda de gado de corte",
+    "TCS aplica apenas PPD BOVINA no pescoço (comum em rebanhos leiteiros), sem PPD aviária comparativa."
+   ],
+   [
+    "Teste da Prega Caudal (TPC), utilizado como método confirmatório exclusivo de vacas em lactação",
+    "TPC injeta PPD bovina na base da prega da cauda e é teste de rotina geralmente usado em bovinos de CORTE."
+   ],
+   [
+    "Teste do Anel em Leite (T.A.), exame confirmatório de sangue e placenta para detectar M. bovis",
+    "Anel em Leite (T.A.) é um teste voltado para Brucelose citado nas recomendações do slide 36."
+   ]
+  ],
+  "pista": "Confirmatório + duas injeções no pescoço (PPD bovina + PPD aviária) + 72h.",
+  "outro": "Se a aplicação fosse única na base da prega da cauda em bovinos de corte, seria o Teste da Prega Caudal (TPC); se fosse única de PPD bovina no pescoço de gado leiteiro, seria o TCS.",
+  "ref": "Slides 12 e 15"
+ },
+ "C2": {
+  "t": "C",
+  "ang": "Princípio",
+  "q": "Que mecanismo imunológico fundamenta a Prova de Tuberculinização com PPD, e por que a técnica exige injeção intradérmica rigorosa (0,1 ml) e leitura exatamente às 72 horas?",
+  "ok": "Hipersensibilidade tardia (Tipo IV); exige via intradérmica real e cutímetro exato em 72 horas",
+  "er": [
+   [
+    "É reação imediata mediada por anticorpos sanguíneos em 15 minutos, aplicada por via intravenosa na jugular sem precisar de cutímetro",
+    "Slide 12 destaca explicitamente: hipersensibilidade tardia (Tipo IV), via intradérmica (dentro da pele, NÃO sob ela) e leitura exatamente em 72h."
+   ],
+   [
+    "É cultura rápida bacteriana feita diretamente na prega da cauda para identificar M. avium ao microscópio em 24 horas",
+    "Cultura bacteriológica e exame histopatológico são exames PÓS-MORTE feitos em laboratório após abate sanitário (slide 15)."
+   ],
+   [
+    "É prova sorológica que mede títulos de anticorpos neutralizantes acima de 0,5 UI/mL no líquido cefalorraquidiano",
+    "Títulos ≥ 0,5 UI/mL em sorologia referem-se à profilaxia pré-exposição da Raiva."
+   ]
+  ],
+  "pista": "Hipersensibilidade tardia (Tipo IV) + dentro da pele (não sob ela) + 0,1 ml + cutímetro em 72h.",
+  "outro": "Quando um animal reagente vai para abate sanitário, a confirmação laboratorial definitiva pode usar histopatológico, cultura bacteriológica e PCR (slide 15).",
+  "ref": "Slides 12 e 15"
+ },
+ "C3": {
+  "t": "C",
+  "ang": "Armadilha",
+  "q": "Na rotina de campo, um técnico injeta 0,1 ml de PPD no tecido subcutâneo (sob a pele), lê os resultados com apenas 24 horas e considera negativo com 100% de certeza um boi caquético com tosse avançada. Quantos erros técnicos há?",
+  "ok": "Três erros: aplicação é intradérmica (não subcutânea), leitura às 72h e caquético pode ter anergia",
+  "er": [
+   [
+    "Apenas um erro: injeção subcutânea e leitura em 24h estão perfeitas, errando somente ao esquecer do exame de anergia",
+    "Slide 12 determina 'via intradérmica (dentro da pele, não sob ela)' e 'exatamente 72 horas após a aplicação'."
+   ],
+   [
+    "Dois erros apenas: a leitura realmente é em 24h por ser hipersensibilidade imediata, estando errados só a agulha e a anergia",
+    "Não é imediata — é hipersensibilidade TARDIA (Tipo IV) com leitura obrigatória às 72 horas."
+   ],
+   [
+    "Nenhum erro técnico na aplicação nem no boi caquético, pois animais em estágio avançado sempre dão a maior reação positiva do rebanho",
+    "Justamente animais em estágio muito avançado estão debilitados demais para reagir (Fenômeno da Anergia = falso negativo, slide 14)."
+   ]
+  ],
+  "pista": "Checagem rigorosa dos slides 12 e 14: intradérmica vs. subcutânea + 72h vs. 24h + Anergia.",
+  "outro": "Além da anergia em caquéticos, vale checar caprinos que podem ter variações de sensibilidade na tuberculinização (slide 18).",
+  "ref": "Slides 12 e 14"
+ },
+ "C4": {
+  "t": "C",
+  "ang": "Inversão",
+  "q": "Quando animais dão positivo ou inconclusivo nos testes de rotina (TCS ou TPC) e, posteriormente, seguem para abate sanitário, qual sequência de exames confirmatórios ante-mortem e post-mortem está prevista no slide 15?",
+  "ok": "Ante-mortem: Teste Cervical Comparativo (TCC); pós-morte após abate: avaliação das lesões, exame histopatológico, cultura bacteriológica e PCR",
+  "er": [
+   [
+    "Ante-mortem: abate direto sem comparativo; pós-morte: apenas teste do Anel em Leite nos testículos",
+    "TCC confirma animais reagentes ou inconclusivos na rotina; pós-morte reúne histopatológico, cultura bacteriológica e PCR."
+   ],
+   [
+    "Ante-mortem: vacinação imediata com BCG para limpar a reação; pós-morte: imunofluorescência de corpúsculo de Negri",
+    "BCG é proibida e corpúsculo de Negri/IFD pertencem ao diagnóstico da Raiva."
+   ],
+   [
+    "Ante-mortem: repetição do TPC em 24 horas; pós-morte: apenas sorologia em glicerina 50%",
+    "Glicerina 50% é para envio encefálico virológico da Raiva; na TB pós-morte fazem-se lesões, histopatologia, cultura e PCR."
+   ]
+  ],
+  "pista": "Tema dado (fluxo confirmatório da tuberculose); encadeia TCC + 3 exames pós-morte (slide 15).",
+  "outro": "Lembre também que antes de qualquer exame ou entrada, histórico epidemiológico da zona e compras recentes sem exame prévio já entram no diagnóstico (slide 11).",
+  "ref": "Slides 11 e 15"
+ },
+ "C5": {
+  "t": "C",
+  "ang": "Ponte",
+  "ponte": "Diagnóstico em campo (TCS/TPC/TCC + Anergia) ↔ Conduta por histórico e clínica",
+  "q": "Integrando os slides 11, 14 e 15, por que o protocolo diagnóstico começa listando 'sinais/sintomas e zona epidemiologicamente suscetível (compras recentes sem exame)' ANTES mesmo da tuberculinização?",
+  "ok": "Porque histórico de compras sem exame e clínica identificam risco e evitam deixar escapar portadores graves em Anergia falsamente negativos no PPD",
+  "er": [
+   [
+    "Porque animais comprados sem exame prévio nunca positivam no TPC nem no TCC, dispensando o uso da tuberculina",
+    "O teste PPD continua essencial (e obrigatório em compra/venda para reprodução, slide 35), mas somado a clínico e histórico."
+   ],
+   [
+    "Porque zona epidemiologicamente suscetível indica exclusivamente ocorrência de Linfadenite Caseosa em bovinos de corte",
+    "Zona epidemiologicamente suscetível (slide 11) diz respeito a históricos de manifestação na área e compras recentes de animais sem diagnóstico."
+   ],
+   [
+    "Porque a PCR pode ser feita no cutímetro em 10 segundos no tronco antes de qualquer abate sanitário",
+    "PCR está listada em 'Exames pós-morte' (slide 15) junto a histopatológico e cultura após o abate sanitário."
+   ]
+  ],
+  "pista": "Liga os 3 itens do slide 11 (clínica + zona/compras + PPD) à necessidade clínica da anergia (14) e testes (15).",
+  "outro": "Se o histórico de risco fosse também o contato com aves silvestres no piquete, isso explicaria resultados falso-positivos cruzados exigindo TCC (slides 15 e 28).",
+  "ref": "Slides 11, 14 e 15"
+ },
+ "D1": {
+  "t": "D",
+  "ang": "Identificação",
+  "q": "Espécie altamente suscetível que atua como reservatório importante para Mycobacterium bovis e Mycobacterium caprae; suas lesões liquefazem mais rapidamente tornando os animais grandes disseminadores, com risco grave ligado a consumo de leite cru por crianças e queijos artesanais. Qual espécie é?",
+  "ok": "Caprinos (cabras)",
+  "er": [
+   [
+    "Ovinos, descritos como os mais suscetíveis entre todos os pequenos ruminantes por liquefazerem rápido as lesões",
+    "O slide 18 abre contrastando exatamente: 'Ovinos MAIS RESISTENTES à doença' vs. 'Caprinos ALTAMENTE SUSCETÍVEIS como reservatórios'."
+   ],
+   [
+    "Suínos, cujas lesões liquefazem na glândula mamária contaminando queijos artesanais por via aerógena",
+    "Suínos são hospedeiros terminais com lesões contidas nos linfonodos cervical/mesentérico (não disseminam eficientemente)."
+   ],
+   [
+    "Equinos, nos quais a infecção liquefaz rapidamente os pulmões permitindo transmissão intensa para crianças via aerossóis",
+    "Equinos são hospedeiros acidentais/terminais de transmissão quase só digestiva, com osteomielite cervical e lesões sarcomatosas."
+   ]
+  ],
+  "pista": "M. caprae + lesões se liquefazem rápido + leite × crianças × queijos artesanais + grande disseminadora.",
+  "outro": "Na mesma comparação do slide 18, a espécie vizinha — Ovinos — é apontada como mais resistente à tuberculose.",
+  "ref": "Slide 18"
+ },
+ "D2": {
+  "t": "D",
+  "ang": "Princípio",
+  "q": "Por que tanto equinos quanto suínos são chamados de 'hospedeiros acidentais / terminais' na tuberculose (slides 20–21), enquanto aves de vida longa contaminam o ambiente por anos?",
+  "ok": "Suínos (lesões contidas em linfonodos) e equinos não transmitem com eficiência; aves eliminam muito M. avium nas fezes contaminando o solo",
+  "er": [
+   [
+    "Porque suínos e equinos morrem em menos de 3 dias antes de formar qualquer lesão, enquanto aves morrem por insuficiência respiratória aguda",
+    "Aves raramente têm sintomas respiratórios (doença é predominantemente INTESTINAL com peito em quilha), e suínos exibem lesões crônicas nos linfonodos."
+   ],
+   [
+    "Porque aves são hospedeiros terminais que nunca eliminam M. avium nas fezes, enquanto suínos disseminam por tosse em abatedouros",
+    "É o inverso: suínos não eliminam em quantidade suficiente nas fezes/respiração (ficam contidos nos linfonodos), e aves eliminam em grandes quantidades nas fezes."
+   ],
+   [
+    "Porque equinos contraem tuberculose exclusivamente por contato sexual e nunca por leite cru de vaca ou pasto compartilhado",
+    "Em equinos a transmissão é quase exclusivamente DIGESTIVA (pasto com bovinos, fezes de aves contaminadas, ingestão de leite de vaca cru)."
+   ]
+  ],
+  "pista": "Contraste de eliminação: suíno contido em linfonodo/equino terminal vs. eliminação fecal maciça das aves (19–21).",
+  "outro": "Além de hospedeiro terminal, o suíno funciona como 'sentinela' da bovinocultura ou saúde humana por albergar M. bovis, M. avium e M. tuberculosis.",
+  "ref": "Slides 19, 20 e 21"
+ },
+ "D3": {
+  "t": "D",
+  "ang": "Armadilha",
+  "q": "Um técnico inspeciona dois quadros: num galinheiro de poedeiras idosas com 'peito em quilha' afirma que a tuberculose aviária é essencialmente pulmonar sem afetar o solo; e num cavalo com rigidez no pescoço (dificuldade de baixar a cabeça para pastar) conclui ser apenas tétano. O que os slides 19 e 20 revelam?",
+  "ok": "Em aves é intestinal (fígado/intestino, solo); em equinos causa osteomielite cervical sarcomatosa",
+  "er": [
+   [
+    "A tuberculose aviária realmente nunca forma nódulos no fígado nem no intestino, sendo uma pneumonia idêntica à bovina",
+    "Slide 19 mostra foto de fígado/parede intestinal com nódulos e diz: 'raramente apresentam sintomas respiratórios; doença predominantemente intestinal'."
+   ],
+   [
+    "Nos equinos a rigidez do pescoço na tuberculose calcifica rapidamente formando grandes cavernas pulmonares como nas cabras",
+    "Slide 20 descreve osteomielite da coluna cervical e lesões de aspecto sarcomatoso (tumores brancos firmes) que RARAMENTE calcificam."
+   ],
+   [
+    "Cavalos não pegam M. bovis nem M. avium ao beber leite de vaca cru ou pastar onde há aves, pois só se infectam por aerossóis",
+    "Slide 20 aponta transmissão quase exclusivamente digestiva via pastagens com bovinos, fezes de aves ou leite de vaca cru."
+   ]
+  ],
+  "pista": "Aves = intestinal/fígado/peito em quilha (19); Equinos = osteomielite cervical + sarcomatosa raramente calcificada + falha sanitária grave (20).",
+  "outro": "Lembre ainda que M. avium nas aves é patógeno oportunista perigoso para seres humanos imunossuprimidos (slide 19).",
+  "ref": "Slides 19 e 20"
+ },
+ "D4": {
+  "t": "D",
+  "ang": "Inversão",
+  "q": "Quando os suínos são expostos por via digestiva à água, ração ou pasto contaminados por fezes de aves, carcaças ou leite bovino (slide 21), que papéis práticos e anatomopatológicos se observam nessa espécie?",
+  "ok": "Abrem lesões contidas nos linfonodos cervical e mesentérico, viram principal causa de condenação no abatedouro e atuam como sentinelas",
+  "er": [
+   [
+    "Passam a transmitir aerossóis maciços para todo o rebanho bovino adjacente e excretam alta carga bacteriana nas fezes por anos",
+    "Slide 21 afirma que o suíno NÃO consegue transmitir eficientemente e NÃO elimina quantidades suficientes nas fezes ou respiração."
+   ],
+   [
+    "Desenvolvem obrigatoriamente osteomielite da coluna cervical com tumores sarcomatosos e queda de postura",
+    "Osteomielite cervical sarcomatosa pertence aos equinos (slide 20), e queda de postura às aves (slide 19)."
+   ],
+   [
+    "Ficam protegidos contra M. bovis e M. tuberculosis, só podendo albergar M. caprae por contato sexual",
+    "Suínos albergam três agentes citados no slide 21: M. bovis (bovinos), M. avium (aves) e M. tuberculosis (humanos)."
+   ]
+  ],
+  "pista": "Tema dado (TB suína); combina contenção nodal + sentinela de bovinos/humanos + condenação de carcaças.",
+  "outro": "Justamente por albergar M. tuberculosis (humanos), M. bovis (bovinos) e M. avium (aves) sem ser grande transmissor, o suíno serve como sentinela sanitária.",
+  "ref": "Slide 21"
+ },
+ "D5": {
+  "t": "D",
+  "ang": "Ponte",
+  "ponte": "Tuberculose em caprinos, aves e equinos ↔ Diagnóstico e alerta alimentar",
+  "q": "Por que a tuberculose em equinos é marcada como 'Falha sanitária grave' (slide 20), enquanto a tuberculose caprina exige atenção extra no diagnóstico e consumo familiar (slide 18)?",
+  "ok": "Equinos indicam falha por ingerir pasto/leite cru/fezes aviárias contaminadas; cabras disseminam rápido (lesões liquefeitas) e dão variações no PPD",
+  "er": [
+   [
+    "Porque equinos têm maior sensibilidade no teste de prega caudal e cabras nunca transmitem nada via leite nem queijos artesanais",
+    "Em cabras há alerta expresso 'leite de cabra × crianças × queijos artesanais' e variações de sensibilidade na tuberculinização; equinos usam histórico/biópsia/raio X."
+   ],
+   [
+    "Porque a única via de infecção tanto em equinos quanto em ovinos é o transplante de órgãos ou picada de morcego hematófago",
+    "Transplante/morcego referem-se à Raiva; equinos pegam TB digestiva (leite cru, fezes aviárias, pasto bovino) e cabras respiratória/digestiva."
+   ],
+   [
+    "Porque equinos são vacinados com BCG obrigatória aos 3 meses, enquanto caprinos são resistentes como os ovinos",
+    "BCG é proibida (bovinos); vacina obrigatória aos 3–8 meses é brucelose em fêmeas bovinas/bubalinas; ovinos resistem mais que caprinos."
+   ]
+  ],
+  "pista": "Une a epidemiologia de exposição de equinos (20: leite cru/fezes de aves) ao perfil caprino (18: lesões liquefeitas/PPD variável/crianças).",
+  "outro": "Para confirmar diagnóstico em equinos, o slide 20 lista histórico de contato, biópsias, raio X e avaliação post-mortem.",
+  "ref": "Slides 18 e 20"
+ },
+ "E1": {
+  "t": "E",
+  "ang": "Identificação",
+  "q": "Na tabela de desinfecção contra tuberculose (slide 17), dois agentes têm eficácia 'Alta' — um por manter atividade mesmo em presença de matéria orgânica (sendo o mais indicado) e outro excelente para solos, currais de madeira e descarte — enquanto um terceiro é considerado geralmente ineficaz (Baixa). Quais são respectivamente?",
+  "ok": "Fenóis (Compostos Fenólicos), Cal Virgem (CaO) e Amônia Quaternária",
+  "er": [
+   [
+    "Amônia Quaternária, Hipoclorito de Sódio 2–5% e Fenóis (ineficazes contra micobactérias)",
+    "Inverte exatamente a tabela do slide 17: Fenóis e Cal Virgem têm eficácia Alta; Amônia Quaternária tem eficácia Baixa (evitar no foco)."
+   ],
+   [
+    "Hipoclorito de Sódio 2–5% (indiferente a esterco), Amônia Quaternária (solos) e Cal Virgem (baixa)",
+    "Hipoclorito de Sódio tem eficácia MÉDIA porque perde o poder rapidamente se houver muita lama ou esterco."
+   ],
+   [
+    "Sabões neutros comuns, Álcool 70% e Compostos Fenólicos (ineficazes na presença orgânica)",
+    "Sabões/álcool aparecem como sensibilizadores do envelope lipídico do vírus da Raiva; na TB, Fenóis mantêm atividade com matéria orgânica."
+   ]
+  ],
+  "pista": "Alta + matéria orgânica = Fenóis; Alta + solos/madeira/descarte = CaO; Baixa/ineficaz = Amônia quaternária.",
+  "outro": "Já a Solução de Hipoclorito de Sódio (2–5%) só rende bem em superfícies limpas (eficácia Média), falhando com muita lama ou esterco.",
+  "ref": "Slide 17"
+ },
+ "E2": {
+  "t": "E",
+  "ang": "Princípio",
+  "q": "Por que o vazio sanitário recomendado para pastagens (mínimo 60 dias) é bem maior que o de instalações limpas e desinfetadas (15 a 30 dias), e como a luz solar influencia isso (slides 16 e 27)?",
+  "ok": "M. bovis dura 2 anos no pasto/solo; sol (UV) limpa o aberto, mas sombra e lama mantêm meses",
+  "er": [
+   [
+    "Porque em instalações fechadas e escuras o M. bovis morre em 45 horas, enquanto no sol aberto do pasto se multiplica por 60 dias",
+    "45 horas em cadáver refere-se à Raiva; o slide 27 diz que o SOL (raios UV) é o melhor desinfetante natural e sombra/lama prolongam persistência."
+   ],
+   [
+    "Porque na água e na carcaça o agente vive apenas 24 horas, tornando necessária a vedação de 60 dias só para evitar ovinos resilientes",
+    "Na tabela WHO (slide 16), M. bovis resiste 2 anos em instalações/fezes/solo/pasto, 1 ano na água e 10 meses na carcaça."
+   ],
+   [
+    "Porque instalações sempre recebem radiação UV nula mesmo quando abertas, ao passo que a amônia quaternária zera o pasto em 15 dias",
+    "Slide 27 pede exposição solar máxima nos 15–30 dias das instalações limpas/desinfetadas, e veda o pasto por ≥60 dias devido a áreas sombreadas/lama."
+   ]
+  ],
+  "pista": "Resistência WHO (2 anos / 1 ano / 10 meses) + efeito UV natural vs. sombra/lama (slide 27).",
+  "outro": "Além de limpeza, desinfecção com fenóis/cal virgem e vazio sanitário, deve-se renovar e lavar periodicamente bebedouros compartilhados (slide 28).",
+  "ref": "Slides 16, 27 e 28"
+ },
+ "E3": {
+  "t": "E",
+  "ang": "Armadilha",
+  "q": "Após retirar vacas positivas para tuberculose, o produtor joga apenas hipoclorito sobre o curral cheio de esterco e amônia quaternária nas paredes, e já solta bezerros na semana seguinte usando a mesma água dos bebedouros para suínos e aves. Quantas falhas críticas há?",
+  "ok": "Hipoclorito falha no esterco, amônia é ineficaz, faltou vazio (15–30d / 60d), segregar e lavar água",
+  "er": [
+   [
+    "Nenhuma falha grave: hipoclorito vence matéria orgânica melhor que fenóis e 7 dias de vazio bastam tanto para curral quanto para pasto",
+    "Hipoclorito PERDE poder em lama/esterco (fenóis é que resistem à matéria orgânica), e o vazio é ≥15–30d (instalações) / ≥60d (pasto)."
+   ],
+   [
+    "A única falha foi usar amônia quaternária, pois água compartilhada nunca transmite tuberculose entre animais de produção",
+    "Slide 28 alerta textualmente: 'A água compartilhada é um dos principais veículos de transmissão da tuberculose entre diferentes animais'."
+   ],
+   [
+    "Erra só ao soltar bezerros com uma semana, pois a amônia quaternária tem eficácia Alta se misturada com lama",
+    "Amônia quaternária tem eficácia Baixa (geralmente ineficaz contra micobactérias, slide 17)."
+   ]
+  ],
+  "pista": "Integra limites de desinfetantes (17), tempos mínimos de vazio (27) e água/segregação (28).",
+  "outro": "Para manejo seguro em troncos nesse mesmo foco, o tratador também precisa de máscara (preferencialmente N95/PFF2), luvas e botas desinfetáveis (slide 26).",
+  "ref": "Slides 17, 26, 27 e 28"
+ },
+ "E4": {
+  "t": "E",
+  "ang": "Inversão",
+  "q": "Num programa de biosseguridade contra tuberculose em foco ativo (slides 26 e 28), que pacote de proteção humana, controle de trânsito e destinação ambiental deve ser aplicado?",
+  "ok": "EPIs (máscara N95/PFF2, luvas, botas), controle de acesso/arcos/rodolúvios, higiene/troca de roupa, segregação de espécies/aves e resíduos (IN 8/2004)",
+  "er": [
+   [
+    "Liberar visitantes nos troncos sem máscara, lavar bebedouros só uma vez ao ano e manter aves silvestres livres nos cochos para imunização cruzada",
+    "Todo o pacote é o inverso: restringir acesso, usar N95/PFF2, lavar bebedouros periodicamente e controlar aves silvestres (evitam falsos positivos)."
+   ],
+   [
+    "Aplicar apenas pasta vampiricida nos bebedouros e usar amônia quaternária exclusiva nos rodolúvios sem trocar roupas",
+    "Pasta vampiricida é para morcegos hematófagos da Raiva; amônia quaternária é de baixa eficácia contra micobactérias."
+   ],
+   [
+    "Descartar resíduos de parto diretamente na água compartilhada e aguardar apenas 45 horas sem higienizar botas ou luvas",
+    "Água compartilhada dissemina o agente e resíduos devem ser incinerados/enterrados com cal virgem (e IN 8/2004)."
+   ]
+  ],
+  "pista": "Tema dado (biosseguridade e EPIs em foco de TB); lista N95/PFF2 + rodolúvios + segregação + água + IN 8/2004.",
+  "outro": "Em áreas sombreadas de pasto que receberam positivos, soma-se ainda vedação mínima de 60 dias.",
+  "ref": "Slides 26 e 28"
+ },
+ "E5": {
+  "t": "E",
+  "ang": "Ponte",
+  "ponte": "Resistência de M. bovis na água e solo ↔ Bebedouros, pastos e resíduos",
+  "q": "Por que a tabela de sobrevivência da WHO (slide 16: 2 anos solo/fezes/instalações, 1 ano água, 10 meses carcaça) justifica simultaneamente a proibição de água compartilhada (slide 28), o uso de cal virgem em resíduos (24) e a vedação de pasto por 60+ dias (27)?",
+  "ok": "Porque a alta resistência ambiental transforma água estagnada, pastos úmidos/sombreados e tecidos descartados em fontes contínuas de reinfecção",
+  "er": [
+   [
+    "Porque o M. bovis sobrevive 10 meses na água mas morre em 24 horas quando misturado a fezes ou solo de currais sombreados",
+    "Inverte os tempos da tabela WHO (slide 16): é 2 anos em instalações/fezes/solo/pastagens, 1 ano na água e 10 meses na carcaça."
+   ],
+   [
+    "Porque a água inativa o bacilo instantaneamente, sendo a cal virgem necessária apenas para eliminar morcegos nos rodolúvios",
+    "Água compartilhada é um dos principais veículos de transmissão (sobrevive 1 ano!) e cal virgem tem eficácia Alta em solos e resíduos."
+   ],
+   [
+    "Porque o vazio de 60 dias garante que animais em anergia voltem a dar positivo no teste antes mesmo de desinfetar as instalações",
+    "Vazio sanitário visa reduzir/eliminar o agente no pasto (raios UV), não reverter anergia clínica."
+   ]
+  ],
+  "pista": "Liga tabela WHO (16) a três medidas concretas: resíduos com cal (17/24), vazio (27) e água/bebedouros (28).",
+  "outro": "O contraste com o vírus rábico é gritante: o envelope lipídico da Raiva desnatura rápido ao sol/secagem e dura até ~45h no cadáver, enquanto M. bovis dura meses a anos.",
+  "ref": "Slides 16, 17, 24, 27 e 28"
+ },
+ "F1": {
+  "t": "F",
+  "ang": "Identificação",
+  "q": "Zoonose conhecida em humanos como Febre Ondulante ou Febre de Malta; em ruminantes e suínos causa aborto (sobretudo do 5º ao 7º mês), retenção de placenta, orquite e epididimite nos machos, tendo vacinação obrigatória única em fêmeas de 3 a 8 meses. Qual é?",
+  "ok": "Brucelose",
+  "er": [
+   [
+    "Tuberculose, cujo sintoma clássico em machos é orquite e prevenção obrigatória usa vacina B19 aos 3–8 meses",
+    "Tuberculose tem vacina PROIBIDA (IN 19/2011) e causa tubérculos caseosos respiratórios/linfonodais; 3–8 meses + B19/RB51 + aborto/orquite são Brucelose."
+   ],
+   [
+    "Botulismo, conhecido em humanos como Febre Ondulante após ingestão de carcaças contaminadas",
+    "Botulismo causa paralisia flácida por toxina pré-formada; Febre Ondulante/de Malta é a brucelose humana (leite/derivados crus ou contato ocupacional)."
+   ],
+   [
+    "Raiva bovina, que provoca aborto do 5º ao 7º mês e epididimite nos touros antes da paralisia",
+    "Raiva compromete o SNC com sintomas neurológicos e morte rápida (3–7 dias); aborto no terço médio-final e orquite definem Brucelose."
+   ]
+  ],
+  "pista": "5º–7º mês de gestação + orquite/epididimite + Febre Ondulante/de Malta + fêmeas 3–8 meses (B19/RB51).",
+  "outro": "Lembrando dos slides de Brucelose (pág. 34), em equinos aparece também lesão característica na cernelha ('mal da cernelha') por B. abortus.",
+  "ref": "Slides 31, 33 e 34"
+ },
+ "F2": {
+  "t": "F",
+  "ang": "Princípio",
+  "q": "Como as principais espécies do gênero Brucella distribuem-se entre os hospedeiros animais (slides 32 e 34), e quais práticas na fazenda alimentam a manutenção e a transmissão da doença?",
+  "ok": "B. abortus (bovinos/equinos), B. melitensis (caprinos/ovinos), B. suis (suínos) (+ ovis/canis)",
+  "er": [
+   [
+    "B. suis é exclusiva de aves comerciais, B. abortus nunca afeta equinos e apenas leite pasteurizado transmite Febre de Malta aos humanos",
+    "Slide 34 associa B. abortus a bovinos, bubalinos e equinos; B. suis é suínos; e humanos infectam-se por leite/derivados NÃO pasteurizados ou contato ocupacional."
+   ],
+   [
+    "Todas as espécies de produção compartilham apenas B. canis por picada de carrapato, sem influência da introdução de novos animais",
+    "Slide 32 lista abortus, suis, ovis, melitensis e canis; slide 33 cita manejo inadequado de infectados, falha vacinal, produtos e entrada de animais contaminados."
+   ],
+   [
+    "B. melitensis atinge só bovinos de corte, enquanto B. abortus limita-se exclusivamente a cães errantes urbanos",
+    "Inverte os hospedeiros: B. abortus tem bovinos como principal reservatório (também bubalinos/equinos); B. melitensis = caprinos e ovinos."
+   ]
+  ],
+  "pista": "Tabela etiológica (32 e 34) + 4 causas de persistência no slide 33 + vias da zoonose (31).",
+  "outro": "Note na disciplina anterior (Epidemiologia, slide 24) que a brucelose também foi citada pelo contato sexual como exemplo de Transmissão Direta.",
+  "ref": "Slides 31, 32, 33 e 34"
+ },
+ "F3": {
+  "t": "F",
+  "ang": "Armadilha",
+  "q": "Na gestão do rebanho de cria, o proprietário compra frascos de B19 para o próprio capataz aplicar em bezerras de 2 meses e nos machinhos futuros reprodutores, repetindo o reforço todo ano. Quantos erros operacionais existem frente às regras do slide 35 e 38?",
+  "ok": "Três erros: só veterinário cadastrado aplica, apenas em fêmeas 3–8 meses e dose única na vida",
+  "er": [
+   [
+    "Apenas um erro: a dose realmente é anual e machos também tomam, errando só ao aplicar com 2 meses em vez de 3 meses",
+    "Slide 35 diz textualmente: 'Dose única por idade: Fêmeas de 3 a 8 meses de idade', aplicada UMA ÚNICA VEZ na vida por Veterinário cadastrado."
+   ],
+   [
+    "Nenhum erro, pois na brucelose tanto machos quanto fêmeas precisam de reforço anual para manter a imunidade de rebanho",
+    "O reforço anual pertence à Raiva (3m + 30d + anual); na Brucelose é DOSE ÚNICA na vida em fêmeas de 3 a 8 meses."
+   ],
+   [
+    "Erra apenas por usar B19 em vez de BCG, já que a cepa RB51 é a única vacina proibida no Brasil desde 2011",
+    "É a BCG (tuberculose) que é proibida pela IN 19/2011; na brucelose utilizam-se as cepas B19 ou RB51 conforme idade e legislação."
+   ]
+  ],
+  "pista": "Regras rígidas dos slides 33, 35 e 38: quem aplica + idade 3–8m + só fêmeas bovinas/bubalinas + dose única + Atestado.",
+  "outro": "Mesmo com vacinação em dia das bezerras, o controle de foco adulto em brucelose segue diagnóstico e abate sanitário (slide 37) + EPIs e pasteurização.",
+  "ref": "Slides 33, 35, 37 e 38"
+ },
+ "F4": {
+  "t": "F",
+  "ang": "Inversão",
+  "q": "Se uma fazenda combina rigorosamente vacinação única das bezerras de 3–8 meses por veterinário cadastrado, teste diagnóstico com abate sanitário dos positivos, uso de EPIs nos partos e pasteurização do leite, que dupla barreira ela estabelece?",
+  "ok": "Protege o rebanho contra novas falhas reprodutivas/abortos (5º–7º mês) e bloqueia a transmissão ocupacional e alimentar da Febre Ondulante humana",
+  "er": [
+   [
+    "Garante também erradicação automática da tuberculose bovina sem precisar nunca realizar o teste de PPD",
+    "Vacina B19/RB51 e testes de brucelose não protegem contra Mycobacterium bovis, que exige monitoramento próprio por TIF."
+   ],
+   [
+    "Substitui integralmente o controle da Raiva rural sem precisar vacinar bovinos aos 3 meses contra morcegos",
+    "São doenças distintas com vacinas e programas diferentes (PNCEBT vs. PNCRH)."
+   ],
+   [
+    "Permite comercializar leite cru de vacas positivas desde que os machos do lote tenham tomado dose dupla de RB51",
+    "Leite não pasteurizado de animais infectados é veículo da Febre de Malta (e em TB jamais pode ser servido nem a bezerros/porcos)."
+   ]
+  ],
+  "pista": "Tema dado (pacote integral anti-brucelose dos slides 31, 35 e 37); separa ganho produtivo animal e barreira zoonótica.",
+  "outro": "Para que esse controle não falhe na compra de reposição, soma-se também controle de entrada com testes negativos (inclusive Anel em Leite — T.A., slide 36).",
+  "ref": "Slides 31, 33, 35 e 37"
+ },
+ "G1": {
+  "t": "G",
+  "ang": "Identificação",
+  "q": "Em um rebanho positivo na tuberculinização, as regras oficiais (MAPA nº 10/2017 e Adagri Portaria 524/2015) determinam notificação em até 24 horas, abate sanitário em no máximo 30 dias em estabelecimento oficial e testes periódicos nos animais acima de 6 semanas a cada 60–90 dias até dois negativos consecutivos. Que processo é esse?",
+  "ok": "Manejo do foco e saneamento de rebanho para Tuberculose",
+  "er": [
+   [
+    "Vacinação obrigatória de emergência com BCG em todo o lote acima de 6 semanas para liberar a venda do leite cru",
+    "A vacinação BCG é PROIBIDA por lei (IN nº 19/2011) e nunca se fornece leite de vacas reagentes a bezerros ou porcos."
+   ],
+   [
+    "Vazio sanitário simples da brucelose permitindo manter animais reagentes na ordenha até encerrar a lactação",
+    "Reagentes positivos na tuberculose exigem isolamento imediato e abate sanitário/eutanásia em no máximo 30 dias (SIF, SIE ou SIM)."
+   ],
+   [
+    "Protocolo de vigilância da Raiva, que exige envio de 0,2% das cabeças caninas ao ano e espera de 14 dias",
+    "Envio de 0,2% de cães e coleta encefálica pertencem à Raiva; 30 dias/SIF/60–90 dias/2 negativos são do foco de Tuberculose."
+   ]
+  ],
+  "pista": "Notificação 24h + abate ≤30d (SIF/SIE/SIM) + testes >6 sem a cada 60–90d + 2 negativos consecutivos.",
+  "outro": "Se a pergunta fosse sobre a norma que PROÍBE a vacina BCG contra tuberculose, seria a Instrução Normativa nº 19, de 24 de julho de 2011.",
+  "ref": "Slides 23, 24, 25 e 35"
+ },
+ "G2": {
+  "t": "G",
+  "ang": "Princípio",
+  "q": "Por que a legislação brasileira (IN nº 19/2011) proíbe a vacinação com BCG contra a tuberculose bovina, obrigando o controle baseado exclusivamente em diagnóstico (PPD) e abate sanitário?",
+  "ok": "Interfere no diagnóstico (PPD), tem eficácia parcial e prejudica certificados livres de exportação",
+  "er": [
+   [
+    "Porque a vacina BCG transmite Febre Ondulante humana pelo leite pasteurizado em 100% das vacas tratadas",
+    "Febre Ondulante é Brucelose (leite não pasteurizado); os três motivos da proibição da BCG no slide 25 são interferência no diagnóstico, eficácia parcial e comércio."
+   ],
+   [
+    "Porque todos os bovinos nascem imunes à tuberculose após tomar B19 e RB51 aos 3 meses de vida",
+    "B19 e RB51 são contra Brucelose e não conferem proteção contra M. bovis."
+   ],
+   [
+    "Porque a BCG causa reação anafilática imediata em equinos hospedeiros terminais nas primeiras 72 horas",
+    "Não é citada anafilaxia em equinos; o slide 25 resume exatamente: Interferência no diagnóstico × Eficácia parcial × Questões comerciais."
+   ]
+  ],
+  "pista": "Três razões literais do slide 25: Interferência no diagnóstico × Eficácia parcial × Questões comerciais.",
+  "outro": "Esse ponto cria o maior contraste estratégico da tabela do slide 35: Brucelose = vacinação obrigatória em bezerras; Tuberculose = sem vacina (proibida), apenas teste e abate.",
+  "ref": "Slides 25, 35 e 38"
+ },
+ "G3": {
+  "t": "G",
+  "ang": "Armadilha",
+  "q": "Ao identificar uma vaca positiva no TCC para tuberculose, o produtor resolve aproveitá-la em uma baia isolada apenas para fornecer leite aos bezerros e porcos da granja, esperando o primeiro teste negativo geral do lote em 30 dias para encerrar o saneamento. Quais três erros graves ele cometeu?",
+  "ok": "Leite de reagentes nunca vai a bezerros/porcos; abate ocorre em ≤30d; pede 2 negativos seguidos",
+  "er": [
+   [
+    "Erra só no prazo de abate, pois servir leite de vaca positiva para porcos é seguro por serem hospedeiros terminais resistentes",
+    "Slide 24 alerta em negrito: 'Nunca forneça leite de vacas reagentes para bezerros ou porcos' (suínos inclusive pegam TB por leite bovino!)."
+   ],
+   [
+    "Apenas o número de testes está errado (exige três negativos), enquanto restos de parto e leite podem ir direto para adubo sem cal virgem",
+    "Restos de partos, tecidos ou leite de positivos devem ser INCINERADOS ou enterrados com cal virgem; saneamento pede DOIS negativos consecutivos."
+   ],
+   [
+    "Está tudo dentro da norma desde que todos os bezerros abaixo de 6 semanas tenham tomado a vacina BCG de reforço",
+    "BCG é proibida e o saneamento testa todos os animais restantes ACIMA de 6 semanas de idade a cada 60–90 dias."
+   ]
+  ],
+  "pista": "Checagem cirúrgica do slide 24: leite a bezerros/porcos (proibido!) + ≤30d abate + >6 sem / 60–90d / 2 negativos.",
+  "outro": "E além de abater em estabelecimento oficial (SIF, SIE ou SIM), a notificação compulsória deve ser imediata em até 24 horas (slide 35).",
+  "ref": "Slides 23, 24 e 35"
+ },
+ "G4": {
+  "t": "G",
+  "ang": "Inversão",
+  "q": "Se um foco confirmado de tuberculose for manejado rigorosamente dentro da regra federal/estadual (MAPA nº 10/2017 e Adagri 524/2015), quais passos cronológicos obrigatórios levam o rebanho do dia da detecção ao saneamento?",
+  "ok": "Notificação ≤24h → isolamento imediato e abate em ≤30d (SIF/SIE/SIM) + incineração/cal de resíduos → testes >6 sem a cada 60–90d até 2 negativos seguidos",
+  "er": [
+   [
+    "Aplicar BCG em 48h → isolar só machos → esperar 2 anos de vazio na água e liberar rebanho após 1 teste positivo em 15 dias",
+    "BCG é proibida e o fluxo oficial é abate em ≤30d, incineração/cal, testes >6 sem a cada 60–90d até 2 negativos consecutivos."
+   ],
+   [
+    "Mandar positivos para leilão de eventos de aglomeração → esperar 72h → descartar leite positivo no bebedouro dos suínos",
+    "Animais em eventos precisam de teste negativo em dia; positivos vão para isolamento e abate sanitário oficial."
+   ],
+   [
+    "Vacinar o lote com RB51 em dose única → lavar o curral apenas com água → encerrar após 30 dias sem novos testes",
+    "RB51 é contra brucelose em bezerras; foco de tuberculose exige desinfecção eficaz (fenóis/CaO), vazio e 2 testes consecutivos negativos."
+   ]
+  ],
+  "pista": "Tema dado (manejo completo de foco de TB); ordena 24h → 30d (SIF/SIE/SIM) → 60–90d → 2 negativos.",
+  "outro": "Na etapa de limpeza desse curral vazio por 15–30 dias (e pasto por ≥60d), a desinfecção deve preferir fenóis ou cal virgem, evitando amônia quaternária.",
+  "ref": "Slides 23, 24 e 35"
+ },
+ "H1": {
+  "t": "H",
+  "ang": "Identificação",
+  "q": "Programa estratégico nacional focado em bovinos e bubalinos por impacto produtivo (abortos, descarte genético e queda de até 25% no leite), exportação e zoonoses; segundo dados citados nos slides, 98% dos estabelecimentos certificados como livres concentram-se na região Sul. Que programa é esse?",
+  "ok": "PNCEBT (Programa Nacional de Controle e Erradicação da Brucelose e da Tuberculose Animal)",
+  "er": [
+   [
+    "PNCRH (Programa Nacional de Controle da Raiva dos Herbívoros), cujo maior foco econômico é perda de até 25% do leite por aborto no 5º mês",
+    "PNCRH foca Raiva rural/morcegos (criado em 1966); 98% de certificados livres no Sul e queda de até 25% do leite estão ligados ao PNCEBT."
+   ],
+   [
+    "SINAN (Sistema de Informação de Agravos de Notificação), responsável por certificar propriedades livres com vacina BCG",
+    "SINAN registra agravos de notificação na saúde pública (iniciado em 1992); certificação de propriedades livres bovinas é do PNCEBT."
+   ],
+   [
+    "PNPR (Programa Nacional de Profilaxia da Raiva), focado exclusivamente em cães, gatos e abate de suínos sentinela",
+    "PNPR (1973) volta-se à raiva urbana em cães e gatos, sem relação com certificação de bovinos/bubalinos livres de TB/brucelose."
+   ]
+  ],
+  "pista": "Bovinos e bubalinos + 98% na região Sul + queda até 25% leite + barreiras comerciais.",
+  "outro": "Para entender a diferença entre os programas citados nas duas aulas: PNCEBT = Brucelose/Tuberculose; PNCRH = Raiva de herbívoros.",
+  "ref": "Slides 22, 23, 29 e 30"
+ },
+ "H2": {
+  "t": "H",
+  "ang": "Princípio",
+  "q": "Por que o PNCEBT concentra suas normas estratégicas exatamente em bovinos e bubalinos (slide 29), mesmo quando caprinos, aves ou suínos também podem infectar-se por micobactérias ou brucelas?",
+  "ok": "Motivos econômicos (leite -25%, exportação), zoonoses e serem os reservatórios biológicos principais",
+  "er": [
+   [
+    "Porque bovinos e bubalinos são os únicos vertebrados suscetíveis à tuberculose, enquanto suínos e caprinos são 100% imunes",
+    "Slide 2 e 3 mostram que todos animais de produção podem se infectar (caprinos e suínos inclusive têm incidências expressivas), mas o foco estratégico do PNCEBT é bovinos/bubalinos."
+   ],
+   [
+    "Porque apenas bubalinos transmitem brucelose por picada de insetos em eventos de aglomeração internacional",
+    "Transmissão de brucelose/TB não ocorre por picada de insetos; o foco justifica-se por peso econômico, exportação, zoonose e papel reservatório."
+   ],
+   [
+    "Porque o Brasil já erradicou totalmente a tuberculose na região Nordeste e mantém 98% dos focos ativos concentrados apenas no Sul",
+    "É o oposto: a região Sul detém 98% dos estabelecimentos CERTIFICADOS COMO LIVRES, refletindo controle mais rigoroso (slide 23)."
+   ]
+  ],
+  "pista": "Eixos dos slides 29 e 30 (econômicas/exportação + saúde pública/zoonoses + biológicas) vs. leitura correta dos 98% no Sul.",
+  "outro": "Lembre também que o rebanho suíno/equino atua como terminal ou sentinela, enquanto bovinos são o reservatório principal de B. abortus e foco do M. bovis.",
+  "ref": "Slides 23, 29 e 30"
+ },
+ "H3": {
+  "t": "H",
+  "ang": "Armadilha",
+  "q": "Um estudante lê o slide 23 ('98% no Sul') e o slide 35 e afirma: 'O Sul concentra 98% dos casos positivos do país, e o teste de tuberculinização só precisa ser feito se o dono quiser vender para abate comum, nunca em feiras ou eventos'. Quais duas inversões ele cometeu?",
+  "ok": "Sul detém 98% das propriedades LIVRES; teste TB é obrigatório em venda reprodutiva e aglomerações",
+  "er": [
+   [
+    "Erra só no evento de aglomeração, pois 98% no Sul refere-se realmente à concentração dos focos positivos não abatidos",
+    "Slide 23 afirma textualmente: 'A região Sul detém 98% dos estabelecimentos certificados como LIVRES no país'."
+   ],
+   [
+    "O teste de tuberculose é opcional tanto em reprodução quanto em eventos, sendo obrigatório apenas vacinar bezerros machos com BCG",
+    "Slide 35: 'não há vacina... O teste é obrigatório para: 1. Compra/venda de animais para reprodução; 2. Ingresso em eventos de aglomeração'."
+   ],
+   [
+    "Na verdade eventos de aglomeração exigem apenas atestado de tétano na GTA, ficando o PNCEBT dispensado fora do Sul",
+    "Tétano não é cobrado na GTA, ao passo que eventos e reprodução exigem testes de Tuberculose e Brucelose em dia pelo PNCEBT (slides 35–36)."
+   ]
+  ],
+  "pista": "98% LIVRES (não casos positivos!) + 2 gatilhos obrigatórios do TIF no slide 35.",
+  "outro": "Para brucelose no controle sanitário leiteiro citado no slide 36, soma-se também a verificação do teste de Anel em Leite (T.A.).",
+  "ref": "Slides 23, 35 e 36"
+ },
+ "H4": {
+  "t": "H",
+  "ang": "Inversão",
+  "q": "Aplicando as quatro 'Recomendações de Gestão para o Agrônomo' (slide 36), o que o profissional precisa checar rotineiramente na fazenda para evitar interdição e perdas econômicas?",
+  "ok": "Calendário Aftosa (UF), nascimentos (3–8m), exames em trânsito/eventos (TB e Anel em Leite) e notificar já",
+  "er": [
+   [
+    "Vacinar apenas contra Febre Aftosa uma vez na vida, testar TB só em novilhas de 2 meses e adiar notificações por 60 dias para evitar interdição",
+    "Adiar notificação (as três — Aftosa, Brucelose e TB — são compulsórias imediatas!) agrava disseminação, interdição e prejuízos (slide 36)."
+   ],
+   [
+    "Substituir a vacinação de bezerras de 3–8 meses pela aplicação de cal virgem em todas as matrizes gestantes no 6º mês",
+    "Cal virgem é para desinfecção de solos/resíduos (TB), nunca para substituir vacina B19/RB51 em bezerras."
+   ],
+   [
+    "Liberar a entrada de animais de reposição sem exame prévio desde que venham de feiras sem GTA e sem controle da UF",
+    "Todo animal de reposição ou saída para aglomeração deve ter testes de Tuberculose e Brucelose (T.A.) em dia conforme o PNCEBT."
+   ]
+  ],
+  "pista": "Tema dado (4 recomendações do slide 36): Aftosa (UF) + nascimentos 3–8m + entrada/saída (TB/Brucelose/Anel em Leite) + notificação imediata.",
+  "outro": "Note que a notificação compulsória imediata (até 24h na TB) funciona como proteção coletiva evitando interdição ampliada na vizinhança.",
+  "ref": "Slides 35 e 36"
+ },
+ "H5": {
+  "t": "H",
+  "ang": "Ponte",
+  "ponte": "Tabela comparativa oficial (Slide 35) ↔ Estratégias opostas entre Brucelose e Tuberculose",
+  "q": "Comparando lado a lado Brucelose e Tuberculose na tabela do slide 35 e no calendário do slide 38, por que o controle oficial proíbe vacinar numa doença e obriga vacinar na outra, exigindo descarte sanitário em ambas?",
+  "ok": "Brucelose vacina bezerras (dose única 3–8m) além do abate; TB proíbe vacina e só faz TIF, 24h e abate",
+  "er": [
+   [
+    "Porque a brucelose não é zoonose nem causa prejuízo reprodutivo, enquanto a tuberculose tem cura rápida com vacina B19 em adultos",
+    "Ambas são zoonoses graves (Febre de Malta e TB zoonótica), e B19 é para fêmeas de 3–8 meses contra brucelose (TB não tem cura nem vacina permitida)."
+   ],
+   [
+    "Porque na brucelose é proibido abater reagentes positivos, enquanto na tuberculose o abate sanitário só ocorre após duas vacinações anuais",
+    "O slide 37 cita 'Diagnóstico e Sacrifício (Teste de Brucelose e abate sanitário)', e na tuberculose não há vacina e o abate é obrigatório."
+   ],
+   [
+    "Porque a maior perda econômica na tuberculose está na compra de frascos de BCG, e na brucelose está na necrose de moela de aves",
+    "Slide 35 aponta que na TB a maior perda é o DESCARTE DE MATRIZES (abate sanitário), e necrose/erosão de moela é vitamina E em aves."
+   ]
+  ],
+  "pista": "Síntese comparativa completa da Tabela do slide 35 e slides 37–38.",
+  "outro": "Em ambas as enfermidades, a falha em notificar ou o trânsito clandestino sem Atestado/exames ameaça todo o rebanho e exportações (slides 30 e 36).",
+  "ref": "Slides 30, 35, 37 e 38"
+ }
+};
+var ORDER = ["B1","A1","D1","G1","C1","F1","H1","E1","B2","E2","H2","C2","A2","G2","F2","D2","G3","D3","B3","E3","F3","A3","C3","H3","C4","F4","A4","D4","H4","B4","E4","G4","A5","H5","D5","B5","C5","E5"];
+var app=document.getElementById('app');
+var queue,pos,answers,t0,cur,locked,optList,famSeen,FAMQ;
+function shuffle(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var x=a[i];a[i]=a[j];a[j]=x}return a}
+function start(ids){queue=ids;pos=0;answers=[];t0=Date.now();famSeen={};FAMQ={};ids.forEach(function(id){FAMQ[Q[id].t]=(FAMQ[Q[id].t]||0)+1});render()}
+function render(){
+  if(pos>=queue.length){return finish()}
+  var id=queue[pos],q=Q[id];cur=id;locked=false;
+  var opts=[{x:q.ok,ok:true,why:''}].concat(q.er.map(function(e){return{x:e[0],ok:false,why:e[1]}}));
+  optList=shuffle(opts);
+  var L='ABCD';
+  var h='<h1>Tuberculose e Brucelose</h1><p class="sub">Etiologia, diagnóstico, espécies, biosseguridade e PNCEBT (slides 1 a 40)</p>';
+  h+='<div class="meta"><span>Questão '+(pos+1)+' de '+queue.length+'</span><span>'+answers.filter(function(a){return a.ok}).length+' acertos</span></div>';
+  h+='<div class="bar"><i style="width:'+(pos/queue.length*100)+'%"></i></div>';
+  h+='<p class="stem">'+q.q+'</p><div id="opts">';
+  optList.forEach(function(o,i){h+='<button class="opt" data-i="'+i+'"><b>'+L[i]+'</b><span>'+o.x+'</span></button>'});
+  h+='</div><div id="fb"></div><p class="hint">Atalhos: 1–4 escolhem a alternativa; Enter avança.</p>';
+  app.innerHTML=h;
+  Array.prototype.forEach.call(app.querySelectorAll('.opt'),function(b){b.onclick=function(){pick(+b.getAttribute('data-i'))}});
+}
+function pick(i){
+  if(locked||!optList[i])return;locked=true;
+  var q=Q[cur],o=optList[i];
+  var btns=app.querySelectorAll('.opt');
+  Array.prototype.forEach.call(btns,function(b,k){b.disabled=true;if(optList[k].ok)b.classList.add('ok');else if(k===i)b.classList.add('ko')});
+  famSeen[q.t]=(famSeen[q.t]||0)+1;
+  var nth=famSeen[q.t];
+  answers.push({id:cur,t:q.t,ok:o.ok,ang:q.ang});
+  var th=T[q.t];
+  var f='<div class="fb"><p class="h '+(o.ok?'ok':'ko')+'">'+(o.ok?'Correto.':'Errado.')+'</p>';
+  f+='<p><em>Tema:</em> '+th.nome+' <em>('+q.ang+')</em></p>';
+  f+='<p><em>Pista que entregou:</em> '+q.pista+'</p>';
+  f+='<p><em>Núcleo:</em> '+th.nucleo+'</p>';
+  if(!o.ok)f+='<p><em>Por que a sua escolha está errada:</em> '+o.why+'</p>';
+  f+='<p><em>Se fosse o outro tema:</em> '+q.outro+'</p>';
+  f+='<p><em>Referência:</em> '+q.ref+'</p>';
+  f+='<p><em>Progresso da família:</em> '+th.nome.split(' - ')[0]+' - '+nth+' de '+FAMQ[q.t]+'</p>';
+  f+='<button class="main" id="nx">'+(pos+1>=queue.length?'Ver fechamento':'Próxima')+'</button></div>';
+  document.getElementById('fb').innerHTML=f;
+  document.getElementById('nx').onclick=next;
+  document.getElementById('nx').focus();
+}
+function next(){pos++;render();window.scrollTo(0,0)}
+document.addEventListener('keydown',function(e){
+  if(!queue||pos>=queue.length)return;
+  if(!locked&&e.key>='1'&&e.key<='4'){pick(+e.key-1)}
+  else if(locked&&e.key==='Enter'){e.preventDefault();next()}
+});
+function fmt(ms){var s=Math.round(ms/1000);return Math.floor(s/60)+'min '+('0'+(s%60)).slice(-2)+'s'}
+function finish(){
+  var tot=answers.length,ac=answers.filter(function(a){return a.ok}).length;
+  var by={};answers.forEach(function(a){by[a.t]=by[a.t]||{n:0,k:0};by[a.t].n++;if(a.ok)by[a.t].k++});
+  var h='<h1>Fechamento - Tuberculose e Brucelose</h1><p class="sub">Defesa sanitária e PNCEBT (40 slides)</p>';
+  h+='<div class="score">'+(ac/tot*10).toFixed(1)+' / 10</div><p>'+ac+' de '+tot+' acertos · tempo '+fmt(Date.now()-t0)+'</p>';
+  h+='<h2>Mapa</h2><table><tr><th>Tema</th><th>Núcleo</th><th>Pistas</th><th>Confusão</th><th>Acertos</th></tr>';
+  Object.keys(T).forEach(function(k){
+    if(!by[k])return;var p=by[k].k/by[k].n;
+    h+='<tr><td>'+T[k].nome+'</td><td>'+T[k].nucleo+'</td><td>'+T[k].pistas+'</td><td>'+T[k].conf+'</td><td class="p'+(p<0.7?' low':'')+'">'+by[k].k+'/'+by[k].n+'</td></tr>';
+  });
+  h+='</table>';
+  h+='<h2>Pontes</h2><ul>';
+  answers.filter(function(a){return a.ang==='Ponte'}).forEach(function(a){h+='<li>'+Q[a.id].ponte+' '+(a.ok?'(acertou)':'(errou)')+'</li>'});
+  h+='</ul>';
+  var soltos=Object.keys(by).filter(function(k){return by[k].k/by[k].n<0.7});
+  h+='<h2>Pontos soltos (abaixo de 70%)</h2>';
+  h+=soltos.length?'<ul>'+soltos.map(function(k){return'<li>'+T[k].nome+' - '+by[k].k+'/'+by[k].n+'</li>'}).join('')+'</ul>':'<p>Nenhum tema abaixo de 70%.</p>';
+  h+='<p class="note">Famílias menores que 5 por peso dos slides: F (Brucelose geral, 4q sem Ponte isolada — comparada em H5) e G (Foco/BCG, 4q sem Ponte isolada — comparada em H5).</p>';
+  var erros=answers.filter(function(a){return!a.ok}).map(function(a){return a.id});
+  h+='<button class="sec" id="rs">Recomeçar</button>';
+  if(erros.length)h+='<button class="main" id="re">Refazer só os erros ('+erros.length+')</button>';
+  if(soltos.length)h+='<p class="hint">Para uma rodada extra com ângulos novos dos temas abaixo de 70%, peça ao Ultron: este arquivo só repete as questões existentes.</p>';
+  app.innerHTML=h;
+  document.getElementById('rs').onclick=function(){start(ORDER)};
+  if(erros.length)document.getElementById('re').onclick=function(){start(erros)};
+}
+start(ORDER);
+</script>
+</body>
+</html>
